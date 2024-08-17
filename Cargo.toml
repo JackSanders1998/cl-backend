@@ -11,3 +11,8 @@ tokio = { version = "1.39.2", features = ["full"] }
 shuttle-axum = "0.47.0"
 shuttle-runtime = "0.47.0"
 anyhow = "1.0.86"
+# sqlx = { version = "0.8.0", features = ["macros"] }
+shuttle-shared-db = { version = "0.47.0", features = ["postgres", "sqlx"] }
+sqlx = "0.7.1"
+serde = "1.0.208"
+
