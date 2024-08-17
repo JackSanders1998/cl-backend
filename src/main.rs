@@ -4,20 +4,9 @@ use axum::{
 };
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
-use dotenvy::dotenv;
-use std::net::SocketAddr;
-use std::{env, error::Error};
-use tokio::net::TcpListener;
-
-#[derive(PartialEq)]
-enum AppEnv {
-    Dev,
-    Prod,
-}
-
-// async fn getUsers() -> &'static str {
-//     return clerk_rs::apis::users_api::GetUserListError
-// }
+// use std::net::SocketAddr;
+use std::env;
+// use tokio::net::TcpListener;
 
 async fn post_log() -> &'static str {
     "Post Log"
@@ -37,8 +26,9 @@ async fn hello_world() -> &'static str {
     "Hello world!"
 }
 
-#[tokio::main]
-async fn main() -> std::io::Result<()> {
+// #[tokio::main]
+#[shuttle_runtime::main]
+async fn main() -> shuttle_axum::ShuttleAxum {
     match dotenvy::dotenv() {
         Ok(path) => println!(".env read successfully from {}", path.display()),
         Err(e) => println!("Could not load .env file: {e}"),
@@ -58,7 +48,8 @@ async fn main() -> std::io::Result<()> {
         .route("/log", delete(delete_log))
         .route("/hello-world", get(hello_world))
         .layer(ClerkLayer::new(config, None, true));
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-    let listener = TcpListener::bind(addr).await?;
-    axum::serve(listener, app).await
+    // let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+    // let listener = TcpListener::bind(addr).await?;
+    // axum::serve(listener, app).await
+    Ok(app.into())
 }
