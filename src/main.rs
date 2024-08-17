@@ -2,10 +2,11 @@ use axum::{
     routing::{delete, get, patch, post},
     Router,
 };
+use anyhow::Context;
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
+use shuttle_runtime::SecretStore;
 // use std::net::SocketAddr;
-use std::env;
 // use tokio::net::TcpListener;
 
 async fn post_log() -> &'static str {
@@ -28,12 +29,8 @@ async fn hello_world() -> &'static str {
 
 // #[tokio::main]
 #[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
-    match dotenvy::dotenv() {
-        Ok(path) => println!(".env read successfully from {}", path.display()),
-        Err(e) => println!("Could not load .env file: {e}"),
-    };
-    let clerk_secret = env::var("CLERK_SECRET").expect("CLERK_SECRET not set");
+async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
+    let clerk_secret = secrets.get("CLERK_SECRET").context("CLERK_SECRET not found")?;
 
     let config: ClerkConfiguration = ClerkConfiguration::new(
         None,
