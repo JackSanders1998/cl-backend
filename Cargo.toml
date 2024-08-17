@@ -1,0 +1,10 @@
+[package]
+name = "cl-backend"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7.5"
+clerk-rs = { version = "0.3.1", features = ["axum"] }
+dotenvy = "0.15.7"
+tokio = { version = "1.39.2", features = ["full"] }
