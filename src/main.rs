@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use anyhow::Context;
 use axum::{
     extract::State,
@@ -11,6 +13,14 @@ use clerk_rs::ClerkConfiguration;
 use serde::{Deserialize, Serialize};
 use shuttle_runtime::SecretStore;
 use sqlx::{postgres::PgPoolOptions, FromRow, PgPool};
+use rspc::Router as RspcRouter;
+
+fn router() -> Arc<RspcRouter> {
+    <RspcRouter>::new()
+        .query("version", |t| t(|_ctx, _input: ()| env!("CARGO_PKG_VERSION")))
+        .build()
+        .arced()
+}
 
 async fn post_log(
     State(state): State<MyState>,
@@ -72,6 +82,7 @@ async fn main(
         .run(&pool)
         .await
         .expect("Migrations failed. Exiting.");
+
     let state = MyState { pool };
 
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
@@ -81,6 +92,8 @@ async fn main(
         .route("/log", get(get_log))
         .route("/log", delete(delete_log))
         .route("/hello-world", get(hello_world))
+        .route("/", get(|| async { "Hello 'rspc'!" }))
+        .nest("/rspc", rspc_axum::endpoint(router(), || ()))
         .layer(ClerkLayer::new(config, None, true))
         .with_state(state);
     Ok(app.into())
