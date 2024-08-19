@@ -17,7 +17,7 @@ use rspc::Router as RspcRouter;
 
 fn router() -> Arc<RspcRouter> {
     <RspcRouter>::new()
-        .query("version", |t| t(|_ctx, _input: ()| env!("CARGO_PKG_VERSION")))
+        .query("version", |t| t(|_ctx, _input: ()| "1.0.0"))
         .build()
         .arced()
 }
