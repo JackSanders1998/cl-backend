@@ -13,10 +13,11 @@ use clerk_rs::ClerkConfiguration;
 use serde::{Deserialize, Serialize};
 use shuttle_runtime::SecretStore;
 use sqlx::{postgres::PgPoolOptions, FromRow, PgPool};
-use rspc::Router as RspcRouter;
+use rspc::{Config, Router as RspcRouter};
 
 fn router() -> Arc<RspcRouter> {
     <RspcRouter>::new()
+        .config(Config::new().export_ts_bindings("./cl-bindings/index.d.ts"))
         .query("version", |t| t(|_ctx, _input: ()| "1.0.0"))
         .build()
         .arced()
@@ -78,10 +79,10 @@ async fn main(
         .expect("PG cannot start. Exiting.");
 
     // Run outstanding db migrations.
-    sqlx::migrate!()
-        .run(&pool)
-        .await
-        .expect("Migrations failed. Exiting.");
+    // sqlx::migrate!()
+    //     .run(&pool)
+    //     .await
+    //     .expect("Migrations failed. Exiting.");
 
     let state = MyState { pool };
 

@@ -1,0 +1,11 @@
+{
+  "name": "cl-bindings",
+  "version": "1.0.0",
+  "description": "TS bindings for cl-backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC"
+}
