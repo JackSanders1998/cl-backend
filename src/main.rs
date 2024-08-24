@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::database::Database;
 use anyhow::Context;
 use axum::{
     extract::State,
@@ -8,12 +9,15 @@ use axum::{
     routing::{delete, get, patch, post},
     Json, Router,
 };
+use cl_backend::Database;
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
+use rspc::Router as RspcRouter;
 use serde::{Deserialize, Serialize};
 use shuttle_runtime::SecretStore;
-use sqlx::{postgres::PgPoolOptions, FromRow, PgPool};
-use rspc::Router as RspcRouter;
+use specta::Type;
+use sqlx::FromRow;
+use tracing::info;
 
 fn router() -> Arc<RspcRouter> {
     <RspcRouter>::new()
@@ -22,46 +26,8 @@ fn router() -> Arc<RspcRouter> {
         .arced()
 }
 
-async fn post_log(
-    State(state): State<MyState>,
-    Json(data): Json<LogNew>,
-) -> Result<impl IntoResponse, impl IntoResponse> {
-    match sqlx::query_as::<_, Log>(
-        "INSERT INTO logs (grade, metadata) VALUES ($1, $2) RETURNING id, grade, metadata",
-    )
-    .bind(&data.grade)
-    .bind(&data.metadata)
-    .fetch_one(&state.pool)
-    .await
-    {
-        Ok(log) => Ok((StatusCode::CREATED, Json(log))),
-        Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
-    }
-}
-async fn patch_log() -> &'static str {
-    "Patch Log"
-}
-async fn get_log(State(state): State<MyState>) -> Result<impl IntoResponse, impl IntoResponse> {
-    match sqlx::query_as::<_, Log>("SELECT * FROM logs")
-        .fetch_all(&state.pool)
-        .await
-    {
-        Ok(todo) => Ok((StatusCode::OK, Json(todo))),
-        Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
-    }
-}
-async fn delete_log() -> &'static str {
-    "Delete Log"
-}
-async fn hello_world() -> &'static str {
-    "Hello world!"
-}
-
 #[shuttle_runtime::main]
-async fn main(
-    // #[shuttle_shared_db::Postgres] pool: PgPool,
-    #[shuttle_runtime::Secrets] secrets: SecretStore,
-) -> shuttle_axum::ShuttleAxum {
+async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
     // Get env vars. Exit if any are not found.
     let clerk_secret = secrets
         .get("CLERK_SECRET")
@@ -70,49 +36,59 @@ async fn main(
         .get("DATABASE_URL")
         .context("DATABASE_URL not found")?;
 
-    // Establish pool connection
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&database_url)
+    let db = Database::connect(&database_url, false)
         .await
-        .expect("PG cannot start. Exiting.");
+        .expect("could not initialize the database connection pool");
 
-    // Run outstanding db migrations.
-    sqlx::migrate!()
-        .run(&pool)
-        .await
-        .expect("Migrations failed. Exiting.");
-
-    let state = MyState { pool };
+    // let user_routes = Router::new().route("/:id", get(|| async {}));
+    // let log_routes = Router::new()
+    //     .route("/", post(post_log))
+    //     .route("/", patch(patch_log))
+    //     .route("/", get(get_log))
+    //     .route("/", delete(delete_log));
 
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
     let app = Router::new()
-        .route("/log", post(post_log))
-        .route("/log", patch(patch_log))
-        .route("/log", get(get_log))
-        .route("/log", delete(delete_log))
-        .route("/hello-world", get(hello_world))
-        .route("/", get(|| async { "Hello 'rspc'!" }))
-        .nest("/rspc", rspc_axum::endpoint(router(), || ()))
+        .nest("/", rspc_axum::endpoint(router(), || ()))
+        // .nest("/log", log_routes)
         .layer(ClerkLayer::new(config, None, true))
-        .with_state(state);
+        .with_state(db);
     Ok(app.into())
 }
 
-#[derive(Serialize, FromRow)]
+#[derive(Serialize, FromRow, Type)]
 struct Log {
     pub id: i32,
     pub grade: String,
     pub metadata: String,
 }
 
-#[derive(Deserialize)]
-struct LogNew {
+#[derive(Deserialize, Type)]
+pub struct LogNew {
     pub grade: String,
     pub metadata: String,
 }
 
-#[derive(Clone)]
-struct MyState {
-    pool: PgPool,
+#[derive(Type)]
+pub struct MyCustomType {
+    pub my_field: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::MyCustomType;
+    use specta::{ts::*, *};
+
+    #[test]
+    fn test_rspc_router() {
+        super::router();
+    }
+
+    #[test]
+    fn test_specta() {
+        assert_eq!(
+            ts::export::<MyCustomType>(&ExportConfiguration::default()).unwrap(),
+            "export type MyCustomType = { my_field: string }".to_string()
+        );
+    }
 }

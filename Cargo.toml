@@ -17,3 +17,5 @@ serde = "1.0.208"
 rspc-axum = { version = "0.1.1", features = ["ws"] }
 rspc = "0.2.0"
 specta = "1.0.5"
+tracing = "0.1.40"
+uuid = "1.10.0"
