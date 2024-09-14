@@ -1,6 +1,8 @@
 /target
 .shuttle-storage
 Secrets*.toml
-.idea
+.env
 
 /cl-bindings/node_modules
+
+.idea

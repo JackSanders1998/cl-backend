@@ -1,19 +1,21 @@
+mod handlers;
+mod models;
+
 use std::sync::Arc;
+use std::time::Duration;
 
 use anyhow::Context;
 use axum::{
-    extract::State,
-    http::StatusCode,
-    response::IntoResponse,
-    routing::{get, post},
-    Json, Router,
+    routing::{delete, get, post},
+    Router,
 };
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
-use serde::{Deserialize, Serialize};
-use shuttle_runtime::SecretStore;
-use sqlx::{postgres::PgPoolOptions, FromRow, PgPool};
+use handlers::*;
 use rspc::{Config, Router as RspcRouter};
+use serde::Serialize;
+use shuttle_runtime::SecretStore;
+use sqlx::{postgres::PgPoolOptions, FromRow};
 
 fn router() -> Arc<RspcRouter> {
     <RspcRouter>::new()
@@ -23,38 +25,8 @@ fn router() -> Arc<RspcRouter> {
         .arced()
 }
 
-async fn post_log(
-    State(state): State<MyState>,
-    Json(data): Json<LogNew>,
-) -> Result<impl IntoResponse, impl IntoResponse> {
-    match sqlx::query_as::<_, Log>(
-        "INSERT INTO logs (grade, metadata) VALUES ($1, $2) RETURNING id, grade, metadata",
-    )
-    .bind(&data.grade)
-    .bind(&data.metadata)
-    .fetch_one(&state.pool)
-    .await
-    {
-        Ok(log) => Ok((StatusCode::CREATED, Json(log))),
-        Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
-    }
-}
-
-async fn get_log(State(state): State<MyState>) -> Result<impl IntoResponse, impl IntoResponse> {
-    match sqlx::query_as::<_, Log>("SELECT * FROM logs")
-        .fetch_all(&state.pool)
-        .await
-    {
-        Ok(todo) => Ok((StatusCode::OK, Json(todo))),
-        Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
-    }
-}
-
 #[shuttle_runtime::main]
-async fn main(
-    // #[shuttle_shared_db::Postgres] pool: PgPool,
-    #[shuttle_runtime::Secrets] secrets: SecretStore,
-) -> shuttle_axum::ShuttleAxum {
+async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
     // Get env vars. Exit if any are not found.
     let clerk_secret = secrets
         .get("CLERK_SECRET")
@@ -65,49 +37,24 @@ async fn main(
 
     // Establish pool connection
     let pool = PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(64)
+        .acquire_timeout(Duration::from_secs(5))
         .connect(&database_url)
         .await
         .expect("PG cannot start. Exiting.");
 
-    // let cors = CorsLayer::new()
-    //     .allow_methods([Method::GET, Method::POST])
-    //     .allow_origin(Any)
-    //     .allow_headers([CONTENT_TYPE]);
-
-    // Run outstanding db migrations.
-    // sqlx::migrate!()
-    //     .run(&pool)
-    //     .await
-    //     .expect("Migrations failed. Exiting.");
-
-    let state = MyState { pool };
+    let location_routes = Router::new()
+        .route("/", post(create_location))
+        .route("/:id", get(get_location))
+        .route("/:id", delete(delete_location));
 
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
+
     let app = Router::new()
-        .route("/log", post(post_log))
-        .route("/log", get(get_log))
-        .route("/", get(|| async { "Hello 'rspc'!" }))
+        .route("/healthcheck", get(|| async { "healthy" }))
+        .nest("/locations", location_routes)
         .nest("/rspc", rspc_axum::endpoint(router(), || ()))
         .layer(ClerkLayer::new(config, None, true))
-        .with_state(state);
+        .with_state(pool);
     Ok(app.into())
-}
-
-#[derive(Serialize, FromRow)]
-struct Log {
-    pub id: i32,
-    pub grade: String,
-    pub metadata: String,
-}
-
-#[derive(Deserialize)]
-struct LogNew {
-    pub grade: String,
-    pub metadata: String,
-}
-
-#[derive(Clone)]
-struct MyState {
-    pool: PgPool,
 }
