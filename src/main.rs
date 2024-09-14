@@ -76,10 +76,10 @@ async fn main(
     //     .allow_headers([CONTENT_TYPE]);
 
     // Run outstanding db migrations.
-    sqlx::migrate!()
-        .run(&pool)
-        .await
-        .expect("Migrations failed. Exiting.");
+    // sqlx::migrate!()
+    //     .run(&pool)
+    //     .await
+    //     .expect("Migrations failed. Exiting.");
 
     let state = MyState { pool };
 
