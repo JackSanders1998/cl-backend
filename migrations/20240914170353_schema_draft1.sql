@@ -8,10 +8,20 @@ BEGIN
 END;
 $$;
 
+CREATE TABLE if NOT EXISTS locations (
+  location_id   uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
+  user_id       text,   -- clerk
+  name          text NOT NULL,
+  environment   text NOT NULL,  -- GYM, OUTDOOR, etc...
+  created_at    TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMP NOT NULL DEFAULT now()
+);
+CREATE trigger updated_at before UPDATE ON locations FOR each row EXECUTE PROCEDURE set_updated_at();
+
 CREATE TABLE if NOT EXISTS seshes (
   sesh_id       uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
   user_id       text,   -- clerk
-  location_id   uuid NOT NULL REFERENCES locations(location_id) ON DELETE CASCADE
+  location_id   uuid NOT NULL REFERENCES locations(location_id) ON DELETE CASCADE,
   notes         text,
   start         TIMESTAMP NOT NULL DEFAULT now(),
   "end"         TIMESTAMP,
@@ -19,16 +29,6 @@ CREATE TABLE if NOT EXISTS seshes (
   updated_at    TIMESTAMP NOT NULL DEFAULT now()
 );
 CREATE trigger updated_at before UPDATE ON seshes FOR each row EXECUTE PROCEDURE set_updated_at();
-
-CREATE TABLE if NOT EXISTS locations (
-  location_id   uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
-  user_id       text,   -- clerk
-  name          text NOT NULL,
-  environment   text NOT NULL,  -- GYM, OUTDOOR, etc...
-  created_at    TIMESTAMP NOT NULL DEFAULT now(),
-  updated_at    TIMESTAMP NOT NULL DEFAULT now(),
-);
-CREATE trigger updated_at before UPDATE ON locations FOR each row EXECUTE PROCEDURE set_updated_at();
 
 CREATE TABLE if NOT EXISTS climbs (
   climb_id      uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
