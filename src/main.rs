@@ -5,7 +5,7 @@ use axum::{
     extract::State,
     http::StatusCode,
     response::IntoResponse,
-    routing::{delete, get, patch, post},
+    routing::{get, post},
     Json, Router,
 };
 use clerk_rs::validators::axum::ClerkLayer;
@@ -39,9 +39,7 @@ async fn post_log(
         Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
     }
 }
-async fn patch_log() -> &'static str {
-    "Patch Log"
-}
+
 async fn get_log(State(state): State<MyState>) -> Result<impl IntoResponse, impl IntoResponse> {
     match sqlx::query_as::<_, Log>("SELECT * FROM logs")
         .fetch_all(&state.pool)
@@ -50,12 +48,6 @@ async fn get_log(State(state): State<MyState>) -> Result<impl IntoResponse, impl
         Ok(todo) => Ok((StatusCode::OK, Json(todo))),
         Err(e) => Err((StatusCode::BAD_REQUEST, e.to_string())),
     }
-}
-async fn delete_log() -> &'static str {
-    "Delete Log"
-}
-async fn hello_world() -> &'static str {
-    "Hello world!"
 }
 
 #[shuttle_runtime::main]
@@ -78,21 +70,23 @@ async fn main(
         .await
         .expect("PG cannot start. Exiting.");
 
+    // let cors = CorsLayer::new()
+    //     .allow_methods([Method::GET, Method::POST])
+    //     .allow_origin(Any)
+    //     .allow_headers([CONTENT_TYPE]);
+
     // Run outstanding db migrations.
-    // sqlx::migrate!()
-    //     .run(&pool)
-    //     .await
-    //     .expect("Migrations failed. Exiting.");
+    sqlx::migrate!()
+        .run(&pool)
+        .await
+        .expect("Migrations failed. Exiting.");
 
     let state = MyState { pool };
 
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
     let app = Router::new()
         .route("/log", post(post_log))
-        .route("/log", patch(patch_log))
         .route("/log", get(get_log))
-        .route("/log", delete(delete_log))
-        .route("/hello-world", get(hello_world))
         .route("/", get(|| async { "Hello 'rspc'!" }))
         .nest("/rspc", rspc_axum::endpoint(router(), || ()))
         .layer(ClerkLayer::new(config, None, true))
