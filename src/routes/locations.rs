@@ -1,6 +1,6 @@
 use crate::models::{CreateLocation, Location};
 use axum::extract::{Path, State};
-use axum::{extract::Json, http::StatusCode, response::IntoResponse, Extension};
+use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
 use sqlx::PgPool;
 use uuid::Uuid;
