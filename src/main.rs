@@ -9,7 +9,7 @@ use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
 use sqlx::{postgres::PgPoolOptions};
-use cl_backend::routes::{create_location, delete_location, get_location, health_check};
+use cl_backend::routes::{create_climb, create_location, create_preference, create_sesh, delete_climb, delete_location, delete_preference, delete_sesh, get_climb, get_location, get_preference, get_sesh, health_check};
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
@@ -34,11 +34,29 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .route("/:id", get(get_location))
         .route("/:id", delete(delete_location));
 
+    let preference_routes = Router::new()
+        .route("/", post(create_preference))
+        .route("/:id", get(get_preference))
+        .route("/:id", delete(delete_preference));
+
+    let sesh_routes = Router::new()
+        .route("/", post(create_sesh))
+        .route("/:id", get(get_sesh))
+        .route("/:id", delete(delete_sesh));
+
+    let climb_routes = Router::new()
+        .route("/", post(create_climb))
+        .route("/:id", get(get_climb))
+        .route("/:id", delete(delete_climb));
+
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
 
     let app = Router::new()
         .route("/healthcheck", get(health_check))
         .nest("/locations", location_routes)
+        .nest("/preferences", preference_routes)
+        .nest("/seshes", sesh_routes)
+        .nest("/climbs", climb_routes)
         .layer(ClerkLayer::new(config, None, true))
         .with_state(pool);
     Ok(app.into())

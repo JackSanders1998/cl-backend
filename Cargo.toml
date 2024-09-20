@@ -14,8 +14,6 @@ anyhow = "1.0.86"
 shuttle-shared-db = { version = "0.47.0", features = ["postgres", "sqlx"] }
 sqlx = { version = "0.7.1", features = ["postgres", "uuid", "chrono"] }
 serde = "1.0.208"
-rspc-axum = { version = "0.1.1", features = ["ws"] }
-rspc = "0.2.0"
 specta = "1.0.5"
 tower-http = {version = "0.5.2", features = ["cors"]}
 http = "1.1.0"
