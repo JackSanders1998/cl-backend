@@ -1,0 +1,64 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT * FROM climbs WHERE climb_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "climb_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "sesh_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "climb_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "style",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "scale",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "grade",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "7066fdba1aa177553e1e32a58ae2d42a7031e87df7a42646fafc95f6c80b150b"
+}

@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::Context;
@@ -8,18 +7,9 @@ use axum::{
 };
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
-use rspc::{Config, Router as RspcRouter};
 use shuttle_runtime::SecretStore;
 use sqlx::{postgres::PgPoolOptions};
 use cl_backend::routes::{create_location, delete_location, get_location, health_check};
-
-fn router() -> Arc<RspcRouter> {
-    <RspcRouter>::new()
-        .config(Config::new().export_ts_bindings("./cl-bindings/index.d.ts"))
-        .query("version", |t| t(|_ctx, _input: ()| "1.0.0"))
-        .build()
-        .arced()
-}
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
@@ -49,7 +39,6 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
     let app = Router::new()
         .route("/healthcheck", get(health_check))
         .nest("/locations", location_routes)
-        .nest("/rspc", rspc_axum::endpoint(router(), || ()))
         .layer(ClerkLayer::new(config, None, true))
         .with_state(pool);
     Ok(app.into())

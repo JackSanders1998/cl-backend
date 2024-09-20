@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM preferences WHERE preference_id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "69f3b28611c9511cb8b96a4d43606ce1f12c633ad0dea92cdd30b7c23eed5feb"
+}
