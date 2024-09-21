@@ -10,7 +10,7 @@ pub async fn create_preference(
     Json(payload): Json<CreatePreference>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
-        "INSERT INTO preferences (user_id, boulder_scale, sport_scale, color_scheme, theme) VALUES ($1, $2, $3, $4, $5) RETURNING preference_id",
+        "INSERT INTO preferences (user_id, boulder_scale, sport_scale, color_scheme, theme) VALUES ($1, $2, $3, $4, $5) RETURNING *",
         payload.user_id,
         payload.boulder_scale,
         payload.sport_scale,
@@ -21,9 +21,18 @@ pub async fn create_preference(
         .await;
 
     match result {
-        Ok(record) => (
+        Ok(preference) => (
             StatusCode::CREATED,
-            Json(json!({ "preference_id": record.preference_id })),
+            Json(json!({
+                "preference_id": preference.preference_id,
+                "user_id": preference.user_id,
+                "boulder_scale": preference.boulder_scale,
+                "sport_scale": preference.sport_scale,
+                "color_scheme": preference.color_scheme,
+                "theme": preference.theme,
+                "created_at": preference.created_at,
+                "updated_at": preference.updated_at,
+            })),
         )
             .into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),

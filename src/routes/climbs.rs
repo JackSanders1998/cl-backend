@@ -11,7 +11,7 @@ pub async fn create_climb(
     Json(payload): Json<CreateClimb>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
-        r#"INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id"#,
+        r#"INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id, sesh_id, climb_type as "climb_type!: ClimbType", style as "style!: Style", scale as "scale!: Scale", grade, created_at, updated_at"#,
         payload.sesh_id,
         payload.climb_type as _,
         payload.style as _,
@@ -22,9 +22,18 @@ pub async fn create_climb(
         .await;
 
     match result {
-        Ok(record) => (
+        Ok(climb) => (
             StatusCode::CREATED,
-            Json(json!({ "climb_id": record.climb_id })),
+            Json(json!({
+                "climb_id": climb.climb_id,
+                "sesh_id": climb.sesh_id,
+                "climb_type": climb.climb_type,
+                "style": climb.style,
+                "scale": climb.scale,
+                "grade": climb.grade,
+                "created_at": climb.created_at,
+                "updated_at": climb.updated_at,
+            })),
         )
             .into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),

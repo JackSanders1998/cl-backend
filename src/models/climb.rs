@@ -14,7 +14,7 @@ pub struct Climb {
     pub updated_at: chrono::NaiveDateTime,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct CreateClimb {
     pub sesh_id: Uuid,
     pub climb_type: ClimbType,
@@ -32,7 +32,7 @@ pub struct UpdateClimb {
     pub grade: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
 #[sqlx(type_name = "climb_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum ClimbType {
@@ -40,7 +40,7 @@ pub enum ClimbType {
     Sport,
 }
 
-#[derive(Serialize, Deserialize, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
 #[sqlx(type_name = "style", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Style {
@@ -48,7 +48,7 @@ pub enum Style {
     Lead,
 }
 
-#[derive(Serialize, Deserialize, sqlx::Type)]
+#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
 #[sqlx(type_name = "scale", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Scale {

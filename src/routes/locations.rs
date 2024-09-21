@@ -10,18 +10,25 @@ pub async fn create_location(
     Json(payload): Json<CreateLocation>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
-        "INSERT INTO locations (user_id, name, environment) VALUES ($1, $2, $3) RETURNING location_id",
+        "INSERT INTO locations (user_id, name, environment) VALUES ($1, $2, $3) RETURNING *",
         payload.user_id,
         payload.name,
         payload.environment
     )
-        .fetch_one(&pool)
-        .await;
+    .fetch_one(&pool)
+    .await;
 
     match result {
-        Ok(record) => (
+        Ok(location) => (
             StatusCode::CREATED,
-            Json(json!({ "location_id": record.location_id })),
+            Json(json!({
+               "location_id": location.location_id,
+               "user_id":  location.user_id,
+                "name": location.name,
+                "environment": location.environment,
+                "created_at":  location.created_at,
+                "updated_at":  location.updated_at,
+            })),
         )
             .into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),

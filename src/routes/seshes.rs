@@ -10,7 +10,7 @@ pub async fn create_sesh(
     Json(payload): Json<CreateSesh>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
-        "INSERT INTO seshes (user_id, location_id, notes) VALUES ($1, $2, $3) RETURNING sesh_id",
+        "INSERT INTO seshes (user_id, location_id, notes) VALUES ($1, $2, $3) RETURNING *",
         payload.user_id,
         payload.location_id,
         payload.notes
@@ -19,9 +19,18 @@ pub async fn create_sesh(
     .await;
 
     match result {
-        Ok(record) => (
+        Ok(sesh) => (
             StatusCode::CREATED,
-            Json(json!({ "sesh_id": record.sesh_id })),
+            Json(json!({
+                "sesh_id": sesh.sesh_id,
+                "user_id": sesh.user_id,
+                "location_id": sesh.location_id,
+                "notes": sesh.notes,
+                "start": sesh.start,
+                "end": sesh.end,
+                "created_at": sesh.created_at,
+                "updated_at": sesh.updated_at,
+            })),
         )
             .into_response(),
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
