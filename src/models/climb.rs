@@ -6,9 +6,9 @@ use uuid::Uuid;
 pub struct Climb {
     pub climb_id: Uuid,
     pub sesh_id: Uuid,
-    pub climb_type: String,
-    pub style: String,
-    pub scale: String,
+    pub climb_type: ClimbType,
+    pub style: Style,
+    pub scale: Scale,
     pub grade: String,
     pub created_at: chrono::NaiveDateTime,
     pub updated_at: chrono::NaiveDateTime,
@@ -17,17 +17,43 @@ pub struct Climb {
 #[derive(Deserialize)]
 pub struct CreateClimb {
     pub sesh_id: Uuid,
-    pub climb_type: String,
-    pub style: String,
-    pub scale: String,
+    pub climb_type: ClimbType,
+    pub style: Style,
+    pub scale: Scale,
     pub grade: String,
 }
 
 #[derive(Deserialize)]
 pub struct UpdateClimb {
     pub sesh_id: Option<Uuid>,
-    pub climb_type: Option<String>,
-    pub style: Option<String>,
-    pub scale: Option<String>,
+    pub climb_type: Option<ClimbType>,
+    pub style: Option<Style>,
+    pub scale: Option<Scale>,
     pub grade: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, sqlx::Type)]
+#[sqlx(type_name = "climb_type", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
+pub enum ClimbType {
+    Boulder,
+    Sport,
+}
+
+#[derive(Serialize, Deserialize, sqlx::Type)]
+#[sqlx(type_name = "style", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
+pub enum Style {
+    TopRope,
+    Lead,
+}
+
+#[derive(Serialize, Deserialize, sqlx::Type)]
+#[sqlx(type_name = "scale", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
+pub enum Scale {
+    Verm,
+    Font,
+    Yosemite,
+    French,
 }

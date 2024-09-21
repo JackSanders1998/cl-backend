@@ -1,4 +1,5 @@
 use crate::models::{Climb, CreateClimb};
+pub use crate::models::{ClimbType, Scale, Style};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
@@ -10,11 +11,11 @@ pub async fn create_climb(
     Json(payload): Json<CreateClimb>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
-        "INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id",
+        r#"INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id"#,
         payload.sesh_id,
-        payload.climb_type,
-        payload.style,
-        payload.scale,
+        payload.climb_type as _,
+        payload.style as _,
+        payload.scale as _,
         payload.grade,
     )
         .fetch_one(&pool)
@@ -34,7 +35,7 @@ pub async fn get_climb(
     State(pool): State<PgPool>,
     Path(climb_id): Path<Uuid>,
 ) -> impl IntoResponse {
-    let result = sqlx::query_as!(Climb, "SELECT * FROM climbs WHERE climb_id = $1", climb_id)
+    let result = sqlx::query_as!(Climb, r#"SELECT climb_id, sesh_id, climb_type as "climb_type: ClimbType", style as "style: Style", scale as "scale: Scale", grade, created_at, updated_at FROM climbs WHERE climb_id = $1"#, climb_id)
         .fetch_one(&pool)
         .await;
 

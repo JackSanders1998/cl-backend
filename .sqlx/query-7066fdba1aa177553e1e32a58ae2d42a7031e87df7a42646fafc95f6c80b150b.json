@@ -16,17 +16,49 @@
       {
         "ordinal": 2,
         "name": "climb_type",
-        "type_info": "Text"
+        "type_info": {
+          "Custom": {
+            "name": "climb_type",
+            "kind": {
+              "Enum": [
+                "boulder",
+                "sport"
+              ]
+            }
+          }
+        }
       },
       {
         "ordinal": 3,
         "name": "style",
-        "type_info": "Text"
+        "type_info": {
+          "Custom": {
+            "name": "style",
+            "kind": {
+              "Enum": [
+                "top_rope",
+                "lead"
+              ]
+            }
+          }
+        }
       },
       {
         "ordinal": 4,
         "name": "scale",
-        "type_info": "Text"
+        "type_info": {
+          "Custom": {
+            "name": "scale",
+            "kind": {
+              "Enum": [
+                "verm",
+                "font",
+                "yosemite",
+                "french"
+              ]
+            }
+          }
+        }
       },
       {
         "ordinal": 5,
