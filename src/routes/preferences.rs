@@ -52,9 +52,12 @@ pub async fn delete_preference(
     State(pool): State<PgPool>,
     Path(preference_id): Path<Uuid>,
 ) -> impl IntoResponse {
-    let result = sqlx::query!("DELETE FROM preferences WHERE preference_id = $1", preference_id)
-        .execute(&pool)
-        .await;
+    let result = sqlx::query!(
+        "DELETE FROM preferences WHERE preference_id = $1",
+        preference_id
+    )
+    .execute(&pool)
+    .await;
 
     match result {
         Ok(_) => StatusCode::NO_CONTENT.into_response(),

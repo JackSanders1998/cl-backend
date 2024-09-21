@@ -5,11 +5,15 @@ use axum::{
     routing::{delete, get, post},
     Router,
 };
+use cl_backend::routes::{
+    create_climb, create_location, create_preference, create_sesh, delete_climb, delete_location,
+    delete_preference, delete_sesh, get_climb, get_location, get_preference, get_sesh,
+    health_check,
+};
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
-use sqlx::{postgres::PgPoolOptions};
-use cl_backend::routes::{create_climb, create_location, create_preference, create_sesh, delete_climb, delete_location, delete_preference, delete_sesh, get_climb, get_location, get_preference, get_sesh, health_check};
+use sqlx::postgres::PgPoolOptions;
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {

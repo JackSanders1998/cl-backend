@@ -1,4 +1,4 @@
-use crate::models::{CreateClimb, Climb};
+use crate::models::{Climb, ClimbType, CreateClimb, Scale, Style};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
@@ -12,9 +12,9 @@ pub async fn create_climb(
     let result = sqlx::query!(
         "INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id",
         payload.sesh_id,
-        payload.climb_type,
-        payload.style,
-        payload.scale,
+        payload.climb_type as _,
+        payload.style as _,
+        payload.scale as _,
         payload.grade,
     )
         .fetch_one(&pool)
@@ -36,7 +36,7 @@ pub async fn get_climb(
 ) -> impl IntoResponse {
     let result = sqlx::query_as!(
         Climb,
-        "SELECT * FROM climbs WHERE climb_id = $1",
+        r#"SELECT climb_id, sesh_id, climb_type AS "climb_type!: ClimbType", style AS "style!: Style", scale AS "scale!: Scale", grade, created_at, updated_at FROM climbs WHERE climb_id = $1"#,
         climb_id
     )
     .fetch_one(&pool)
