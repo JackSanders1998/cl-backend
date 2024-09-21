@@ -4,7 +4,7 @@ use uuid::Uuid;
 use ts_rs::TS;
 
 #[derive(Serialize, Deserialize, FromRow, TS)]
-#[ts(export)]
+#[ts(export, export_to = "Climb.ts")]
 pub struct Climb {
     pub climb_id: Uuid,
     pub sesh_id: Uuid,
