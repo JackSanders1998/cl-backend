@@ -1,4 +1,4 @@
-use crate::models::{CreateClimb, Climb};
+use crate::models::{Climb, CreateClimb};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
@@ -34,13 +34,9 @@ pub async fn get_climb(
     State(pool): State<PgPool>,
     Path(climb_id): Path<Uuid>,
 ) -> impl IntoResponse {
-    let result = sqlx::query_as!(
-        Climb,
-        "SELECT * FROM climbs WHERE climb_id = $1",
-        climb_id
-    )
-    .fetch_one(&pool)
-    .await;
+    let result = sqlx::query_as!(Climb, "SELECT * FROM climbs WHERE climb_id = $1", climb_id)
+        .fetch_one(&pool)
+        .await;
 
     match result {
         Ok(climb) => (StatusCode::OK, Json(climb)).into_response(),

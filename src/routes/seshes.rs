@@ -15,8 +15,8 @@ pub async fn create_sesh(
         payload.location_id,
         payload.notes
     )
-        .fetch_one(&pool)
-        .await;
+    .fetch_one(&pool)
+    .await;
 
     match result {
         Ok(record) => (
@@ -28,17 +28,10 @@ pub async fn create_sesh(
     }
 }
 
-pub async fn get_sesh(
-    State(pool): State<PgPool>,
-    Path(sesh_id): Path<Uuid>,
-) -> impl IntoResponse {
-    let result = sqlx::query_as!(
-        Sesh,
-        "SELECT * FROM seshes WHERE sesh_id = $1",
-        sesh_id
-    )
-    .fetch_one(&pool)
-    .await;
+pub async fn get_sesh(State(pool): State<PgPool>, Path(sesh_id): Path<Uuid>) -> impl IntoResponse {
+    let result = sqlx::query_as!(Sesh, "SELECT * FROM seshes WHERE sesh_id = $1", sesh_id)
+        .fetch_one(&pool)
+        .await;
 
     match result {
         Ok(sesh) => (StatusCode::OK, Json(sesh)).into_response(),
