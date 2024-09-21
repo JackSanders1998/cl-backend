@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM climbs WHERE climb_id = $1",
+  "query": "SELECT climb_id, sesh_id, climb_type as \"climb_type: ClimbType\", style as \"style: Style\", scale as \"scale: Scale\", grade, created_at, updated_at FROM climbs WHERE climb_id = $1",
   "describe": {
     "columns": [
       {
@@ -15,7 +15,7 @@
       },
       {
         "ordinal": 2,
-        "name": "climb_type",
+        "name": "climb_type: ClimbType",
         "type_info": {
           "Custom": {
             "name": "climb_type",
@@ -30,7 +30,7 @@
       },
       {
         "ordinal": 3,
-        "name": "style",
+        "name": "style: Style",
         "type_info": {
           "Custom": {
             "name": "style",
@@ -45,7 +45,7 @@
       },
       {
         "ordinal": 4,
-        "name": "scale",
+        "name": "scale: Scale",
         "type_info": {
           "Custom": {
             "name": "scale",
@@ -92,5 +92,5 @@
       false
     ]
   },
-  "hash": "7066fdba1aa177553e1e32a58ae2d42a7031e87df7a42646fafc95f6c80b150b"
+  "hash": "dfeaa6b319e4817f5abb580b2a22b80377bc852524cb15d2916517fa08581c1b"
 }

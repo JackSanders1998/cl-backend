@@ -19,8 +19,6 @@ pub struct CreateSesh {
     pub user_id: Option<String>,
     pub location_id: Uuid,
     pub notes: Option<String>,
-    pub start: chrono::NaiveDateTime,
-    pub end: Option<chrono::NaiveDateTime>,
 }
 
 #[derive(Deserialize)]
