@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
+use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, Deserialize, FromRow, TS)]
+#[ts(export)]
 pub struct Preference {
     pub preference_id: Uuid,
     pub user_id: String,
@@ -10,11 +12,14 @@ pub struct Preference {
     pub sport_scale: String,
     pub color_scheme: String,
     pub theme: String,
+    #[ts(type = "string")]
     pub created_at: chrono::NaiveDateTime,
+    #[ts(type = "string")]
     pub updated_at: chrono::NaiveDateTime,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, TS)]
+#[ts(export)]
 pub struct CreatePreference {
     pub user_id: String,
     pub boulder_scale: String,
@@ -23,7 +28,8 @@ pub struct CreatePreference {
     pub theme: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, TS)]
+#[ts(export)]
 pub struct UpdatePreference {
     pub boulder_scale: Option<String>,
     pub sport_scale: Option<String>,
