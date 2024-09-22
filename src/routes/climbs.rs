@@ -1,13 +1,14 @@
 use crate::models::{Climb, CreateClimb};
 pub use crate::models::{ClimbType, Scale, Style};
+use crate::routes::AppState;
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
-use sqlx::PgPool;
+use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn create_climb(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateClimb>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
@@ -18,7 +19,7 @@ pub async fn create_climb(
         payload.scale as _,
         payload.grade,
     )
-        .fetch_one(&pool)
+        .fetch_one(&state.db)
         .await;
 
     match result {
@@ -41,11 +42,11 @@ pub async fn create_climb(
 }
 
 pub async fn get_climb(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Path(climb_id): Path<Uuid>,
 ) -> impl IntoResponse {
     let result = sqlx::query_as!(Climb, r#"SELECT climb_id, sesh_id, climb_type as "climb_type: ClimbType", style as "style: Style", scale as "scale: Scale", grade, created_at, updated_at FROM climbs WHERE climb_id = $1"#, climb_id)
-        .fetch_one(&pool)
+        .fetch_one(&state.db)
         .await;
 
     match result {
@@ -55,11 +56,11 @@ pub async fn get_climb(
 }
 
 pub async fn delete_climb(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Path(climb_id): Path<Uuid>,
 ) -> impl IntoResponse {
     let result = sqlx::query!("DELETE FROM climbs WHERE climb_id = $1", climb_id)
-        .execute(&pool)
+        .execute(&state.db)
         .await;
 
     match result {

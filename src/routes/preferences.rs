@@ -1,12 +1,13 @@
 use crate::models::{CreatePreference, Preference};
+use crate::routes::AppState;
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
-use sqlx::PgPool;
+use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn create_preference(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Json(payload): Json<CreatePreference>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
@@ -17,7 +18,7 @@ pub async fn create_preference(
         payload.color_scheme,
         payload.theme,
     )
-        .fetch_one(&pool)
+        .fetch_one(&state.db)
         .await;
 
     match result {
@@ -40,7 +41,7 @@ pub async fn create_preference(
 }
 
 pub async fn get_preference(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Path(preference_id): Path<Uuid>,
 ) -> impl IntoResponse {
     let result = sqlx::query_as!(
@@ -48,7 +49,7 @@ pub async fn get_preference(
         "SELECT * FROM preferences WHERE preference_id = $1",
         preference_id
     )
-    .fetch_one(&pool)
+    .fetch_one(&state.db)
     .await;
 
     match result {
@@ -58,14 +59,14 @@ pub async fn get_preference(
 }
 
 pub async fn delete_preference(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Path(preference_id): Path<Uuid>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
         "DELETE FROM preferences WHERE preference_id = $1",
         preference_id
     )
-    .execute(&pool)
+    .execute(&state.db)
     .await;
 
     match result {

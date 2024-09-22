@@ -1,12 +1,13 @@
 use crate::models::{CreateSesh, Sesh};
+use crate::routes::AppState;
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
-use sqlx::PgPool;
+use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn create_sesh(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateSesh>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
@@ -15,7 +16,7 @@ pub async fn create_sesh(
         payload.location_id,
         payload.notes
     )
-    .fetch_one(&pool)
+    .fetch_one(&state.db)
     .await;
 
     match result {
@@ -37,9 +38,12 @@ pub async fn create_sesh(
     }
 }
 
-pub async fn get_sesh(State(pool): State<PgPool>, Path(sesh_id): Path<Uuid>) -> impl IntoResponse {
+pub async fn get_sesh(
+    State(state): State<Arc<AppState>>,
+    Path(sesh_id): Path<Uuid>,
+) -> impl IntoResponse {
     let result = sqlx::query_as!(Sesh, "SELECT * FROM seshes WHERE sesh_id = $1", sesh_id)
-        .fetch_one(&pool)
+        .fetch_one(&state.db)
         .await;
 
     match result {
@@ -49,11 +53,11 @@ pub async fn get_sesh(State(pool): State<PgPool>, Path(sesh_id): Path<Uuid>) -> 
 }
 
 pub async fn delete_sesh(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Path(sesh_id): Path<Uuid>,
 ) -> impl IntoResponse {
     let result = sqlx::query!("DELETE FROM seshes WHERE sesh_id = $1", sesh_id)
-        .execute(&pool)
+        .execute(&state.db)
         .await;
 
     match result {

@@ -1,12 +1,14 @@
 use crate::models::{CreateLocation, Location};
+use crate::routes::AppState;
 use axum::extract::{Path, State};
+use axum::http::HeaderMap;
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
-use sqlx::PgPool;
+use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn create_location(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateLocation>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
@@ -15,7 +17,7 @@ pub async fn create_location(
         payload.name,
         payload.environment
     )
-    .fetch_one(&pool)
+    .fetch_one(&state.db)
     .await;
 
     match result {
@@ -35,16 +37,23 @@ pub async fn create_location(
     }
 }
 
+// #[debug_handler]
 pub async fn get_location(
-    State(pool): State<PgPool>,
+    headers: HeaderMap,
+    State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
+    // request: Request,
+    body: String,
 ) -> impl IntoResponse {
+    println!("called get_location");
+    println!("headers: {:?}", headers);
+    println!("body: {:?}", body);
     let result = sqlx::query_as!(
         Location,
         "SELECT * FROM locations WHERE location_id = $1",
         location_id
     )
-    .fetch_one(&pool)
+    .fetch_one(&state.db)
     .await;
 
     match result {
@@ -54,11 +63,11 @@ pub async fn get_location(
 }
 
 pub async fn delete_location(
-    State(pool): State<PgPool>,
+    State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
 ) -> impl IntoResponse {
     let result = sqlx::query!("DELETE FROM locations WHERE location_id = $1", location_id)
-        .execute(&pool)
+        .execute(&state.db)
         .await;
 
     match result {
