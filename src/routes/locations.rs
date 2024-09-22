@@ -1,5 +1,5 @@
 use crate::models::{CreateLocation, Location};
-use crate::routes::AppState;
+use crate::routes::{get_claims, AppState};
 use axum::extract::{Path, State};
 use axum::http::HeaderMap;
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
@@ -8,12 +8,13 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn create_location(
+    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateLocation>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
         "INSERT INTO locations (user_id, name, environment) VALUES ($1, $2, $3) RETURNING *",
-        payload.user_id,
+        get_claims(headers),
         payload.name,
         payload.environment
     )
@@ -37,17 +38,10 @@ pub async fn create_location(
     }
 }
 
-// #[debug_handler]
 pub async fn get_location(
-    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
-    // request: Request,
-    body: String,
 ) -> impl IntoResponse {
-    println!("called get_location");
-    println!("headers: {:?}", headers);
-    println!("body: {:?}", body);
     let result = sqlx::query_as!(
         Location,
         "SELECT * FROM locations WHERE location_id = $1",

@@ -1,18 +1,20 @@
 use crate::models::{CreateSesh, Sesh};
-use crate::routes::AppState;
+use crate::routes::{get_claims, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
+use http::HeaderMap;
 use serde_json::json;
 use std::sync::Arc;
 use uuid::Uuid;
 
 pub async fn create_sesh(
+    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateSesh>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
         "INSERT INTO seshes (user_id, location_id, notes) VALUES ($1, $2, $3) RETURNING *",
-        payload.user_id,
+        get_claims(headers),
         payload.location_id,
         payload.notes
     )
