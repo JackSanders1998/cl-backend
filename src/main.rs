@@ -8,16 +8,17 @@ use axum::{
     Router,
 };
 use cl_backend::routes::{
-    create_climb, create_location, create_preference, create_sesh, delete_climb, delete_location,
-    delete_preference, delete_sesh, get_climb, get_location, get_preference, get_sesh,
-    health_check, AppState,
+    create_climb, create_location, create_preference, create_sesh, delete_climb,
+    delete_location_by_location_id, delete_preference, delete_sesh, get_climb,
+    get_location_by_location_id, get_preference, get_sesh, health_check, search_locations,
+    AppState,
 };
 use clerk_rs::clerk::Clerk;
 use clerk_rs::validators::authorizer::ClerkAuthorizer;
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
-use sqlx::postgres::PgPoolOptions;
+use sqlx::postgres::{PgPoolOptions};
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
@@ -39,8 +40,9 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     let location_routes = Router::new()
         .route("/", post(create_location))
-        .route("/:id", get(get_location))
-        .route("/:id", delete(delete_location));
+        .route("/:id", get(get_location_by_location_id))
+        .route("/", get(search_locations))
+        .route("/:id", delete(delete_location_by_location_id));
 
     let preference_routes = Router::new()
         .route("/", post(create_preference))

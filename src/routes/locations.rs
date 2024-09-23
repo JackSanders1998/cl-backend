@@ -1,9 +1,10 @@
 use crate::models::{CreateLocation, Location};
 use crate::routes::{get_claims, AppState};
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::http::HeaderMap;
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;
+use std::collections::HashMap;
 use std::sync::Arc;
 use uuid::Uuid;
 
@@ -38,7 +39,7 @@ pub async fn create_location(
     }
 }
 
-pub async fn get_location(
+pub async fn get_location_by_location_id(
     State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
 ) -> impl IntoResponse {
@@ -56,7 +57,30 @@ pub async fn get_location(
     }
 }
 
-pub async fn delete_location(
+pub async fn search_locations(
+    State(state): State<Arc<AppState>>,
+    Query(params): Query<HashMap<String, String>>,
+) -> impl IntoResponse {
+    let result;
+    let name = params.get("name");
+    if name.is_some() {
+        let formatted_name = "%".to_owned()+name.unwrap()+"%";
+        result = sqlx::query_as!(Location, "SELECT * FROM locations WHERE name LIKE $1", formatted_name)
+            .fetch_all(&state.db)
+            .await;
+    } else {
+        result = sqlx::query_as!(Location, "SELECT * FROM locations")
+            .fetch_all(&state.db)
+            .await;
+    }
+
+    match result {
+        Ok(location) => (StatusCode::OK, Json(location)).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+pub async fn delete_location_by_location_id(
     State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
 ) -> impl IntoResponse {
