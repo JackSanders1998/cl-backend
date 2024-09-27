@@ -110,10 +110,10 @@ pub async fn update_location_by_location_id(
             Json(json!({
                "location_id": location.location_id,
                "user_id":  location.user_id,
-                "name": location.name,
-                "environment": location.environment,
-                "created_at":  location.created_at,
-                "updated_at":  location.updated_at,
+               "name": location.name,
+               "environment": location.environment,
+               "created_at":  location.created_at,
+               "updated_at":  location.updated_at,
             })),
         )
             .into_response(),
