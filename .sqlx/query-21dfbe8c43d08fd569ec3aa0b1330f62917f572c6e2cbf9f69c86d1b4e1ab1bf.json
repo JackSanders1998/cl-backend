@@ -1,0 +1,66 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                UPDATE seshes\n                SET location_id = COALESCE($1, location_id),\n                    notes = COALESCE($2, notes),\n                    \"end\" = CURRENT_TIMESTAMP\n                WHERE sesh_id = $3\n                AND seshes.end IS NULL\n                RETURNING *\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "sesh_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "location_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 3,
+        "name": "notes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "start",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 5,
+        "name": "end",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "21dfbe8c43d08fd569ec3aa0b1330f62917f572c6e2cbf9f69c86d1b4e1ab1bf"
+}

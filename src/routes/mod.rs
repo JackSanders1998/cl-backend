@@ -6,8 +6,6 @@ mod seshes;
 
 use base64::engine::general_purpose;
 use base64::{alphabet, engine, Engine};
-use clerk_rs::clerk::Clerk;
-use clerk_rs::validators::authorizer::ClerkAuthorizer;
 pub use climbs::*;
 pub use health_check::health_check;
 use http::HeaderMap;
@@ -19,8 +17,6 @@ use sqlx::{Pool, Postgres};
 
 pub struct AppState {
     pub db: Pool<Postgres>,
-    pub auth: ClerkAuthorizer,
-    pub clerk: Clerk,
 }
 
 fn get_claims(header: HeaderMap) -> String {

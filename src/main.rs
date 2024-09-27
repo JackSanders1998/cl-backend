@@ -11,11 +11,9 @@ use cl_backend::routes::{
     create_climb, create_location, create_preference, create_sesh, delete_climb,
     delete_location_by_location_id, delete_preference, delete_sesh, get_active_sesh,
     get_climb_by_climb_id, get_location_by_location_id, get_preference_by_preference_id,
-    get_preference_by_user_id, get_sesh, health_check, search_locations,
-    update_location_by_location_id, AppState,
+    get_preference_by_user_id, get_sesh, health_check, search_locations, search_seshes,
+    update_location_by_location_id, update_sesh_by_sesh_id, AppState,
 };
-use clerk_rs::clerk::Clerk;
-use clerk_rs::validators::authorizer::ClerkAuthorizer;
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
@@ -41,9 +39,9 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     let location_routes = Router::new()
         .route("/", post(create_location))
+        .route("/:id", patch(update_location_by_location_id))
         .route("/:id", get(get_location_by_location_id))
         .route("/", get(search_locations))
-        .route("/:id", patch(update_location_by_location_id))
         .route("/:id", delete(delete_location_by_location_id));
 
     let preference_routes = Router::new()
@@ -54,6 +52,8 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     let sesh_routes = Router::new()
         .route("/", post(create_sesh))
+        .route("/:id", patch(update_sesh_by_sesh_id))
+        .route("/", get(search_seshes))
         .route("/:id", get(get_sesh))
         .route("/active", get(get_active_sesh))
         .route("/:id", delete(delete_sesh));
@@ -64,12 +64,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .route("/:id", delete(delete_climb));
 
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
-    let auth = ClerkAuthorizer::new(Clerk::new(config.clone()), true);
-    let state = std::sync::Arc::new(AppState {
-        db,
-        auth,
-        clerk: Clerk::new(config.clone()),
-    });
+    let state = std::sync::Arc::new(AppState { db });
 
     let app = Router::new()
         .route("/healthcheck", get(health_check))
