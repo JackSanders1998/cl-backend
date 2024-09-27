@@ -69,8 +69,8 @@ pub async fn get_preference_by_user_id(
         "SELECT * FROM preferences WHERE user_id = $1",
         get_claims(headers)
     )
-        .fetch_one(&state.db)
-        .await;
+    .fetch_one(&state.db)
+    .await;
 
     match result {
         Ok(preference) => (StatusCode::OK, Json(preference)).into_response(),

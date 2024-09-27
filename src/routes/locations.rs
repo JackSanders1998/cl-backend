@@ -1,4 +1,4 @@
-use crate::models::{CreateLocation, Location};
+use crate::models::{CreateLocation, Location, UpdateLocation};
 use crate::routes::{get_claims, AppState};
 use axum::extract::{Path, Query, State};
 use axum::http::HeaderMap;
@@ -64,10 +64,14 @@ pub async fn search_locations(
     let result;
     let name = params.get("name");
     if name.is_some() {
-        let formatted_name = "%".to_owned()+name.unwrap()+"%";
-        result = sqlx::query_as!(Location, "SELECT * FROM locations WHERE name LIKE $1", formatted_name)
-            .fetch_all(&state.db)
-            .await;
+        let formatted_name = "%".to_owned() + name.unwrap() + "%";
+        result = sqlx::query_as!(
+            Location,
+            "SELECT * FROM locations WHERE name LIKE $1",
+            formatted_name
+        )
+        .fetch_all(&state.db)
+        .await;
     } else {
         result = sqlx::query_as!(Location, "SELECT * FROM locations")
             .fetch_all(&state.db)
@@ -77,6 +81,43 @@ pub async fn search_locations(
     match result {
         Ok(location) => (StatusCode::OK, Json(location)).into_response(),
         Err(_) => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+pub async fn update_location_by_location_id(
+    State(state): State<Arc<AppState>>,
+    Path(location_id): Path<Uuid>,
+    Json(payload): Json<UpdateLocation>,
+) -> impl IntoResponse {
+    let result = sqlx::query!(
+        r#"
+            UPDATE locations
+            SET name = COALESCE($1, locations.name),
+                environment = COALESCE($2, locations.environment)
+           WHERE location_id = $3
+           RETURNING *
+        "#,
+        payload.name,
+        payload.environment,
+        location_id
+    )
+    .fetch_one(&state.db)
+    .await;
+
+    match result {
+        Ok(location) => (
+            StatusCode::OK,
+            Json(json!({
+               "location_id": location.location_id,
+               "user_id":  location.user_id,
+                "name": location.name,
+                "environment": location.environment,
+                "created_at":  location.created_at,
+                "updated_at":  location.updated_at,
+            })),
+        )
+            .into_response(),
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
 
