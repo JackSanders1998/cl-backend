@@ -41,7 +41,7 @@ pub async fn create_climb(
     }
 }
 
-pub async fn get_climb(
+pub async fn get_climb_by_climb_id(
     State(state): State<Arc<AppState>>,
     Path(climb_id): Path<Uuid>,
 ) -> impl IntoResponse {

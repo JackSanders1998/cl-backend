@@ -7,12 +7,7 @@ use axum::{
     routing::{delete, get, post},
     Router,
 };
-use cl_backend::routes::{
-    create_climb, create_location, create_preference, create_sesh, delete_climb,
-    delete_location_by_location_id, delete_preference, delete_sesh, get_climb,
-    get_location_by_location_id, get_preference, get_sesh, health_check, search_locations,
-    AppState,
-};
+use cl_backend::routes::{create_climb, create_location, create_preference, create_sesh, delete_climb, delete_location_by_location_id, delete_preference, delete_sesh, get_climb_by_climb_id, get_location_by_location_id, get_preference_by_preference_id, get_sesh, health_check, search_locations, AppState, get_preference_by_user_id};
 use clerk_rs::clerk::Clerk;
 use clerk_rs::validators::authorizer::ClerkAuthorizer;
 use clerk_rs::validators::axum::ClerkLayer;
@@ -46,7 +41,8 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     let preference_routes = Router::new()
         .route("/", post(create_preference))
-        .route("/:id", get(get_preference))
+        .route("/:id", get(get_preference_by_preference_id))
+        .route("/", get(get_preference_by_user_id))
         .route("/:id", delete(delete_preference));
 
     let sesh_routes = Router::new()
@@ -56,7 +52,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     let climb_routes = Router::new()
         .route("/", post(create_climb))
-        .route("/:id", get(get_climb))
+        .route("/:id", get(get_climb_by_climb_id))
         .route("/:id", delete(delete_climb));
 
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);

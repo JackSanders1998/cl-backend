@@ -42,7 +42,7 @@ pub async fn create_preference(
     }
 }
 
-pub async fn get_preference(
+pub async fn get_preference_by_preference_id(
     State(state): State<Arc<AppState>>,
     Path(preference_id): Path<Uuid>,
 ) -> impl IntoResponse {
@@ -53,6 +53,24 @@ pub async fn get_preference(
     )
     .fetch_one(&state.db)
     .await;
+
+    match result {
+        Ok(preference) => (StatusCode::OK, Json(preference)).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+pub async fn get_preference_by_user_id(
+    headers: HeaderMap,
+    State(state): State<Arc<AppState>>,
+) -> impl IntoResponse {
+    let result = sqlx::query_as!(
+        Preference,
+        "SELECT * FROM preferences WHERE user_id = $1",
+        get_claims(headers)
+    )
+        .fetch_one(&state.db)
+        .await;
 
     match result {
         Ok(preference) => (StatusCode::OK, Json(preference)).into_response(),
