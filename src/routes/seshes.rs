@@ -54,6 +54,65 @@ pub async fn get_sesh(
     }
 }
 
+pub async fn get_active_sesh(
+    headers: HeaderMap,
+    State(state): State<Arc<AppState>>,
+) -> impl IntoResponse {
+    let result = sqlx::query_as!(
+        Sesh,
+        "SELECT * FROM seshes WHERE seshes.end IS NULL AND user_id = $1 ORDER BY created_at DESC",
+        get_claims(headers)
+    )
+    .fetch_optional(&state.db)
+    .await;
+
+    match result {
+        Ok(sesh) => (StatusCode::OK, Json(sesh)).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+// pub async fn update_sesh_by_sesh_id(
+//     State(state): State<Arc<AppState>>,
+//     Path(sesh_id): Path<Uuid>,
+//     Json(payload): Json<UpdateSesh>,
+// ) -> impl IntoResponse {
+//     if (payload.end_session.is_some()) {
+//     //
+//     }
+//     let result = sqlx::query!(
+//         r#"
+//             UPDATE seshes
+//             SET location_id = COALESCE($1, seshes.location_id),
+//                 notes = COALESCE($2, seshes.notes)
+//                 end_session = COALESCE($3, seshes.notes)
+//            WHERE sesh_id = $4
+//            RETURNING *
+//         "#,
+//         payload.location_id,
+//         payload.notes,
+//         sesh_id
+//     )
+//         .fetch_one(&state.db)
+//         .await;
+//
+//     match result {
+//         Ok(location) => (
+//             StatusCode::OK,
+//             Json(json!({
+//                "location_id": location.location_id,
+//                "user_id":  location.user_id,
+//                "name": location.name,
+//                "environment": location.environment,
+//                "created_at":  location.created_at,
+//                "updated_at":  location.updated_at,
+//             })),
+//         )
+//             .into_response(),
+//         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+//     }
+// }
+
 pub async fn delete_sesh(
     State(state): State<Arc<AppState>>,
     Path(sesh_id): Path<Uuid>,

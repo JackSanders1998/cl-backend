@@ -23,9 +23,7 @@ pub struct CreateSesh {
 
 #[derive(Deserialize)]
 pub struct UpdateSesh {
-    pub user_id: Option<String>,
     pub location_id: Option<Uuid>,
     pub notes: Option<String>,
-    pub start: Option<chrono::NaiveDateTime>,
-    pub end: Option<chrono::NaiveDateTime>,
+    pub end_session: Option<bool>,
 }
