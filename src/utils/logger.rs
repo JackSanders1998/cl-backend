@@ -1,8 +1,5 @@
 use axum::body::Body;
-use axum::{
-    extract::MatchedPath,
-    http::{Request},
-};
+use axum::{extract::MatchedPath, http::Request};
 use tower_http::trace::{HttpMakeClassifier, TraceLayer};
 use tracing::{info_span, Span};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};

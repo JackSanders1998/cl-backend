@@ -14,7 +14,7 @@ use cl_backend::routes::{
     get_preference_by_user_id, get_sesh, health_check, search_locations, search_seshes,
     update_location_by_location_id, update_sesh_by_sesh_id, AppState,
 };
-use cl_backend::utils::{CustomTraceLayer};
+use cl_backend::utils::CustomTraceLayer;
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
@@ -81,3 +81,5 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .with_state(state);
     Ok(app.into())
 }
+
+// TODO: https://github.com/tokio-rs/axum/blob/main/examples/testing/src/main.rs
