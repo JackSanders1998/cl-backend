@@ -14,6 +14,7 @@ use cl_backend::routes::{
     get_preference_by_user_id, get_sesh, health_check, search_locations, search_seshes,
     update_location_by_location_id, update_sesh_by_sesh_id, AppState,
 };
+use cl_backend::utils::{CustomTraceLayer};
 use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
@@ -21,6 +22,9 @@ use sqlx::postgres::PgPoolOptions;
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
+    // Initialize trace layer
+    CustomTraceLayer::init();
+
     // Get env vars. Exit if any are not found.
     let clerk_secret = secrets
         .get("CLERK_SECRET")
@@ -73,6 +77,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .nest("/seshes", sesh_routes)
         .nest("/climbs", climb_routes)
         .layer(ClerkLayer::new(config, None, true))
+        .layer(CustomTraceLayer::new())
         .with_state(state);
     Ok(app.into())
 }
