@@ -7,7 +7,7 @@ pub struct Climb {
     pub climb_id: Uuid,
     pub sesh_id: Uuid,
     pub climb_type: ClimbType,
-    pub style: Style,
+    pub style: Option<Style>,
     pub scale: Scale,
     pub grade: String,
     pub created_at: chrono::NaiveDateTime,
@@ -18,7 +18,7 @@ pub struct Climb {
 pub struct CreateClimb {
     pub sesh_id: Uuid,
     pub climb_type: ClimbType,
-    pub style: Style,
+    pub style: Option<Style>,
     pub scale: Scale,
     pub grade: String,
 }

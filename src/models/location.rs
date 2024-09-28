@@ -5,7 +5,7 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Location {
     pub location_id: Uuid,
-    pub user_id: Option<String>,
+    pub user_id: String,
     pub name: String,
     pub environment: String,
     pub created_at: chrono::NaiveDateTime,
@@ -14,14 +14,13 @@ pub struct Location {
 
 #[derive(Deserialize)]
 pub struct CreateLocation {
-    pub user_id: Option<String>,
+    pub user_id: String,
     pub name: String,
     pub environment: String,
 }
 
 #[derive(Deserialize)]
 pub struct UpdateLocation {
-    pub user_id: Option<String>,
     pub name: Option<String>,
     pub environment: Option<String>,
 }
