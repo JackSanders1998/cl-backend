@@ -16,7 +16,6 @@ pub struct Sesh {
 
 #[derive(Deserialize)]
 pub struct CreateSesh {
-    pub user_id: Option<String>,
     pub location_id: Uuid,
     pub notes: Option<String>,
 }

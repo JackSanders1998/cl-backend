@@ -16,7 +16,6 @@ pub struct Preference {
 
 #[derive(Deserialize)]
 pub struct CreatePreference {
-    pub user_id: String,
     pub boulder_scale: String,
     pub sport_scale: String,
     pub color_scheme: String,

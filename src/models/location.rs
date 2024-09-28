@@ -14,7 +14,6 @@ pub struct Location {
 
 #[derive(Deserialize)]
 pub struct CreateLocation {
-    pub user_id: String,
     pub name: String,
     pub environment: String,
 }

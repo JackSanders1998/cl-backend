@@ -1,5 +1,5 @@
 use crate::models::{Climb, CreateClimb};
-pub use crate::models::{ClimbType, Scale, Style};
+pub use crate::models::{ClimbType, Scale, Style, Attempt};
 use crate::routes::AppState;
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
@@ -12,12 +12,38 @@ pub async fn create_climb(
     Json(payload): Json<CreateClimb>,
 ) -> impl IntoResponse {
     let result = sqlx::query!(
-        r#"INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id, sesh_id, climb_type as "climb_type!: ClimbType", style as "style!: Style", scale as "scale!: Scale", grade, created_at, updated_at"#,
+        r#"
+            INSERT INTO climbs (
+                sesh_id,
+                climb_type,
+                style,
+                scale,
+                grade,
+                attempt,
+                pointer,
+                notes
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING
+                climb_id,
+                sesh_id,
+                climb_type as "climb_type!: ClimbType",
+                style as "style!: Style",
+                scale as "scale!: Scale",
+                grade,
+                attempt as "attempt!: Attempt",
+                pointer,
+                notes,
+                created_at,
+                updated_at
+        "#,
         payload.sesh_id,
         payload.climb_type as _,
         payload.style as _,
         payload.scale as _,
         payload.grade,
+        payload.attempt as _,
+        payload.pointer,
+        payload.notes,
     )
         .fetch_one(&state.db)
         .await;
@@ -26,14 +52,17 @@ pub async fn create_climb(
         Ok(climb) => (
             StatusCode::CREATED,
             Json(json!({
-                "climb_id": climb.climb_id,
-                "sesh_id": climb.sesh_id,
-                "climb_type": climb.climb_type,
+                "climbId": climb.climb_id,
+                "seshId": climb.sesh_id,
+                "climbType": climb.climb_type,
                 "style": climb.style,
                 "scale": climb.scale,
                 "grade": climb.grade,
-                "created_at": climb.created_at,
-                "updated_at": climb.updated_at,
+                "attempt": climb.attempt,
+                "pointer": climb.pointer,
+                "notes": climb.notes,
+                "createdAt": climb.created_at,
+                "updatedAt": climb.updated_at,
             })),
         )
             .into_response(),
@@ -45,7 +74,24 @@ pub async fn get_climb_by_climb_id(
     State(state): State<Arc<AppState>>,
     Path(climb_id): Path<Uuid>,
 ) -> impl IntoResponse {
-    let result = sqlx::query_as!(Climb, r#"SELECT climb_id, sesh_id, climb_type as "climb_type: ClimbType", style as "style: Style", scale as "scale: Scale", grade, created_at, updated_at FROM climbs WHERE climb_id = $1"#, climb_id)
+    let result = sqlx::query_as!(
+        Climb,
+        r#"
+            SELECT
+                climb_id,
+                sesh_id,
+                climb_type as "climb_type: ClimbType",
+                style as "style: Style",
+                scale as "scale: Scale",
+                grade,
+                attempt as "attempt: Attempt",
+                pointer,
+                notes,
+                created_at,
+                updated_at
+            FROM climbs
+            WHERE climb_id = $1
+        "#, climb_id)
         .fetch_one(&state.db)
         .await;
 

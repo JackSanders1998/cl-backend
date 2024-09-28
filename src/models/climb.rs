@@ -10,6 +10,9 @@ pub struct Climb {
     pub style: Option<Style>,
     pub scale: Scale,
     pub grade: String,
+    pub attempt: Attempt,
+    pub pointer: Option<Uuid>,
+    pub notes: Option<String>,
     pub created_at: chrono::NaiveDateTime,
     pub updated_at: chrono::NaiveDateTime,
 }
@@ -21,6 +24,9 @@ pub struct CreateClimb {
     pub style: Option<Style>,
     pub scale: Scale,
     pub grade: String,
+    pub attempt: Attempt,
+    pub pointer: Option<Uuid>,
+    pub notes: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -30,6 +36,9 @@ pub struct UpdateClimb {
     pub style: Option<Style>,
     pub scale: Option<Scale>,
     pub grade: Option<String>,
+    pub attempt: Option<Attempt>,
+    pub pointer: Option<Uuid>,
+    pub notes: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, sqlx::Type)]
@@ -56,4 +65,14 @@ pub enum Scale {
     Font,
     Yosemite,
     French,
+}
+
+#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
+#[sqlx(type_name = "attempt", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
+pub enum Attempt {
+    Onsight,
+    Flash,
+    Redpoint,
+    Fall,
 }

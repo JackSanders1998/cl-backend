@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "INSERT INTO climbs (sesh_id, climb_type, style, scale, grade) VALUES ($1, $2, $3, $4, $5) RETURNING climb_id, sesh_id, climb_type as \"climb_type!: ClimbType\", style as \"style!: Style\", scale as \"scale!: Scale\", grade, created_at, updated_at",
+  "query": "\n            INSERT INTO climbs (\n                sesh_id,\n                climb_type,\n                style,\n                scale,\n                grade,\n                attempt,\n                pointer,\n                notes\n            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)\n            RETURNING\n                climb_id,\n                sesh_id,\n                climb_type as \"climb_type!: ClimbType\",\n                style as \"style!: Style\",\n                scale as \"scale!: Scale\",\n                grade,\n                attempt as \"attempt!: Attempt\",\n                pointer,\n                notes,\n                created_at,\n                updated_at\n        ",
   "describe": {
     "columns": [
       {
@@ -67,11 +67,38 @@
       },
       {
         "ordinal": 6,
+        "name": "attempt!: Attempt",
+        "type_info": {
+          "Custom": {
+            "name": "attempt",
+            "kind": {
+              "Enum": [
+                "onsight",
+                "flash",
+                "redpoint",
+                "fall"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "pointer",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "notes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
         "name": "created_at",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 7,
+        "ordinal": 10,
         "name": "updated_at",
         "type_info": "Timestamp"
       }
@@ -114,6 +141,21 @@
             }
           }
         },
+        "Text",
+        {
+          "Custom": {
+            "name": "attempt",
+            "kind": {
+              "Enum": [
+                "onsight",
+                "flash",
+                "redpoint",
+                "fall"
+              ]
+            }
+          }
+        },
+        "Uuid",
         "Text"
       ]
     },
@@ -125,8 +167,11 @@
       false,
       false,
       false,
+      true,
+      true,
+      false,
       false
     ]
   },
-  "hash": "a3467a78a13dc20b8ed52eb9bed58b505ecf148d31a4bf2be994cbfed2a7c1cc"
+  "hash": "f2d682c6c99637a233db97ff0aa557dad04c1f7cd8ee48760e23d7784febe961"
 }

@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT climb_id, sesh_id, climb_type as \"climb_type: ClimbType\", style as \"style: Style\", scale as \"scale: Scale\", grade, created_at, updated_at FROM climbs WHERE climb_id = $1",
+  "query": "\n            SELECT\n                climb_id,\n                sesh_id,\n                climb_type as \"climb_type: ClimbType\",\n                style as \"style: Style\",\n                scale as \"scale: Scale\",\n                grade,\n                attempt as \"attempt: Attempt\",\n                pointer,\n                notes,\n                created_at,\n                updated_at\n            FROM climbs\n            WHERE climb_id = $1\n        ",
   "describe": {
     "columns": [
       {
@@ -67,11 +67,38 @@
       },
       {
         "ordinal": 6,
+        "name": "attempt: Attempt",
+        "type_info": {
+          "Custom": {
+            "name": "attempt",
+            "kind": {
+              "Enum": [
+                "onsight",
+                "flash",
+                "redpoint",
+                "fall"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "pointer",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "notes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
         "name": "created_at",
         "type_info": "Timestamp"
       },
       {
-        "ordinal": 7,
+        "ordinal": 10,
         "name": "updated_at",
         "type_info": "Timestamp"
       }
@@ -89,8 +116,11 @@
       false,
       false,
       false,
+      true,
+      true,
+      false,
       false
     ]
   },
-  "hash": "dfeaa6b319e4817f5abb580b2a22b80377bc852524cb15d2916517fa08581c1b"
+  "hash": "63278fb1db383669bffa45ebab23d223e418b99a13d14cb941012c119a9c8b67"
 }
