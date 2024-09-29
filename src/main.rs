@@ -19,9 +19,50 @@ use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
 use sqlx::postgres::PgPoolOptions;
+use utoipa::{
+    openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
+    Modify, OpenApi,
+};
+use utoipa_swagger_ui::SwaggerUi;
+use utoipauto::utoipauto;
+
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
+    // #[derive(OpenApi)]
+    // #[openapi(
+    //     modifiers(&SecurityAddon),
+    //     tags(
+    //         (name = "Climbing Logger", description = "Climbing Logger API")
+    //     ),
+    //     nest(
+    //         path = "/api/v1/ones", api = search_climbs::OneApi
+    //     )
+    // )]
+
+    #[utoipauto(paths = "./src/routes from cl_backend::routes")]
+    #[derive(OpenApi)]
+    #[openapi(
+        tags(
+            (name = "Climbing Logger", description = "Climbing logger endpoints.")
+        ),
+        modifiers(&SecurityAddon)
+    )]
+    struct ApiDoc;
+
+    struct SecurityAddon;
+
+    impl Modify for SecurityAddon {
+        fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+            if let Some(components) = openapi.components.as_mut() {
+                components.add_security_scheme(
+                    "api_key",
+                    SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("cl_apikey"))),
+                )
+            }
+        }
+    }
+
     // Initialize trace layer
     CustomTraceLayer::init();
 
@@ -79,8 +120,16 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .nest("/climbs", climb_routes)
         .layer(ClerkLayer::new(config, None, true))
         .layer(CustomTraceLayer::new())
+        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .with_state(state);
     Ok(app.into())
 }
 
 // TODO: https://github.com/tokio-rs/axum/blob/main/examples/testing/src/main.rs
+
+
+#[derive(OpenApi)]
+#[openapi(
+// paths(create_climb),
+)]
+struct ClimbApi;

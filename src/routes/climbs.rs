@@ -103,6 +103,14 @@ pub async fn get_climb_by_climb_id(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/climbs",
+    responses(
+        (status = 200, description = "List all climbs successfully", body = [Climb]),
+        (status = NOT_FOUND, description = "Climb was not found")
+    )
+)]
 pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let result = sqlx::query_as!(
         Climb,

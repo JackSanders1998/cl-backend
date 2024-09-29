@@ -1,8 +1,8 @@
-mod climbs;
-mod health_check;
-mod locations;
-mod preferences;
-mod seshes;
+pub mod climbs;
+pub mod health_check;
+pub mod locations;
+pub mod preferences;
+pub mod seshes;
 
 use base64::engine::general_purpose;
 use base64::{alphabet, engine, Engine};
