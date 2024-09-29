@@ -12,7 +12,7 @@ pub struct Location {
     pub updated_at: chrono::NaiveDateTime,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct CreateLocation {
     pub name: String,
     pub environment: String,

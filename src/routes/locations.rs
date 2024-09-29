@@ -26,12 +26,12 @@ pub async fn create_location(
         Ok(location) => (
             StatusCode::CREATED,
             Json(json!({
-               "location_id": location.location_id,
-               "user_id":  location.user_id,
+               "locationId": location.location_id,
+               "userId":  location.user_id,
                 "name": location.name,
                 "environment": location.environment,
-                "created_at":  location.created_at,
-                "updated_at":  location.updated_at,
+                "createdAt":  location.created_at,
+                "updatedAt":  location.updated_at,
             })),
         )
             .into_response(),
@@ -108,12 +108,12 @@ pub async fn update_location_by_location_id(
         Ok(location) => (
             StatusCode::OK,
             Json(json!({
-               "location_id": location.location_id,
-               "user_id":  location.user_id,
+               "locationId": location.location_id,
+               "userId":  location.user_id,
                "name": location.name,
                "environment": location.environment,
-               "created_at":  location.created_at,
-               "updated_at":  location.updated_at,
+               "createdAt":  location.created_at,
+               "updatedAt":  location.updated_at,
             })),
         )
             .into_response(),

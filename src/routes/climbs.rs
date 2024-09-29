@@ -1,5 +1,5 @@
+pub use crate::models::{Attempt, ClimbType, Scale, Style};
 use crate::models::{Climb, CreateClimb};
-pub use crate::models::{ClimbType, Scale, Style, Attempt};
 use crate::routes::AppState;
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
@@ -45,8 +45,8 @@ pub async fn create_climb(
         payload.pointer,
         payload.notes,
     )
-        .fetch_one(&state.db)
-        .await;
+    .fetch_one(&state.db)
+    .await;
 
     match result {
         Ok(climb) => (
@@ -91,9 +91,39 @@ pub async fn get_climb_by_climb_id(
                 updated_at
             FROM climbs
             WHERE climb_id = $1
-        "#, climb_id)
-        .fetch_one(&state.db)
-        .await;
+        "#,
+        climb_id
+    )
+    .fetch_one(&state.db)
+    .await;
+
+    match result {
+        Ok(climb) => (StatusCode::OK, Json(climb)).into_response(),
+        Err(_) => StatusCode::NOT_FOUND.into_response(),
+    }
+}
+
+pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoResponse {
+    let result = sqlx::query_as!(
+        Climb,
+        r#"
+            SELECT
+                climb_id,
+                sesh_id,
+                climb_type as "climb_type: ClimbType",
+                style as "style: Style",
+                scale as "scale: Scale",
+                grade,
+                attempt as "attempt: Attempt",
+                pointer,
+                notes,
+                created_at,
+                updated_at
+            FROM climbs
+        "#
+    )
+    .fetch_all(&state.db)
+    .await;
 
     match result {
         Ok(climb) => (StatusCode::OK, Json(climb)).into_response(),

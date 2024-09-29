@@ -11,8 +11,8 @@ use cl_backend::routes::{
     create_climb, create_location, create_preference, create_sesh, delete_climb,
     delete_location_by_location_id, delete_preference, delete_sesh, get_active_sesh,
     get_climb_by_climb_id, get_location_by_location_id, get_preference_by_preference_id,
-    get_preference_by_user_id, get_sesh, health_check, search_locations, search_seshes,
-    update_location_by_location_id, update_sesh_by_sesh_id, AppState,
+    get_preference_by_user_id, get_sesh, health_check, search_climbs, search_locations,
+    search_seshes, update_location_by_location_id, update_sesh_by_sesh_id, AppState,
 };
 use cl_backend::utils::CustomTraceLayer;
 use clerk_rs::validators::axum::ClerkLayer;
@@ -64,6 +64,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     let climb_routes = Router::new()
         .route("/", post(create_climb))
+        .route("/", get(search_climbs))
         .route("/:id", get(get_climb_by_climb_id))
         .route("/:id", delete(delete_climb));
 

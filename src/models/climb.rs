@@ -41,6 +41,17 @@ pub struct UpdateClimb {
     pub notes: Option<String>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct ClimbData {
+    pub climb_type: ClimbType,
+    pub style: Option<Style>,
+    pub scale: Scale,
+    pub grade: String,
+    pub attempt: Attempt,
+    pub pointer: Option<Uuid>,
+    pub notes: Option<String>,
+}
+
 #[derive(Serialize, Deserialize, Debug, sqlx::Type)]
 #[sqlx(type_name = "climb_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]

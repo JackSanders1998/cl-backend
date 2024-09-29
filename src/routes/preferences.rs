@@ -28,13 +28,13 @@ pub async fn create_preference(
             StatusCode::CREATED,
             Json(json!({
                 "preference_id": preference.preference_id,
-                "user_id": preference.user_id,
+                "userId": preference.user_id,
                 "boulder_scale": preference.boulder_scale,
                 "sport_scale": preference.sport_scale,
                 "color_scheme": preference.color_scheme,
                 "theme": preference.theme,
-                "created_at": preference.created_at,
-                "updated_at": preference.updated_at,
+                "createdAt": preference.created_at,
+                "updatedAt": preference.updated_at,
             })),
         )
             .into_response(),
