@@ -10,8 +10,8 @@ use uuid::Uuid;
     post,
     path = "/climbs",
     responses(
-        (status = 201, description = "Create a climb", body = [Climb], content_type = "application/json"),
-        (status = 500, description = "Climb was not created", content_type = "application/json")
+        (status = 201, description = "Create a climb", body = Climb),
+        (status = 500, description = "Climb was not created")
     ),
     request_body = CreateClimb
 )]
@@ -50,8 +50,8 @@ pub async fn create_climb(
         ("climb_id", description = "climb id"),
     ),
     responses(
-        (status = 200, description = "Get a climb successfully", content_type = "application/json"),
-        (status = 404, description = "Climb was not found", content_type = "application/json")
+        (status = 200, description = "Get a climb successfully", body = Climb),
+        (status = 404, description = "Climb was not found")
     )
 )]
 pub async fn get_climb_by_climb_id(
@@ -70,8 +70,8 @@ pub async fn get_climb_by_climb_id(
     get,
     path = "/climbs",
     responses(
-        (status = 200, description = "List all climbs successfully", content_type = "application/json"),
-        (status = 404, description = "Climb was not found", content_type = "application/json")
+        (status = 200, description = "List all climbs successfully", body = [Climb]),
+        (status = 404, description = "Climb was not found")
     )
 )]
 pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -90,8 +90,8 @@ pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoRespo
         ("climb_id", description = "climb id"),
     ),
     responses(
-        (status = 204, description = "Delete a climb", content_type = "application/json"),
-        (status = 500, description = "Climb was not deleted", content_type = "application/json")
+        (status = 204, description = "Delete a climb"),
+        (status = 500, description = "Climb was not deleted")
     )
 )]
 pub async fn delete_climb(

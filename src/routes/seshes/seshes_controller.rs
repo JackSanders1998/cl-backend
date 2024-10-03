@@ -12,8 +12,8 @@ use uuid::Uuid;
     path = "/seshes",
     request_body = CreateSesh,
     responses(
-        (status = 201, description = "Create a sesh", body = [Sesh], content_type = "application/json"),
-        (status = 500, description = "Sesh was not created", content_type = "application/json")
+        (status = 201, description = "Create a sesh", body = Sesh),
+        (status = 500, description = "Sesh was not created")
     )
 )]
 pub async fn create_sesh(
@@ -49,8 +49,8 @@ pub async fn create_sesh(
         ("sesh_id", description = "sesh id"),
     ),
     responses(
-        (status = 200, description = "Get a sesh successfully", content_type = "application/json"),
-        (status = 404, description = "Sesh was not found", content_type = "application/json")
+        (status = 200, description = "Get a sesh successfully", body = Sesh),
+        (status = 404, description = "Sesh was not found")
     )
 )]
 pub async fn get_sesh_by_sesh_id(
@@ -70,8 +70,8 @@ pub async fn get_sesh_by_sesh_id(
     path = "/seshes",
     params(SeshSearchParams),
     responses(
-        (status = 200, description = "Get sesh(es) successfully", content_type = "application/json"),
-        (status = 404, description = "No sesh found", content_type = "application/json")
+        (status = 200, description = "Get sesh(es) successfully", body = [Sesh]),
+        (status = 404, description = "No sesh found")
     )
 )]
 pub async fn search_seshes(
@@ -90,8 +90,8 @@ pub async fn search_seshes(
     get,
     path = "/seshes/active",
     responses(
-        (status = 200, description = "Get active sesh successfully", content_type = "application/json"),
-        (status = 404, description = "No active sesh found", content_type = "application/json")
+        (status = 200, description = "Get active sesh successfully", body = [SqlxSeshWithLocationAndClimbs]),
+        (status = 404, description = "No active sesh found")
     )
 )]
 pub async fn get_active_sesh(
@@ -118,8 +118,8 @@ pub async fn get_active_sesh(
     ),
     request_body = UpdateSesh,
     responses(
-        (status = 200, description = "Update sesh successfully", content_type = "application/json"),
-        (status = 500, description = "Sesh was not updated", content_type = "application/json")
+        (status = 200, description = "Update sesh successfully", body = [Sesh]),
+        (status = 500, description = "Sesh was not updated")
     )
 )]
 pub async fn update_sesh_by_sesh_id(
@@ -155,8 +155,8 @@ pub async fn update_sesh_by_sesh_id(
         ("sesh_id", description = "sesh id"),
     ),
     responses(
-        (status = 204, description = "Delete a sesh", content_type = "application/json"),
-        (status = 500, description = "Sesh was not deleted", content_type = "application/json")
+        (status = 204, description = "Delete a sesh"),
+        (status = 500, description = "Sesh was not deleted")
     )
 )]
 pub async fn delete_sesh(

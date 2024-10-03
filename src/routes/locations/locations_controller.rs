@@ -11,8 +11,8 @@ use uuid::Uuid;
     path = "/locations",
     request_body = CreateLocation,
     responses(
-        (status = 201, description = "Create a location", body = [Location], content_type = "application/json"),
-        (status = 500, description = "Location was not created", content_type = "application/json")
+        (status = 201, description = "Create a location", body = Location),
+        (status = 500, description = "Location was not created")
     )
 )]
 pub async fn create_location(
@@ -46,8 +46,8 @@ pub async fn create_location(
         ("location_id", description = "location id"),
     ),
     responses(
-        (status = 200, description = "Get a location successfully", content_type = "application/json"),
-        (status = 404, description = "Location was not found", content_type = "application/json")
+        (status = 200, description = "Get a location successfully", body = Location),
+        (status = 404, description = "Location was not found")
     )
 )]
 pub async fn get_location_by_location_id(
@@ -67,8 +67,8 @@ pub async fn get_location_by_location_id(
     path = "/locations",
     params(LocationSearchParams),
     responses(
-        (status = 200, description = "Get location(s) successfully", content_type = "application/json"),
-        (status = 404, description = "No location found", content_type = "application/json")
+        (status = 200, description = "Get location(s) successfully", body = [Location]),
+        (status = 404, description = "No location found")
     )
 )]
 pub async fn search_locations(
@@ -91,8 +91,8 @@ pub async fn search_locations(
     ),
     request_body = UpdateLocation,
     responses(
-        (status = 200, description = "Update location successfully", content_type = "application/json"),
-        (status = 500, description = "Location was not updated", content_type = "application/json")
+        (status = 200, description = "Update location successfully", body = Location),
+        (status = 500, description = "Location was not updated")
     )
 )]
 pub async fn update_location_by_location_id(
@@ -127,8 +127,8 @@ pub async fn update_location_by_location_id(
         ("location_id", description = "location id"),
     ),
     responses(
-        (status = 204, description = "Delete a location", content_type = "application/json"),
-        (status = 500, description = "Location was not deleted", content_type = "application/json")
+        (status = 204, description = "Delete a location"),
+        (status = 500, description = "Location was not deleted")
     )
 )]
 pub async fn delete_location_by_location_id(

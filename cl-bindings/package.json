@@ -5,7 +5,7 @@
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate": "openapi --input ./api.json --output ./generated"
+    "generate": "openapi-generator-cli generate -i ./api.json -g typescript-fetch -o generated/openapi --additional-properties=withInterfaces=true"
   },
   "author": "Jack Sanders",
   "license": "ISC",
@@ -16,6 +16,6 @@
   "homepage": "https://github.com/JackSanders1998/cl-backend#readme",
   "registry": "https://registry.npmjs.org/",
   "devDependencies": {
-    "openapi-typescript-codegen": "^0.29.0"
+    "@openapitools/openapi-generator-cli": "^2.13.13"
   }
 }

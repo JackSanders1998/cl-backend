@@ -10,8 +10,8 @@ use uuid::Uuid;
     post,
     path = "/preferences",
     responses(
-        (status = 201, description = "Create a preference", body = [Preference], content_type = "application/json"),
-        (status = 500, description = "Preference was not created", content_type = "application/json")
+        (status = 201, description = "Create a preference", body = Preference),
+        (status = 500, description = "Preference was not created")
     ),
     request_body = CreatePreference
 )]
@@ -49,8 +49,8 @@ pub async fn create_preference(
         ("preference_id", description = "preference id"),
     ),
     responses(
-        (status = 200, description = "Get a preference successfully", content_type = "application/json"),
-        (status = 404, description = "Preference was not found", content_type = "application/json")
+        (status = 200, description = "Get a preference successfully", body = Preference),
+        (status = 404, description = "Preference was not found")
     )
 )]
 pub async fn get_preference_by_preference_id(
@@ -68,16 +68,10 @@ pub async fn get_preference_by_preference_id(
 
 #[utoipa::path(
     get,
-    path = "/preferences/{user_id}",
-    params(
-        ("user_id", description = "user id"),
-    ),
+    path = "/preferences",
     responses(
-        (status = 200, description = "Get a preference(s) successfully", content_type = "application/json"),
-        (status = 404, description = "No preference found", content_type = "application/json")
-    ),
-    security(
-        ("token" = [])
+        (status = 200, description = "Get preference(s) successfully", body = [Preference]),
+        (status = 404, description = "No preference found")
     )
 )]
 pub async fn get_preference_by_user_id(
@@ -100,8 +94,8 @@ pub async fn get_preference_by_user_id(
         ("preference_id", description = "preference id"),
     ),
     responses(
-        (status = 204, description = "Delete a preference", content_type = "application/json"),
-        (status = 500, description = "Preference was not deleted", content_type = "application/json")
+        (status = 204, description = "Delete a preference"),
+        (status = 500, description = "Preference was not deleted")
     )
 )]
 pub async fn delete_preference(

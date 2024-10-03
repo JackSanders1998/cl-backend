@@ -17,7 +17,17 @@
         "operationId": "search_climbs",
         "responses": {
           "200": {
-            "description": "List all climbs successfully"
+            "description": "List all climbs successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Climb"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Climb was not found"
@@ -45,10 +55,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Climb"
-                  }
+                  "$ref": "#/components/schemas/Climb"
                 }
               }
             }
@@ -79,7 +86,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Get a climb successfully"
+            "description": "Get a climb successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Climb"
+                }
+              }
+            }
           },
           "404": {
             "description": "Climb was not found"
@@ -132,7 +146,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Get location(s) successfully"
+            "description": "Get location(s) successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Location"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "No location found"
@@ -160,10 +184,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Location"
-                  }
+                  "$ref": "#/components/schemas/Location"
                 }
               }
             }
@@ -194,7 +215,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Get a location successfully"
+            "description": "Get a location successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
           },
           "404": {
             "description": "Location was not found"
@@ -256,7 +284,14 @@
         },
         "responses": {
           "200": {
-            "description": "Update location successfully"
+            "description": "Update location successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Location"
+                }
+              }
+            }
           },
           "500": {
             "description": "Location was not updated"
@@ -265,6 +300,30 @@
       }
     },
     "/preferences": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::preferences::preferences_controller"
+        ],
+        "operationId": "get_preference_by_user_id",
+        "responses": {
+          "200": {
+            "description": "Get preference(s) successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Preference"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No preference found"
+          }
+        }
+      },
       "post": {
         "tags": [
           "cl_backend::routes::preferences::preferences_controller"
@@ -286,10 +345,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Preference"
-                  }
+                  "$ref": "#/components/schemas/Preference"
                 }
               }
             }
@@ -320,7 +376,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Get a preference successfully"
+            "description": "Get a preference successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preference"
+                }
+              }
+            }
           },
           "404": {
             "description": "Preference was not found"
@@ -354,35 +417,6 @@
         }
       }
     },
-    "/preferences/{user_id}": {
-      "get": {
-        "tags": [
-          "cl_backend::routes::preferences::preferences_controller"
-        ],
-        "operationId": "get_preference_by_user_id",
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "description": "user id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Get a preference(s) successfully"
-          },
-          "404": {
-            "description": "No preference found"
-          }
-        },
-        "security": [
-          {
-            "token": []
-          }
-        ]
-      }
-    },
     "/seshes": {
       "get": {
         "tags": [
@@ -402,7 +436,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Get sesh(es) successfully"
+            "description": "Get sesh(es) successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sesh"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "No sesh found"
@@ -430,10 +474,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Sesh"
-                  }
+                  "$ref": "#/components/schemas/Sesh"
                 }
               }
             }
@@ -452,7 +493,17 @@
         "operationId": "get_active_sesh",
         "responses": {
           "200": {
-            "description": "Get active sesh successfully"
+            "description": "Get active sesh successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SqlxSeshWithLocationAndClimbs"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "No active sesh found"
@@ -480,7 +531,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Get a sesh successfully"
+            "description": "Get a sesh successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sesh"
+                }
+              }
+            }
           },
           "404": {
             "description": "Sesh was not found"
@@ -542,7 +600,17 @@
         },
         "responses": {
           "200": {
-            "description": "Update sesh successfully"
+            "description": "Update sesh successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sesh"
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Sesh was not updated"
