@@ -13,5 +13,8 @@
     "url": "git+https://github.com/JackSanders1998/cl-backend.git"
   },
   "homepage": "https://github.com/JackSanders1998/cl-backend#readme",
-  "registry": "https://registry.npmjs.org/"
+  "registry": "https://registry.npmjs.org/",
+  "devDependencies": {
+    "openapi-typescript-codegen": "^0.29.0"
+  }
 }

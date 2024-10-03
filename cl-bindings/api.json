@@ -219,10 +219,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Get a preference successfully"
+            "description": "Get a preference(s) successfully"
           },
           "404": {
-            "description": "Preference was not found"
+            "description": "No preference found"
           }
         },
         "security": [
@@ -230,6 +230,172 @@
             "token": []
           }
         ]
+      }
+    },
+    "/seshes": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::seshes::seshes_controller"
+        ],
+        "operationId": "search_seshes",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Query"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Get sesh(es) successfully"
+          },
+          "404": {
+            "description": "No sesh found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cl_backend::routes::seshes::seshes_controller"
+        ],
+        "operationId": "create_sesh",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSesh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a sesh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sesh"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Sesh was not created"
+          }
+        }
+      }
+    },
+    "/seshes/active": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::seshes::seshes_controller"
+        ],
+        "operationId": "get_active_sesh",
+        "responses": {
+          "200": {
+            "description": "Get active sesh successfully"
+          },
+          "404": {
+            "description": "No active sesh found"
+          }
+        }
+      }
+    },
+    "/seshes/{sesh_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::seshes::seshes_controller"
+        ],
+        "operationId": "get_sesh_by_sesh_id",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "path",
+            "description": "sesh id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a sesh successfully"
+          },
+          "404": {
+            "description": "Sesh was not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cl_backend::routes::seshes::seshes_controller"
+        ],
+        "operationId": "delete_sesh",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "path",
+            "description": "sesh id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a sesh"
+          },
+          "500": {
+            "description": "Sesh was not deleted"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "cl_backend::routes::seshes::seshes_controller"
+        ],
+        "operationId": "update_sesh_by_sesh_id",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "path",
+            "description": "sesh id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSesh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Update sesh successfully"
+          },
+          "500": {
+            "description": "Sesh was not updated"
+          }
+        }
       }
     }
   },
@@ -434,6 +600,22 @@
           }
         }
       },
+      "CreateSesh": {
+        "type": "object",
+        "required": [
+          "location_id"
+        ],
+        "properties": {
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "Location": {
         "type": "object",
         "required": [
@@ -518,6 +700,193 @@
           "Yosemite",
           "French"
         ]
+      },
+      "Sesh": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "location_id",
+          "start",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SeshWithLocationAndClimbs": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "location_id",
+          "start",
+          "created_at",
+          "updated_at",
+          "location",
+          "climbs"
+        ],
+        "properties": {
+          "climbs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClimbData"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/CreateLocation"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SqlxSeshWithLocationAndClimbs": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "location_id",
+          "start",
+          "created_at",
+          "updated_at",
+          "name",
+          "environment",
+          "climb_type",
+          "scale",
+          "grade",
+          "attempt"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "climb_notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "climb_type": {
+            "$ref": "#/components/schemas/ClimbType"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "environment": {
+            "type": "string"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "pointer": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "style": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Style"
+              }
+            ],
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
       },
       "Style": {
         "type": "string",
@@ -610,6 +979,24 @@
             "nullable": true
           },
           "theme": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateSesh": {
+        "type": "object",
+        "properties": {
+          "end_session": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "notes": {
             "type": "string",
             "nullable": true
           }

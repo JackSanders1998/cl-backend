@@ -13,7 +13,7 @@ use cl_backend::routes::{
     create_climb, create_location, create_preference, create_sesh, delete_climb,
     delete_location_by_location_id, delete_preference, delete_sesh, get_active_sesh,
     get_climb_by_climb_id, get_location_by_location_id, get_preference_by_preference_id,
-    get_preference_by_user_id, get_sesh, health_check, search_climbs, search_locations,
+    get_preference_by_user_id, get_sesh_by_sesh_id, health_check, search_climbs, search_locations,
     search_seshes, update_location_by_location_id, update_sesh_by_sesh_id, AppState,
 };
 use cl_backend::utils::CustomTraceLayer;
@@ -29,9 +29,7 @@ use utoipa::{
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
 
-#[utoipauto(
-paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models"
-)]
+#[utoipauto(paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models")]
 #[derive(OpenApi)]
 #[openapi(
 tags(
@@ -110,7 +108,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .route("/", post(create_sesh))
         .route("/:id", patch(update_sesh_by_sesh_id))
         .route("/", get(search_seshes))
-        .route("/:id", get(get_sesh))
+        .route("/:id", get(get_sesh_by_sesh_id))
         .route("/active", get(get_active_sesh))
         .route("/:id", delete(delete_sesh));
 

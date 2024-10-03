@@ -73,8 +73,8 @@ pub async fn get_preference_by_preference_id(
         ("user_id", description = "user id"),
     ),
     responses(
-        (status = 200, description = "Get a preference successfully", content_type = "application/json"),
-        (status = 404, description = "Preference was not found", content_type = "application/json")
+        (status = 200, description = "Get a preference(s) successfully", content_type = "application/json"),
+        (status = 404, description = "No preference found", content_type = "application/json")
     ),
     security(
         ("token" = [])
