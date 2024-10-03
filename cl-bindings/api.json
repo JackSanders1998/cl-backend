@@ -113,6 +113,157 @@
         }
       }
     },
+    "/locations": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::locations::locations_controller"
+        ],
+        "operationId": "search_locations",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get location(s) successfully"
+          },
+          "404": {
+            "description": "No location found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cl_backend::routes::locations::locations_controller"
+        ],
+        "operationId": "create_location",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLocation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a location",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Location"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Location was not created"
+          }
+        }
+      }
+    },
+    "/locations/{location_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::locations::locations_controller"
+        ],
+        "operationId": "get_location_by_location_id",
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "path",
+            "description": "location id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a location successfully"
+          },
+          "404": {
+            "description": "Location was not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cl_backend::routes::locations::locations_controller"
+        ],
+        "operationId": "delete_location_by_location_id",
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "path",
+            "description": "location id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a location"
+          },
+          "500": {
+            "description": "Location was not deleted"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "cl_backend::routes::locations::locations_controller"
+        ],
+        "operationId": "update_location_by_location_id",
+        "parameters": [
+          {
+            "name": "location_id",
+            "in": "path",
+            "description": "location id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLocation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Update location successfully"
+          },
+          "500": {
+            "description": "Location was not updated"
+          }
+        }
+      }
+    },
     "/preferences": {
       "post": {
         "tags": [
@@ -648,6 +799,15 @@
           },
           "user_id": {
             "type": "string"
+          }
+        }
+      },
+      "LocationSearchParams": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

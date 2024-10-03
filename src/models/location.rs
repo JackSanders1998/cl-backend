@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use utoipa::ToSchema;
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, FromRow, ToSchema)]
@@ -23,4 +23,9 @@ pub struct CreateLocation {
 pub struct UpdateLocation {
     pub name: Option<String>,
     pub environment: Option<String>,
+}
+
+#[derive(Deserialize, ToSchema, IntoParams)]
+pub struct LocationSearchParams {
+    pub name: Option<String>, //  Add more
 }

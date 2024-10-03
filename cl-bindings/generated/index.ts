@@ -16,6 +16,7 @@ export type { CreateLocation } from './models/CreateLocation';
 export type { CreatePreference } from './models/CreatePreference';
 export type { CreateSesh } from './models/CreateSesh';
 export type { Location } from './models/Location';
+export type { LocationSearchParams } from './models/LocationSearchParams';
 export type { Preference } from './models/Preference';
 export { Scale } from './models/Scale';
 export type { Sesh } from './models/Sesh';
@@ -29,5 +30,6 @@ export type { UpdatePreference } from './models/UpdatePreference';
 export type { UpdateSesh } from './models/UpdateSesh';
 
 export { ClBackendRoutesClimbsClimbsControllerService } from './services/ClBackendRoutesClimbsClimbsControllerService';
+export { ClBackendRoutesLocationsLocationsControllerService } from './services/ClBackendRoutesLocationsLocationsControllerService';
 export { ClBackendRoutesPreferencesPreferencesControllerService } from './services/ClBackendRoutesPreferencesPreferencesControllerService';
 export { ClBackendRoutesSeshesSeshesControllerService } from './services/ClBackendRoutesSeshesSeshesControllerService';

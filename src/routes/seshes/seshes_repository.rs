@@ -1,9 +1,10 @@
 pub use crate::models::{Attempt, ClimbType, Scale, Style};
-use crate::models::{CreateSesh, Sesh, SqlxSeshWithLocationAndClimbs, UpdateSesh};
+use crate::models::{
+    CreateSesh, Sesh, SeshSearchParams, SqlxSeshWithLocationAndClimbs, UpdateSesh,
+};
 use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
-use std::collections::HashMap;
 use std::sync::Arc;
 use uuid::Uuid;
 
@@ -37,22 +38,24 @@ pub async fn get_sesh_by_sesh_id(state: Arc<AppState>, sesh_id: Uuid) -> Result<
 
 pub async fn search_seshes(
     state: Arc<AppState>,
-    params: HashMap<String, String>,
+    params: SeshSearchParams,
 ) -> Result<Vec<Sesh>, PgError> {
-    let notes = params.get("notes");
-    if notes.is_some() {
-        let formatted_name = "%".to_owned() + notes.unwrap() + "%";
-        sqlx::query_as!(
-            Sesh,
-            "SELECT * FROM seshes WHERE notes LIKE $1",
-            formatted_name
-        )
-        .fetch_all(&state.db)
-        .await
-    } else {
-        sqlx::query_as!(Sesh, "SELECT * FROM seshes")
+    match params.notes {
+        Some(notes) => {
+            let formatted_name = "%".to_owned() + &*notes + "%";
+            sqlx::query_as!(
+                Sesh,
+                "SELECT * FROM seshes WHERE notes LIKE $1",
+                formatted_name
+            )
             .fetch_all(&state.db)
             .await
+        }
+        None => {
+            sqlx::query_as!(Sesh, "SELECT * FROM seshes")
+                .fetch_all(&state.db)
+                .await
+        }
     }
 }
 

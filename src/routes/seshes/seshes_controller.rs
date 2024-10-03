@@ -78,27 +78,10 @@ pub async fn search_seshes(
     State(state): State<Arc<AppState>>,
     Query(params): Query<SeshSearchParams>,
 ) -> impl IntoResponse {
-    let result;
-    match params.notes {
-        Some(notes) => {
-            let formatted_name = "%".to_owned() + &*notes + "%";
-            result = sqlx::query_as!(
-                Sesh,
-                "SELECT * FROM seshes WHERE notes LIKE $1",
-                formatted_name
-            )
-            .fetch_all(&state.db)
-            .await;
-        },
-        None => {
-            result = sqlx::query_as!(Sesh, "SELECT * FROM seshes")
-                .fetch_all(&state.db)
-                .await;
-        }
-    }
+    let result = seshes_repository::search_seshes(state, params).await;
 
     match result {
-        Ok(sesh) => (StatusCode::OK, Json(sesh)).into_response(),
+        Ok(seshes) => (StatusCode::OK, Json(seshes)).into_response(),
         Err(_) => StatusCode::NOT_FOUND.into_response(),
     }
 }
