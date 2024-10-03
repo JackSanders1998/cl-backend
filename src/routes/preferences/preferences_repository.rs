@@ -1,6 +1,5 @@
 use crate::models::{CreatePreference, Preference};
 use crate::routes::AppState;
-use axum::{http::StatusCode, response::IntoResponse};
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
 use std::sync::Arc;

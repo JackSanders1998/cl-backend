@@ -75,7 +75,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
     // Initialize trace layer
     CustomTraceLayer::init();
     // Generate openapi bindings
-    generate_open_api_bindings();
+    let _ = generate_open_api_bindings();
 
     // Get env vars. Exit if any are not found.
     let clerk_secret = secrets
