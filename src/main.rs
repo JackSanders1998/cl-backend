@@ -1,5 +1,7 @@
 extern crate core;
 
+use std::fs::File;
+use std::io::Write;
 use std::time::Duration;
 
 use anyhow::Context;
@@ -27,44 +29,53 @@ use utoipa::{
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
 
-#[shuttle_runtime::main]
-async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
-    #[utoipauto(
-        paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models"
-    )]
-    #[derive(OpenApi)]
-    #[openapi(
-        tags(
-            (name = "Climbing Logger", description = "Climbing logger endpoints.")
-        ),
-        modifiers(&SecurityAddon)
-    )]
-    pub struct ApiDoc;
+#[utoipauto(
+paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models"
+)]
+#[derive(OpenApi)]
+#[openapi(
+tags(
+(name = "Climbing Logger", description = "Climbing logger endpoints.")
+),
+modifiers(&SecurityAddon)
+)]
+pub struct ApiDoc;
 
-    struct SecurityAddon;
+struct SecurityAddon;
 
-    impl Modify for SecurityAddon {
-        fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
-            if let Some(schema) = openapi.components.as_mut() {
-                schema.add_security_scheme(
-                    "api_key1",
-                    SecurityScheme::Http(
-                        HttpBuilder::new()
-                            .scheme(HttpAuthScheme::Bearer)
-                            .bearer_format("JWT")
-                            .build(),
-                    ),
-                );
-                schema.add_security_scheme(
-                    "api_key",
-                    SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("cl_apikey"))),
-                )
-            }
+impl Modify for SecurityAddon {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        if let Some(schema) = openapi.components.as_mut() {
+            schema.add_security_scheme(
+                "api_key1",
+                SecurityScheme::Http(
+                    HttpBuilder::new()
+                        .scheme(HttpAuthScheme::Bearer)
+                        .bearer_format("JWT")
+                        .build(),
+                ),
+            );
+            schema.add_security_scheme(
+                "api_key",
+                SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("cl_apikey"))),
+            )
         }
     }
+}
 
+fn generate_open_api_bindings() -> std::io::Result<()> {
+    let mut file = File::create("./cl-bindings/api.json")?;
+    let json = ApiDoc::openapi().to_pretty_json()?;
+    println!("{}", &json);
+    file.write_all(json.as_bytes())
+}
+
+#[shuttle_runtime::main]
+async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
     // Initialize trace layer
     CustomTraceLayer::init();
+    // Generate openapi bindings
+    generate_open_api_bindings();
 
     // Get env vars. Exit if any are not found.
     let clerk_secret = secrets

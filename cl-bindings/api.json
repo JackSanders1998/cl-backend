@@ -1,0 +1,638 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "cl-backend",
+    "description": "",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/climbs": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::climbs::climbs_controller"
+        ],
+        "operationId": "search_climbs",
+        "responses": {
+          "200": {
+            "description": "List all climbs successfully"
+          },
+          "404": {
+            "description": "Climb was not found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cl_backend::routes::climbs::climbs_controller"
+        ],
+        "operationId": "create_climb",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClimb"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a climb",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Climb"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Climb was not created"
+          }
+        }
+      }
+    },
+    "/climbs/{climb_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::climbs::climbs_controller"
+        ],
+        "operationId": "get_climb_by_climb_id",
+        "parameters": [
+          {
+            "name": "climb_id",
+            "in": "path",
+            "description": "climb id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a climb successfully"
+          },
+          "404": {
+            "description": "Climb was not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cl_backend::routes::climbs::climbs_controller"
+        ],
+        "operationId": "delete_climb",
+        "parameters": [
+          {
+            "name": "climb_id",
+            "in": "path",
+            "description": "climb id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a climb"
+          },
+          "500": {
+            "description": "Climb was not deleted"
+          }
+        }
+      }
+    },
+    "/preferences": {
+      "post": {
+        "tags": [
+          "cl_backend::routes::preferences::preferences_controller"
+        ],
+        "operationId": "create_preference",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePreference"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a preference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Preference"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Preference was not created"
+          }
+        }
+      }
+    },
+    "/preferences/{preference_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::preferences::preferences_controller"
+        ],
+        "operationId": "get_preference_by_preference_id",
+        "parameters": [
+          {
+            "name": "preference_id",
+            "in": "path",
+            "description": "preference id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a preference successfully"
+          },
+          "404": {
+            "description": "Preference was not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cl_backend::routes::preferences::preferences_controller"
+        ],
+        "operationId": "delete_preference",
+        "parameters": [
+          {
+            "name": "preference_id",
+            "in": "path",
+            "description": "preference id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a preference"
+          },
+          "500": {
+            "description": "Preference was not deleted"
+          }
+        }
+      }
+    },
+    "/preferences/{user_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::routes::preferences::preferences_controller"
+        ],
+        "operationId": "get_preference_by_user_id",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "user id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a preference successfully"
+          },
+          "404": {
+            "description": "Preference was not found"
+          }
+        },
+        "security": [
+          {
+            "token": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Attempt": {
+        "type": "string",
+        "enum": [
+          "Onsight",
+          "Flash",
+          "Redpoint",
+          "Fall"
+        ]
+      },
+      "Climb": {
+        "type": "object",
+        "required": [
+          "climb_id",
+          "sesh_id",
+          "climb_type",
+          "scale",
+          "grade",
+          "attempt",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "climb_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "climb_type": {
+            "$ref": "#/components/schemas/ClimbType"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "pointer": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "style": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Style"
+              }
+            ],
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ClimbData": {
+        "type": "object",
+        "required": [
+          "climb_type",
+          "scale",
+          "grade",
+          "attempt"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "climb_type": {
+            "$ref": "#/components/schemas/ClimbType"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "pointer": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "style": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Style"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "ClimbType": {
+        "type": "string",
+        "enum": [
+          "Boulder",
+          "Sport"
+        ]
+      },
+      "CreateClimb": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "climb_type",
+          "scale",
+          "grade",
+          "attempt"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "climb_type": {
+            "$ref": "#/components/schemas/ClimbType"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "pointer": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "style": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Style"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "CreateLocation": {
+        "type": "object",
+        "required": [
+          "name",
+          "environment"
+        ],
+        "properties": {
+          "environment": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePreference": {
+        "type": "object",
+        "required": [
+          "boulder_scale",
+          "sport_scale",
+          "color_scheme",
+          "theme"
+        ],
+        "properties": {
+          "boulder_scale": {
+            "type": "string"
+          },
+          "color_scheme": {
+            "type": "string"
+          },
+          "sport_scale": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          }
+        }
+      },
+      "Location": {
+        "type": "object",
+        "required": [
+          "location_id",
+          "user_id",
+          "name",
+          "environment",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Preference": {
+        "type": "object",
+        "required": [
+          "preference_id",
+          "user_id",
+          "boulder_scale",
+          "sport_scale",
+          "color_scheme",
+          "theme",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "boulder_scale": {
+            "type": "string"
+          },
+          "color_scheme": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "preference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sport_scale": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Scale": {
+        "type": "string",
+        "enum": [
+          "Verm",
+          "Font",
+          "Yosemite",
+          "French"
+        ]
+      },
+      "Style": {
+        "type": "string",
+        "enum": [
+          "TopRope",
+          "Lead"
+        ]
+      },
+      "UpdateClimb": {
+        "type": "object",
+        "properties": {
+          "attempt": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Attempt"
+              }
+            ],
+            "nullable": true
+          },
+          "climb_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClimbType"
+              }
+            ],
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "pointer": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "scale": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Scale"
+              }
+            ],
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "style": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Style"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "UpdateLocation": {
+        "type": "object",
+        "properties": {
+          "environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdatePreference": {
+        "type": "object",
+        "properties": {
+          "boulder_scale": {
+            "type": "string",
+            "nullable": true
+          },
+          "color_scheme": {
+            "type": "string",
+            "nullable": true
+          },
+          "sport_scale": {
+            "type": "string",
+            "nullable": true
+          },
+          "theme": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "cl_apikey"
+      },
+      "api_key1": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Climbing Logger",
+      "description": "Climbing logger endpoints."
+    }
+  ]
+}
