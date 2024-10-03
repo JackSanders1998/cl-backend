@@ -19,6 +19,7 @@ use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
 use sqlx::postgres::PgPoolOptions;
+use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder};
 use utoipa::{
     openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
     Modify, OpenApi,
@@ -28,8 +29,9 @@ use utoipauto::utoipauto;
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
-
-    #[utoipauto(paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models")]
+    #[utoipauto(
+        paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models"
+    )]
     #[derive(OpenApi)]
     #[openapi(
         tags(
@@ -43,8 +45,17 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 
     impl Modify for SecurityAddon {
         fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
-            if let Some(components) = openapi.components.as_mut() {
-                components.add_security_scheme(
+            if let Some(schema) = openapi.components.as_mut() {
+                schema.add_security_scheme(
+                    "api_key1",
+                    SecurityScheme::Http(
+                        HttpBuilder::new()
+                            .scheme(HttpAuthScheme::Bearer)
+                            .bearer_format("JWT")
+                            .build(),
+                    ),
+                );
+                schema.add_security_scheme(
                     "api_key",
                     SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::new("cl_apikey"))),
                 )

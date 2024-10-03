@@ -30,7 +30,7 @@ pub struct CreateClimb {
     pub notes: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct UpdateClimb {
     pub sesh_id: Option<Uuid>,
     pub climb_type: Option<ClimbType>,

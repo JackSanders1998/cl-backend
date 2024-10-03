@@ -6,10 +6,7 @@ use sqlx::Error as PgError;
 use std::sync::Arc;
 use uuid::Uuid;
 
-pub async fn create_climb(
-    state: Arc<AppState>,
-    payload: CreateClimb,
-) -> Result<Climb, PgError> {
+pub async fn create_climb(state: Arc<AppState>, payload: CreateClimb) -> Result<Climb, PgError> {
     sqlx::query_as(
         r#"
             INSERT INTO climbs (

@@ -1,5 +1,5 @@
 pub use crate::models::{Attempt, ClimbType, Scale, Style};
-use crate::models::{CreateClimb, Climb};
+use crate::models::{Climb, CreateClimb};
 use crate::routes::{climbs_repository, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
@@ -92,8 +92,7 @@ pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoRespo
     responses(
         (status = 204, description = "Delete a climb", content_type = "application/json"),
         (status = 500, description = "Climb was not deleted", content_type = "application/json")
-    ),
-    request_body = CreateClimb
+    )
 )]
 pub async fn delete_climb(
     State(state): State<Arc<AppState>>,
