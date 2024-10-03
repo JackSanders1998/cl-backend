@@ -238,16 +238,17 @@
           "cl_backend::routes::seshes::seshes_controller"
         ],
         "operationId": "search_seshes",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Query"
-              }
+        "parameters": [
+          {
+            "name": "notes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get sesh(es) successfully"
@@ -743,6 +744,15 @@
           },
           "user_id": {
             "type": "string"
+          }
+        }
+      },
+      "SeshSearchParams": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

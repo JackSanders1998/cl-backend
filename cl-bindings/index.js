@@ -1,3 +1,3 @@
-var openapi = require('./api.json');
+var openapi = require('./index');
 
 module.exports = openapi;

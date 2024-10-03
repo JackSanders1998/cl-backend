@@ -1,10 +1,9 @@
 pub use crate::models::{Attempt, ClimbType, Scale, Style};
-use crate::models::{CreateSesh, Sesh, UpdateSesh};
+use crate::models::{CreateSesh, Sesh, SeshSearchParams, UpdateSesh};
 use crate::routes::{get_claims, seshes_repository, seshes_service, AppState};
 use axum::extract::{Path, Query, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use http::HeaderMap;
-use std::collections::HashMap;
 use std::sync::Arc;
 use uuid::Uuid;
 
@@ -69,7 +68,7 @@ pub async fn get_sesh_by_sesh_id(
 #[utoipa::path(
     get,
     path = "/seshes",
-    request_body = Query,
+    params(SeshSearchParams),
     responses(
         (status = 200, description = "Get sesh(es) successfully", content_type = "application/json"),
         (status = 404, description = "No sesh found", content_type = "application/json")
@@ -77,23 +76,25 @@ pub async fn get_sesh_by_sesh_id(
 )]
 pub async fn search_seshes(
     State(state): State<Arc<AppState>>,
-    Query(params): Query<HashMap<String, String>>,
+    Query(params): Query<SeshSearchParams>,
 ) -> impl IntoResponse {
     let result;
-    let notes = params.get("notes");
-    if notes.is_some() {
-        let formatted_name = "%".to_owned() + notes.unwrap() + "%";
-        result = sqlx::query_as!(
-            Sesh,
-            "SELECT * FROM seshes WHERE notes LIKE $1",
-            formatted_name
-        )
-        .fetch_all(&state.db)
-        .await;
-    } else {
-        result = sqlx::query_as!(Sesh, "SELECT * FROM seshes")
+    match params.notes {
+        Some(notes) => {
+            let formatted_name = "%".to_owned() + &*notes + "%";
+            result = sqlx::query_as!(
+                Sesh,
+                "SELECT * FROM seshes WHERE notes LIKE $1",
+                formatted_name
+            )
             .fetch_all(&state.db)
             .await;
+        },
+        None => {
+            result = sqlx::query_as!(Sesh, "SELECT * FROM seshes")
+                .fetch_all(&state.db)
+                .await;
+        }
     }
 
     match result {

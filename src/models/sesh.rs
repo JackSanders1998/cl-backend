@@ -1,7 +1,7 @@
 use crate::models::{Attempt, ClimbData, ClimbType, CreateLocation, Scale, Style};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use utoipa::ToSchema;
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, FromRow, ToSchema)]
@@ -58,6 +58,11 @@ pub struct SeshWithLocationAndClimbs {
 pub struct CreateSesh {
     pub location_id: Uuid,
     pub notes: Option<String>,
+}
+
+#[derive(Deserialize, ToSchema, IntoParams)]
+pub struct SeshSearchParams {
+    pub notes: Option<String>, //  Add more
 }
 
 #[derive(Deserialize, ToSchema)]
