@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Climb {
     pub climb_id: Uuid,
     pub sesh_id: Uuid,
@@ -17,7 +18,7 @@ pub struct Climb {
     pub updated_at: chrono::NaiveDateTime,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct CreateClimb {
     pub sesh_id: Uuid,
     pub climb_type: ClimbType,
@@ -41,7 +42,7 @@ pub struct UpdateClimb {
     pub notes: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct ClimbData {
     pub climb_type: ClimbType,
     pub style: Option<Style>,
@@ -52,25 +53,22 @@ pub struct ClimbData {
     pub notes: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
 #[sqlx(type_name = "climb_type", rename_all = "snake_case")]
-#[serde(rename_all = "snake_case")]
 pub enum ClimbType {
     Boulder,
     Sport,
 }
 
-#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
 #[sqlx(type_name = "style", rename_all = "snake_case")]
-#[serde(rename_all = "snake_case")]
 pub enum Style {
     TopRope,
     Lead,
 }
 
-#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
 #[sqlx(type_name = "scale", rename_all = "snake_case")]
-#[serde(rename_all = "snake_case")]
 pub enum Scale {
     Verm,
     Font,
@@ -78,9 +76,8 @@ pub enum Scale {
     French,
 }
 
-#[derive(Serialize, Deserialize, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
 #[sqlx(type_name = "attempt", rename_all = "snake_case")]
-#[serde(rename_all = "snake_case")]
 pub enum Attempt {
     Onsight,
     Flash,

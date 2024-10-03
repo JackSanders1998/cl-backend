@@ -26,21 +26,10 @@ use utoipa::{
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
 
-
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
-    // #[derive(OpenApi)]
-    // #[openapi(
-    //     modifiers(&SecurityAddon),
-    //     tags(
-    //         (name = "Climbing Logger", description = "Climbing Logger API")
-    //     ),
-    //     nest(
-    //         path = "/api/v1/ones", api = search_climbs::OneApi
-    //     )
-    // )]
 
-    #[utoipauto(paths = "./src/routes from cl_backend::routes")]
+    #[utoipauto(paths = "./src/routes from cl_backend::routes, ./src/models from cl_backend::models")]
     #[derive(OpenApi)]
     #[openapi(
         tags(
@@ -48,7 +37,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         ),
         modifiers(&SecurityAddon)
     )]
-    struct ApiDoc;
+    pub struct ApiDoc;
 
     struct SecurityAddon;
 
@@ -126,10 +115,3 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
 }
 
 // TODO: https://github.com/tokio-rs/axum/blob/main/examples/testing/src/main.rs
-
-
-#[derive(OpenApi)]
-#[openapi(
-// paths(create_climb),
-)]
-struct ClimbApi;

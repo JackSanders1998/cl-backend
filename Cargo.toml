@@ -4,7 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-axum = "0.7.5"
+#axum = "0.7.5"
+axum = { version = "0.7.4", features = [
+    "macros",
+    "tracing",
+    "json",
+#    "multipart",
+] }
 clerk-rs = { version = "0.3.1", features = ["axum"] }
 tokio = { version = "1.39.2", features = ["full"] }
 shuttle-axum = "0.47.0"
@@ -14,7 +20,7 @@ shuttle-shared-db = { version = "0.47.0", features = ["postgres", "sqlx"] }
 sqlx = { version = "0.7.1", features = ["postgres", "uuid", "chrono"] }
 serde = "1.0.208"
 http = "1.1.0"
-uuid = "1.10.0"
+uuid = {version = "1.10.0", features = ["serde"] }
 chrono = "0.4.38"
 serde_json = "1.0.128"
 base64 = "0.22.1"
@@ -22,6 +28,6 @@ tower-http = { version = "0.5.2", features = ["cors", "trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 cargo-watch = "8.5.2"
-utoipa = { version = "4.2.3", features = ["axum_extras"] }
+utoipa = { version = "4.2.3", features = ["axum_extras", "chrono", "uuid"] }
 utoipa-swagger-ui = { version = "7.1.0", features = ["axum"] }
 utoipauto = "0.1.14"
