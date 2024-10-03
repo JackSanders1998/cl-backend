@@ -1,3 +1,3 @@
-var openapi = require('./generated/openapi/index');
+var openapi = require('./openapi');
 
 module.exports = openapi;
