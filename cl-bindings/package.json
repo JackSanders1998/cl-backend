@@ -1,6 +1,6 @@
 {
-  "name": "@cl-backend/types",
-  "version": "0.0.1",
+  "name": "@climbing-logger/types",
+  "version": "0.0.2",
   "description": "Type declarations for cl-backend",
   "types": "index.d.ts",
   "scripts": {
@@ -12,7 +12,6 @@
     "type": "git",
     "url": "git+https://github.com/JackSanders1998/cl-backend.git"
   },
-
   "homepage": "https://github.com/JackSanders1998/cl-backend#readme",
   "registry": "https://registry.npmjs.org/"
 }
