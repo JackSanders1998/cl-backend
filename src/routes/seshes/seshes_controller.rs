@@ -90,7 +90,7 @@ pub async fn search_seshes(
     get,
     path = "/seshes/active",
     responses(
-        (status = 200, description = "Get active sesh successfully", body = [SqlxSeshWithLocationAndClimbs]),
+        (status = 200, description = "Get active sesh successfully", body = [SeshWithLocationAndClimbs]),
         (status = 404, description = "No active sesh found")
     )
 )]

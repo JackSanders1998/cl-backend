@@ -499,7 +499,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SqlxSeshWithLocationAndClimbs"
+                    "$ref": "#/components/schemas/SeshWithLocationAndClimbs"
                   }
                 }
               }

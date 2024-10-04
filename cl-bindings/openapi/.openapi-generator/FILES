@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/ClBackendroutesclimbsclimbsControllerApi.ts
 apis/ClBackendrouteslocationslocationsControllerApi.ts
 apis/ClBackendroutespreferencespreferencesControllerApi.ts
