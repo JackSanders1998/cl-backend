@@ -18,8 +18,8 @@
  * @export
  */
 export const ClimbType = {
-    Boulder: 'Boulder',
-    Sport: 'Sport'
+    Boulder: 'boulder',
+    Sport: 'sport'
 } as const;
 export type ClimbType = typeof ClimbType[keyof typeof ClimbType];
 

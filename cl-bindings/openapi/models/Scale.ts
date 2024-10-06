@@ -18,10 +18,10 @@
  * @export
  */
 export const Scale = {
-    Verm: 'Verm',
-    Font: 'Font',
-    Yosemite: 'Yosemite',
-    French: 'French'
+    Verm: 'verm',
+    Font: 'font',
+    Yosemite: 'yosemite',
+    French: 'french'
 } as const;
 export type Scale = typeof Scale[keyof typeof Scale];
 

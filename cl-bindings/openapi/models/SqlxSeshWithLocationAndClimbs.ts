@@ -49,7 +49,7 @@ export interface SqlxSeshWithLocationAndClimbs {
      * @type {Attempt}
      * @memberof SqlxSeshWithLocationAndClimbs
      */
-    attempt: Attempt;
+    attempt?: Attempt | null;
     /**
      * 
      * @type {string}
@@ -61,7 +61,7 @@ export interface SqlxSeshWithLocationAndClimbs {
      * @type {ClimbType}
      * @memberof SqlxSeshWithLocationAndClimbs
      */
-    climbType: ClimbType;
+    climbType?: ClimbType | null;
     /**
      * 
      * @type {Date}
@@ -85,7 +85,7 @@ export interface SqlxSeshWithLocationAndClimbs {
      * @type {string}
      * @memberof SqlxSeshWithLocationAndClimbs
      */
-    grade: string;
+    grade?: string | null;
     /**
      * 
      * @type {string}
@@ -115,7 +115,7 @@ export interface SqlxSeshWithLocationAndClimbs {
      * @type {Scale}
      * @memberof SqlxSeshWithLocationAndClimbs
      */
-    scale: Scale;
+    scale?: Scale | null;
     /**
      * 
      * @type {string}
@@ -154,14 +154,10 @@ export interface SqlxSeshWithLocationAndClimbs {
  * Check if a given object implements the SqlxSeshWithLocationAndClimbs interface.
  */
 export function instanceOfSqlxSeshWithLocationAndClimbs(value: object): value is SqlxSeshWithLocationAndClimbs {
-    if (!('attempt' in value) || value['attempt'] === undefined) return false;
-    if (!('climbType' in value) || value['climbType'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     if (!('environment' in value) || value['environment'] === undefined) return false;
-    if (!('grade' in value) || value['grade'] === undefined) return false;
     if (!('locationId' in value) || value['locationId'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
-    if (!('scale' in value) || value['scale'] === undefined) return false;
     if (!('seshId' in value) || value['seshId'] === undefined) return false;
     if (!('start' in value) || value['start'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
@@ -179,18 +175,18 @@ export function SqlxSeshWithLocationAndClimbsFromJSONTyped(json: any, ignoreDisc
     }
     return {
         
-        'attempt': AttemptFromJSON(json['attempt']),
+        'attempt': json['attempt'] == null ? undefined : AttemptFromJSON(json['attempt']),
         'climbNotes': json['climb_notes'] == null ? undefined : json['climb_notes'],
-        'climbType': ClimbTypeFromJSON(json['climb_type']),
+        'climbType': json['climb_type'] == null ? undefined : ClimbTypeFromJSON(json['climb_type']),
         'createdAt': (new Date(json['created_at'])),
         'end': json['end'] == null ? undefined : (new Date(json['end'])),
         'environment': json['environment'],
-        'grade': json['grade'],
+        'grade': json['grade'] == null ? undefined : json['grade'],
         'locationId': json['location_id'],
         'name': json['name'],
         'notes': json['notes'] == null ? undefined : json['notes'],
         'pointer': json['pointer'] == null ? undefined : json['pointer'],
-        'scale': ScaleFromJSON(json['scale']),
+        'scale': json['scale'] == null ? undefined : ScaleFromJSON(json['scale']),
         'seshId': json['sesh_id'],
         'start': (new Date(json['start'])),
         'style': json['style'] == null ? undefined : StyleFromJSON(json['style']),

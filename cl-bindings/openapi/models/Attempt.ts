@@ -18,10 +18,10 @@
  * @export
  */
 export const Attempt = {
-    Onsight: 'Onsight',
-    Flash: 'Flash',
-    Redpoint: 'Redpoint',
-    Fall: 'Fall'
+    Onsight: 'onsight',
+    Flash: 'flash',
+    Redpoint: 'redpoint',
+    Fall: 'fall'
 } as const;
 export type Attempt = typeof Attempt[keyof typeof Attempt];
 

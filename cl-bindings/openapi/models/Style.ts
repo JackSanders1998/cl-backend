@@ -18,8 +18,8 @@
  * @export
  */
 export const Style = {
-    TopRope: 'TopRope',
-    Lead: 'Lead'
+    TopRope: 'top_rope',
+    Lead: 'lead'
 } as const;
 export type Style = typeof Style[keyof typeof Style];
 
