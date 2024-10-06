@@ -5,16 +5,10 @@ use std::io::Write;
 use std::time::Duration;
 
 use anyhow::Context;
-use axum::{
-    routing::{delete, get, patch, post},
-    Router,
-};
+use axum::routing::get;
+use axum::Router;
 use cl_backend::routes::{
-    create_climb, create_location, create_preference, create_sesh, delete_climb,
-    delete_location_by_location_id, delete_preference, delete_sesh, get_active_sesh,
-    get_climb_by_climb_id, get_location_by_location_id, get_preference_by_preference_id,
-    get_preference_by_user_id, get_sesh_by_sesh_id, health_check, search_climbs, search_locations,
-    search_seshes, update_location_by_location_id, update_sesh_by_sesh_id, AppState,
+    climbs_router, health_check, locations_router, preferences_router, seshes_router, AppState,
 };
 use cl_backend::utils::CustomTraceLayer;
 use clerk_rs::validators::axum::ClerkLayer;
@@ -90,42 +84,15 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .await
         .expect("PG cannot start. Exiting.");
 
-    let location_routes = Router::new()
-        .route("/", post(create_location))
-        .route("/:id", patch(update_location_by_location_id))
-        .route("/:id", get(get_location_by_location_id))
-        .route("/", get(search_locations))
-        .route("/:id", delete(delete_location_by_location_id));
-
-    let preference_routes = Router::new()
-        .route("/", post(create_preference))
-        .route("/:id", get(get_preference_by_preference_id))
-        .route("/", get(get_preference_by_user_id))
-        .route("/:id", delete(delete_preference));
-
-    let sesh_routes = Router::new()
-        .route("/", post(create_sesh))
-        .route("/:id", patch(update_sesh_by_sesh_id))
-        .route("/", get(search_seshes))
-        .route("/:id", get(get_sesh_by_sesh_id))
-        .route("/active", get(get_active_sesh))
-        .route("/:id", delete(delete_sesh));
-
-    let climb_routes = Router::new()
-        .route("/", post(create_climb))
-        .route("/", get(search_climbs))
-        .route("/:id", get(get_climb_by_climb_id))
-        .route("/:id", delete(delete_climb));
-
     let config: ClerkConfiguration = ClerkConfiguration::new(None, None, Some(clerk_secret), None);
     let state = std::sync::Arc::new(AppState { db });
 
     let app = Router::new()
         .route("/healthcheck", get(health_check))
-        .nest("/locations", location_routes)
-        .nest("/preferences", preference_routes)
-        .nest("/seshes", sesh_routes)
-        .nest("/climbs", climb_routes)
+        .nest("/locations", locations_router())
+        .nest("/preferences", preferences_router())
+        .nest("/seshes", seshes_router())
+        .nest("/climbs", climbs_router())
         .layer(ClerkLayer::new(config, None, true))
         .layer(CustomTraceLayer::new())
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
