@@ -16,7 +16,7 @@ pub struct Sesh {
     pub updated_at: chrono::NaiveDateTime,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Debug, ToSchema)]
+#[derive(Serialize, Deserialize, FromRow, Clone, ToSchema)]
 pub struct SqlxSeshWithLocationAndClimbs {
     // sesh
     pub sesh_id: Uuid,
@@ -27,15 +27,15 @@ pub struct SqlxSeshWithLocationAndClimbs {
     pub end: Option<chrono::NaiveDateTime>,
     pub created_at: chrono::NaiveDateTime,
     pub updated_at: chrono::NaiveDateTime,
-    // location
+    // location (inner join)
     pub name: String,
     pub environment: String,
-    // climb
-    pub climb_type: ClimbType,
+    // climb (left join)
+    pub climb_type: Option<ClimbType>,
     pub style: Option<Style>,
-    pub scale: Scale,
-    pub grade: String,
-    pub attempt: Attempt,
+    pub scale: Option<Scale>,
+    pub grade: Option<String>,
+    pub attempt: Option<Attempt>,
     pub pointer: Option<Uuid>,
     pub climb_notes: Option<String>,
 }

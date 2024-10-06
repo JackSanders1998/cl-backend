@@ -98,14 +98,16 @@ pub async fn get_active_sesh(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
 ) -> impl IntoResponse {
-    let result = seshes_repository::get_all_active_sesh_data(state, get_claims(headers)).await;
+    let seshes = seshes_repository::get_all_active_sesh_data(state, get_claims(headers)).await;
 
-    match result {
-        Ok(seshes) => (
-            StatusCode::OK,
-            Json(seshes_service::map_db_rows_to_sesh_object(seshes)),
-        )
-            .into_response(),
+    match seshes {
+        Ok(seshes) => {
+            let sesh_with_location_and_climbs = seshes_service::map_db_rows_to_sesh_object(seshes);
+            match sesh_with_location_and_climbs {
+                Ok(sesh) => (StatusCode::OK, Json(sesh)).into_response(),
+                _ => StatusCode::NOT_FOUND.into_response(),
+            }
+        }
         Err(_) => StatusCode::NOT_FOUND.into_response(),
     }
 }

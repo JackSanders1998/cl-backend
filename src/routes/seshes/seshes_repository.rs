@@ -63,29 +63,30 @@ pub async fn get_all_active_sesh_data(
     state: Arc<AppState>,
     user_id: String,
 ) -> Result<Vec<SqlxSeshWithLocationAndClimbs>, PgError> {
-    sqlx::query_as!(
-        SqlxSeshWithLocationAndClimbs,
+    sqlx::query_as(
         r#"
             WITH latest_active_sesh AS (
                 SELECT * FROM seshes WHERE seshes.end IS NULL AND user_id = $1 ORDER BY created_at DESC
             )
             SELECT
                 latest_active_sesh.*,
-                climbs.climb_type as "climb_type: ClimbType",
-                climbs.style as "style: Style",
-                climbs.scale as "scale: Scale",
+                climbs.climb_type,
+                climbs.style,
+                climbs.scale,
                 climbs.grade,
-                climbs.notes as climb_notes,
+                climbs.notes AS climb_notes,
                 climbs.pointer,
-                climbs.attempt as "attempt: Attempt",
+                climbs.attempt,
                 locations.name,
                 locations.environment
             FROM latest_active_sesh
             JOIN locations ON locations.location_id = latest_active_sesh.location_id
-            JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id;
+            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id;
         "#,
-        user_id
     )
+        .bind(
+            user_id.clone()
+        )
         .fetch_all(&state.db)
         .await
 }

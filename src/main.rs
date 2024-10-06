@@ -64,7 +64,6 @@ impl Modify for SecurityAddon {
 fn generate_open_api_bindings() -> std::io::Result<()> {
     let mut file = File::create("./cl-bindings/api.json")?;
     let json = ApiDoc::openapi().to_pretty_json()?;
-    println!("{}", &json);
     file.write_all(json.as_bytes())
 }
 

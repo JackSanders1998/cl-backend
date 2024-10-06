@@ -624,10 +624,10 @@
       "Attempt": {
         "type": "string",
         "enum": [
-          "Onsight",
-          "Flash",
-          "Redpoint",
-          "Fall"
+          "onsight",
+          "flash",
+          "redpoint",
+          "fall"
         ]
       },
       "Climb": {
@@ -733,8 +733,8 @@
       "ClimbType": {
         "type": "string",
         "enum": [
-          "Boulder",
-          "Sport"
+          "boulder",
+          "sport"
         ]
       },
       "CreateClimb": {
@@ -924,10 +924,10 @@
       "Scale": {
         "type": "string",
         "enum": [
-          "Verm",
-          "Font",
-          "Yosemite",
-          "French"
+          "verm",
+          "font",
+          "yosemite",
+          "french"
         ]
       },
       "Sesh": {
@@ -1050,22 +1050,28 @@
           "created_at",
           "updated_at",
           "name",
-          "environment",
-          "climb_type",
-          "scale",
-          "grade",
-          "attempt"
+          "environment"
         ],
         "properties": {
           "attempt": {
-            "$ref": "#/components/schemas/Attempt"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Attempt"
+              }
+            ],
+            "nullable": true
           },
           "climb_notes": {
             "type": "string",
             "nullable": true
           },
           "climb_type": {
-            "$ref": "#/components/schemas/ClimbType"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClimbType"
+              }
+            ],
+            "nullable": true
           },
           "created_at": {
             "type": "string",
@@ -1080,7 +1086,8 @@
             "type": "string"
           },
           "grade": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "location_id": {
             "type": "string",
@@ -1099,7 +1106,12 @@
             "nullable": true
           },
           "scale": {
-            "$ref": "#/components/schemas/Scale"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Scale"
+              }
+            ],
+            "nullable": true
           },
           "sesh_id": {
             "type": "string",
@@ -1129,8 +1141,8 @@
       "Style": {
         "type": "string",
         "enum": [
-          "TopRope",
-          "Lead"
+          "top_rope",
+          "lead"
         ]
       },
       "UpdateClimb": {

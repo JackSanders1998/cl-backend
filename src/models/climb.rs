@@ -53,22 +53,25 @@ pub struct ClimbData {
     pub notes: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "climb_type", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
 pub enum ClimbType {
     Boulder,
     Sport,
 }
 
-#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "style", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
 pub enum Style {
     TopRope,
     Lead,
 }
 
-#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "scale", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
 pub enum Scale {
     Verm,
     Font,
@@ -76,8 +79,9 @@ pub enum Scale {
     French,
 }
 
-#[derive(Serialize, Deserialize, ToSchema, Debug, sqlx::Type)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
 #[sqlx(type_name = "attempt", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
 pub enum Attempt {
     Onsight,
     Flash,

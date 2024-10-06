@@ -19,18 +19,7 @@ pub async fn create_climb(state: Arc<AppState>, payload: CreateClimb) -> Result<
                 pointer,
                 notes
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING
-                climb_id,
-                sesh_id,
-                climb_type as "climb_type!: ClimbType",
-                style as "style!: Style",
-                scale as "scale!: Scale",
-                grade,
-                attempt as "attempt!: Attempt",
-                pointer,
-                notes,
-                created_at,
-                updated_at
+            RETURNING *
         "#,
     )
     .bind(payload.sesh_id)
