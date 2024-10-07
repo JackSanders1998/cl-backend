@@ -102,6 +102,11 @@ pub async fn get_active_sesh(
 
     match seshes {
         Ok(seshes) => {
+            // If there are no rows in the, return empty
+            if seshes.len() == 0 {
+                return StatusCode::OK.into_response();
+            }
+            // Else, continue with mapping
             let sesh_with_location_and_climbs = seshes_service::map_db_rows_to_sesh_object(seshes);
             match sesh_with_location_and_climbs {
                 Ok(sesh) => (StatusCode::OK, Json(sesh)).into_response(),
