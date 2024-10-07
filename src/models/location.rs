@@ -9,8 +9,8 @@ pub struct Location {
     pub user_id: String,
     pub name: String,
     pub environment: String,
-    pub created_at: chrono::NaiveDateTime,
-    pub updated_at: chrono::NaiveDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Serialize, Deserialize, ToSchema)]

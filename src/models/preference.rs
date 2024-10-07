@@ -11,8 +11,8 @@ pub struct Preference {
     pub sport_scale: String,
     pub color_scheme: String,
     pub theme: String,
-    pub created_at: chrono::NaiveDateTime,
-    pub updated_at: chrono::NaiveDateTime,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Deserialize, ToSchema)]

@@ -39,10 +39,7 @@ pub async fn create_climb(
             }),
         )
             .into_response(),
-        Err(err) => {
-            println!("{:?}", err);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()
-        }
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
 

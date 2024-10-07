@@ -120,7 +120,7 @@ pub async fn get_active_sesh(
     ),
     request_body = UpdateSesh,
     responses(
-        (status = 200, description = "Update sesh successfully", body = [Sesh]),
+        (status = 200, description = "Update sesh successfully", body = Sesh),
         (status = 500, description = "Sesh was not updated")
     )
 )]

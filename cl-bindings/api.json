@@ -604,10 +604,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Sesh"
-                  }
+                  "$ref": "#/components/schemas/Sesh"
                 }
               }
             }
