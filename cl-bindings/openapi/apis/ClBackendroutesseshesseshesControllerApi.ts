@@ -131,11 +131,11 @@ export interface ClBackendroutesseshesseshesControllerApiInterface {
      * @throws {RequiredError}
      * @memberof ClBackendroutesseshesseshesControllerApiInterface
      */
-    updateSeshBySeshIdRaw(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Sesh>>>;
+    updateSeshBySeshIdRaw(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Sesh>>;
 
     /**
      */
-    updateSeshBySeshId(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Sesh>>;
+    updateSeshBySeshId(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Sesh>;
 
 }
 
@@ -293,7 +293,7 @@ export class ClBackendroutesseshesseshesControllerApi extends runtime.BaseAPI im
 
     /**
      */
-    async updateSeshBySeshIdRaw(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Sesh>>> {
+    async updateSeshBySeshIdRaw(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Sesh>> {
         if (requestParameters['seshId'] == null) {
             throw new runtime.RequiredError(
                 'seshId',
@@ -322,12 +322,12 @@ export class ClBackendroutesseshesseshesControllerApi extends runtime.BaseAPI im
             body: UpdateSeshToJSON(requestParameters['updateSesh']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SeshFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => SeshFromJSON(jsonValue));
     }
 
     /**
      */
-    async updateSeshBySeshId(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Sesh>> {
+    async updateSeshBySeshId(requestParameters: UpdateSeshBySeshIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Sesh> {
         const response = await this.updateSeshBySeshIdRaw(requestParameters, initOverrides);
         return await response.value();
     }

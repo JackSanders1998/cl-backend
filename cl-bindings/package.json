@@ -1,10 +1,11 @@
 {
   "name": "@climbing-logger/types",
-  "version": "0.0.15",
+  "version": "0.0.19",
   "description": "Type declarations for cl-backend",
   "types": "index.d.ts",
   "scripts": {
-    "generate": "openapi-generator-cli generate -i ./api.json -g typescript-fetch -o openapi --additional-properties=withInterfaces=true"
+    "generate": "openapi-generator-cli generate -i ./api.json -g typescript-fetch -o openapi --additional-properties=withInterfaces=true",
+    "pub": "npm run generate && npm version patch && npm publish --access=public"
   },
   "author": "Jack Sanders",
   "license": "ISC",
