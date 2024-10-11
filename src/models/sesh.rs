@@ -1,4 +1,4 @@
-use crate::models::{Attempt, ClimbData, ClimbType, CreateLocation, Scale, Style};
+use crate::models::{Attempt, ClimbData, ClimbType, LocationData, Scale, Style};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use utoipa::{IntoParams, ToSchema};
@@ -8,12 +8,13 @@ use uuid::Uuid;
 pub struct Sesh {
     pub sesh_id: Uuid,
     pub user_id: String,
-    pub location_id: Uuid,
     pub notes: Option<String>,
     pub start: chrono::DateTime<chrono::Utc>,
     pub end: Option<chrono::DateTime<chrono::Utc>>,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
+    pub location: LocationData,
+    pub climbs: Vec<ClimbData>,
 }
 
 #[derive(Serialize, Deserialize, FromRow, Clone, ToSchema)]
@@ -21,16 +22,19 @@ pub struct SqlxSeshWithLocationAndClimbs {
     // sesh
     pub sesh_id: Uuid,
     pub user_id: String,
-    pub location_id: Uuid,
     pub notes: Option<String>,
     pub start: chrono::DateTime<chrono::Utc>,
     pub end: Option<chrono::DateTime<chrono::Utc>>,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     // location (inner join)
+    pub location_id: Uuid,
     pub name: String,
     pub environment: String,
+    pub location_created_at: chrono::DateTime<chrono::Utc>,
+    pub location_updated_at: chrono::DateTime<chrono::Utc>,
     // climb (left join)
+    pub climb_id: Option<Uuid>,
     pub climb_type: Option<ClimbType>,
     pub style: Option<Style>,
     pub scale: Option<Scale>,
@@ -38,20 +42,8 @@ pub struct SqlxSeshWithLocationAndClimbs {
     pub attempt: Option<Attempt>,
     pub pointer: Option<Uuid>,
     pub climb_notes: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, FromRow, ToSchema)]
-pub struct SeshWithLocationAndClimbs {
-    pub sesh_id: Uuid,
-    pub user_id: String,
-    pub location_id: Uuid,
-    pub notes: Option<String>,
-    pub start: chrono::DateTime<chrono::Utc>,
-    pub end: Option<chrono::DateTime<chrono::Utc>>,
-    pub created_at: chrono::DateTime<chrono::Utc>,
-    pub updated_at: chrono::DateTime<chrono::Utc>,
-    pub location: CreateLocation,
-    pub climbs: Vec<ClimbData>,
+    pub climb_created_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub climb_updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 #[derive(Deserialize, ToSchema)]

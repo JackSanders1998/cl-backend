@@ -42,8 +42,9 @@ pub struct UpdateClimb {
     pub notes: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, ToSchema)]
+#[derive(Serialize, Deserialize, FromRow, ToSchema)]
 pub struct ClimbData {
+    pub climb_id: Uuid,
     pub climb_type: ClimbType,
     pub style: Option<Style>,
     pub scale: Scale,
@@ -51,6 +52,8 @@ pub struct ClimbData {
     pub attempt: Attempt,
     pub pointer: Option<Uuid>,
     pub notes: Option<String>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
