@@ -17,7 +17,7 @@ pub struct Sesh {
     pub climbs: Vec<ClimbData>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Clone, ToSchema)]
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug, ToSchema)]
 pub struct SqlxSeshWithLocationAndClimbs {
     // sesh
     pub sesh_id: Uuid,
@@ -46,7 +46,7 @@ pub struct SqlxSeshWithLocationAndClimbs {
     pub climb_updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-#[derive(Deserialize, ToSchema)]
+#[derive(Deserialize, Debug, ToSchema)]
 pub struct CreateSesh {
     pub location_id: Uuid,
     pub notes: Option<String>,

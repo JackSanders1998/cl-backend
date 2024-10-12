@@ -5,6 +5,7 @@ use crate::routes::{seshes_repository, AppState};
 use std::collections::HashMap;
 use std::io::ErrorKind;
 use std::sync::Arc;
+use tracing::trace;
 use uuid::Uuid;
 
 pub fn get_ids_from_struct(sesh_ids: Vec<Id>) -> Vec<Uuid> {
@@ -14,6 +15,8 @@ pub fn get_ids_from_struct(sesh_ids: Vec<Id>) -> Vec<Uuid> {
 pub fn map_db_rows_to_sesh_object(
     db_rows: Vec<SqlxSeshWithLocationAndClimbs>,
 ) -> Result<Vec<Sesh>, ErrorKind> {
+    trace!("map_db_rows_to_sesh_object called with: {:?}", db_rows);
+
     let mut mapped_seshes: Vec<Sesh> = Vec::new();
 
     let mut seshes: HashMap<Uuid, Vec<SqlxSeshWithLocationAndClimbs>> = HashMap::new();
@@ -70,7 +73,7 @@ pub fn map_db_rows_to_sesh_object(
                 }
                 mapped_seshes.push(sesh_with_location_and_climbs);
             }
-            _ => println!("No sesh found!"),
+            _ => trace!("No sesh found!"),
         }
     }
 
@@ -81,8 +84,19 @@ pub async fn get_seshes_with_location_and_climbs(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
 ) -> Result<Vec<Sesh>, ErrorKind> {
+    trace!(
+        "get_seshes_with_location_and_climbs called with {:?}",
+        sesh_ids
+    );
+
     match seshes_repository::get_seshes_with_location_and_climbs(state, sesh_ids).await {
         Ok(db_rows) => map_db_rows_to_sesh_object(db_rows),
-        _ => Err(ErrorKind::NotFound),
+        Err(error) => {
+            trace!(
+                "get_seshes_with_location_and_climbs failed with error: {:?}",
+                error
+            );
+            Err(ErrorKind::NotFound)
+        }
     }
 }

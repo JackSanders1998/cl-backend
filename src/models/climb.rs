@@ -56,7 +56,7 @@ pub struct ClimbData {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, ToSchema)]
 #[sqlx(type_name = "climb_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum ClimbType {
@@ -64,7 +64,7 @@ pub enum ClimbType {
     Sport,
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, ToSchema)]
 #[sqlx(type_name = "style", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Style {
@@ -72,7 +72,7 @@ pub enum Style {
     Lead,
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, ToSchema)]
 #[sqlx(type_name = "scale", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Scale {
@@ -82,7 +82,7 @@ pub enum Scale {
     French,
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, ToSchema)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, ToSchema)]
 #[sqlx(type_name = "attempt", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Attempt {

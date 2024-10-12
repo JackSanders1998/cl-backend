@@ -19,6 +19,12 @@ pub async fn create_sesh(
     payload: CreateSesh,
     user_id: String,
 ) -> Result<Id, PgError> {
+    trace!(
+        "create_sesh called by {} with payload: {:?}",
+        user_id,
+        payload
+    );
+
     sqlx::query_as(
         r#"
             INSERT INTO seshes (
@@ -65,23 +71,38 @@ pub async fn get_seshes_with_location_and_climbs(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
 ) -> Result<Vec<SqlxSeshWithLocationAndClimbs>, PgError> {
+    let sesh_ids_string: Vec<String> = sesh_ids
+        .iter()
+        .map(|id| format!("'{}'", id.to_string()))
+        .collect();
     let query_string = format!(
-        "
-            WITH latest_active_sesh AS (
-                SELECT * FROM seshes WHERE seshes.sesh_id IN ( { } )
+        r#"
+            WITH sesh_data AS (
+                SELECT * FROM seshes WHERE seshes.sesh_id IN ( {} ) ORDER BY created_at DESC
             )
             SELECT
-                latest_active_sesh.*,
-                climbs.*,
-                locations.
-            FROM latest_active_sesh
-            JOIN locations ON locations.location_id = latest_active_sesh.location_id
-            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id;
-        ",
-        format!("?{}", ", ?".repeat(sesh_ids.len() - 1))
+                sesh_data.*,
+                climbs.climb_id,
+                climbs.climb_type,
+                climbs.style,
+                climbs.scale,
+                climbs.grade,
+                climbs.attempt,
+                climbs.pointer,
+                climbs.notes AS climb_notes,
+                climbs.created_at AS climb_created_at,
+                climbs.updated_at AS climb_updated_at,
+                locations.location_id,
+                locations.name,
+                locations.environment,
+                locations.created_at AS location_created_at,
+                locations.updated_at AS location_updated_at
+            FROM sesh_data
+            JOIN locations ON locations.location_id = sesh_data.location_id
+            LEFT JOIN climbs ON climbs.sesh_id = sesh_data.sesh_id;
+        "#,
+        sesh_ids_string.join(",")
     );
-
-    trace!("{}", query_string);
 
     let mut query = sqlx::query_as(&query_string);
     for sesh_id in sesh_ids {
@@ -98,12 +119,25 @@ pub async fn get_all_active_sesh_data(
     sqlx::query_as(
         r#"
             WITH latest_active_sesh AS (
-                SELECT * FROM seshes WHERE seshes.end IS NULL AND user_id = $1 ORDER BY created_at DESC
+                SELECT * FROM seshes WHERE seshes.end IS NULL AND user_id = $1 ORDER BY created_at DESC LIMIT 1
             )
             SELECT
                 latest_active_sesh.*,
-                climbs.*,
-                locations.
+                climbs.climb_id,
+                climbs.climb_type,
+                climbs.style,
+                climbs.scale,
+                climbs.grade,
+                climbs.attempt,
+                climbs.pointer,
+                climbs.notes AS climb_notes,
+                climbs.created_at AS climb_created_at,
+                climbs.updated_at AS climb_updated_at,
+                locations.location_id,
+                locations.name,
+                locations.environment,
+                locations.created_at AS location_created_at,
+                locations.updated_at AS location_updated_at
             FROM latest_active_sesh
             JOIN locations ON locations.location_id = latest_active_sesh.location_id
             LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id;
