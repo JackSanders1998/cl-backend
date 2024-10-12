@@ -499,7 +499,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SeshWithLocationAndClimbs"
+                    "$ref": "#/components/schemas/Sesh"
                   }
                 }
               }
@@ -690,17 +690,28 @@
       "ClimbData": {
         "type": "object",
         "required": [
+          "climb_id",
           "climb_type",
           "scale",
           "grade",
-          "attempt"
+          "attempt",
+          "created_at",
+          "updated_at"
         ],
         "properties": {
           "attempt": {
             "$ref": "#/components/schemas/Attempt"
           },
+          "climb_id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "climb_type": {
             "$ref": "#/components/schemas/ClimbType"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
           },
           "grade": {
             "type": "string"
@@ -724,6 +735,10 @@
               }
             ],
             "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -833,6 +848,18 @@
           }
         }
       },
+      "Id": {
+        "type": "object",
+        "required": [
+          "sesh_id"
+        ],
+        "properties": {
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "Location": {
         "type": "object",
         "required": [
@@ -864,6 +891,36 @@
           },
           "user_id": {
             "type": "string"
+          }
+        }
+      },
+      "LocationData": {
+        "type": "object",
+        "required": [
+          "location_id",
+          "name",
+          "environment",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -932,12 +989,19 @@
         "required": [
           "sesh_id",
           "user_id",
-          "location_id",
           "start",
           "created_at",
-          "updated_at"
+          "updated_at",
+          "location",
+          "climbs"
         ],
         "properties": {
+          "climbs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClimbData"
+            }
+          },
           "created_at": {
             "type": "string",
             "format": "date-time"
@@ -947,9 +1011,8 @@
             "format": "date-time",
             "nullable": true
           },
-          "location_id": {
-            "type": "string",
-            "format": "uuid"
+          "location": {
+            "$ref": "#/components/schemas/LocationData"
           },
           "notes": {
             "type": "string",
@@ -981,73 +1044,19 @@
           }
         }
       },
-      "SeshWithLocationAndClimbs": {
-        "type": "object",
-        "required": [
-          "sesh_id",
-          "user_id",
-          "location_id",
-          "start",
-          "created_at",
-          "updated_at",
-          "location",
-          "climbs"
-        ],
-        "properties": {
-          "climbs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ClimbData"
-            }
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "end": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "location": {
-            "$ref": "#/components/schemas/CreateLocation"
-          },
-          "location_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "notes": {
-            "type": "string",
-            "nullable": true
-          },
-          "sesh_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "start": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "user_id": {
-            "type": "string"
-          }
-        }
-      },
       "SqlxSeshWithLocationAndClimbs": {
         "type": "object",
         "required": [
           "sesh_id",
           "user_id",
-          "location_id",
           "start",
           "created_at",
           "updated_at",
+          "location_id",
           "name",
-          "environment"
+          "environment",
+          "location_created_at",
+          "location_updated_at"
         ],
         "properties": {
           "attempt": {
@@ -1056,6 +1065,16 @@
                 "$ref": "#/components/schemas/Attempt"
               }
             ],
+            "nullable": true
+          },
+          "climb_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "climb_id": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           },
           "climb_notes": {
@@ -1068,6 +1087,11 @@
                 "$ref": "#/components/schemas/ClimbType"
               }
             ],
+            "nullable": true
+          },
+          "climb_updated_at": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "created_at": {
@@ -1086,9 +1110,17 @@
             "type": "string",
             "nullable": true
           },
+          "location_created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "location_id": {
             "type": "string",
             "format": "uuid"
+          },
+          "location_updated_at": {
+            "type": "string",
+            "format": "date-time"
           },
           "name": {
             "type": "string"

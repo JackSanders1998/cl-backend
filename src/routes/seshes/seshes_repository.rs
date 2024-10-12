@@ -5,6 +5,7 @@ use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
 use sqlx::FromRow;
 use std::sync::Arc;
+use tracing::log::trace;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
@@ -79,6 +80,8 @@ pub async fn get_seshes_with_location_and_climbs(
         ",
         format!("?{}", ", ?".repeat(sesh_ids.len() - 1))
     );
+
+    trace!("{}", query_string);
 
     let mut query = sqlx::query_as(&query_string);
     for sesh_id in sesh_ids {

@@ -6,6 +6,7 @@ use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use http::HeaderMap;
 use serde_json::json;
 use std::sync::Arc;
+use tracing::log::trace;
 use uuid::Uuid;
 
 #[utoipa::path(
@@ -38,7 +39,10 @@ pub async fn create_sesh(
                 Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
             }
         }
-        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        Err(error) => {
+            trace!("Failed to create sesh. Error: {:?}", error);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 
@@ -65,7 +69,10 @@ pub async fn get_sesh_by_sesh_id(
                 StatusCode::NOT_FOUND.into_response()
             }
         }
-        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        Err(error) => {
+            trace!("Failed to get sesh by id. Error: {}", error);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 
@@ -95,7 +102,10 @@ pub async fn search_seshes(
                 Err(_) => StatusCode::NOT_FOUND.into_response(),
             }
         }
-        _ => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        Err(error) => {
+            trace!("Failed to get search seshes. Error: {:?}", error);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 
@@ -123,7 +133,10 @@ pub async fn get_active_sesh(
                 _ => StatusCode::NOT_FOUND.into_response(),
             }
         }
-        Err(_) => StatusCode::NOT_FOUND.into_response(),
+        Err(error) => {
+            trace!("Failed to get an active sesh. Error: {:?}", error);
+            StatusCode::NOT_FOUND.into_response()
+        }
     }
 }
 
@@ -153,7 +166,10 @@ pub async fn update_sesh_by_sesh_id(
                 Err(_) => StatusCode::NOT_FOUND.into_response(),
             }
         }
-        Err(_) => StatusCode::NOT_FOUND.into_response(),
+        Err(error) => {
+            trace!("Failed to get delete sesh. Error: {:?}", error);
+            StatusCode::NOT_FOUND.into_response()
+        }
     }
 }
 
