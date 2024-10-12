@@ -20,7 +20,7 @@ pub struct AppState {
 }
 
 fn get_claims(header: HeaderMap) -> String {
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Serialize, Deserialize)]
     struct Claims {
         sub: String,
     }
