@@ -13,12 +13,31 @@
  */
 
 import { mapValues } from '../runtime';
+import type { ClimbData } from './ClimbData';
+import {
+    ClimbDataFromJSON,
+    ClimbDataFromJSONTyped,
+    ClimbDataToJSON,
+} from './ClimbData';
+import type { LocationData } from './LocationData';
+import {
+    LocationDataFromJSON,
+    LocationDataFromJSONTyped,
+    LocationDataToJSON,
+} from './LocationData';
+
 /**
  * 
  * @export
  * @interface Sesh
  */
 export interface Sesh {
+    /**
+     * 
+     * @type {Array<ClimbData>}
+     * @memberof Sesh
+     */
+    climbs: Array<ClimbData>;
     /**
      * 
      * @type {Date}
@@ -33,10 +52,10 @@ export interface Sesh {
     end?: Date | null;
     /**
      * 
-     * @type {string}
+     * @type {LocationData}
      * @memberof Sesh
      */
-    locationId: string;
+    location: LocationData;
     /**
      * 
      * @type {string}
@@ -73,8 +92,9 @@ export interface Sesh {
  * Check if a given object implements the Sesh interface.
  */
 export function instanceOfSesh(value: object): value is Sesh {
+    if (!('climbs' in value) || value['climbs'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
-    if (!('locationId' in value) || value['locationId'] === undefined) return false;
+    if (!('location' in value) || value['location'] === undefined) return false;
     if (!('seshId' in value) || value['seshId'] === undefined) return false;
     if (!('start' in value) || value['start'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
@@ -92,9 +112,10 @@ export function SeshFromJSONTyped(json: any, ignoreDiscriminator: boolean): Sesh
     }
     return {
         
+        'climbs': ((json['climbs'] as Array<any>).map(ClimbDataFromJSON)),
         'createdAt': (new Date(json['created_at'])),
         'end': json['end'] == null ? undefined : (new Date(json['end'])),
-        'locationId': json['location_id'],
+        'location': LocationDataFromJSON(json['location']),
         'notes': json['notes'] == null ? undefined : json['notes'],
         'seshId': json['sesh_id'],
         'start': (new Date(json['start'])),
@@ -109,9 +130,10 @@ export function SeshToJSON(value?: Sesh | null): any {
     }
     return {
         
+        'climbs': ((value['climbs'] as Array<any>).map(ClimbDataToJSON)),
         'created_at': ((value['createdAt']).toISOString()),
         'end': value['end'] == null ? undefined : ((value['end'] as any).toISOString()),
-        'location_id': value['locationId'],
+        'location': LocationDataToJSON(value['location']),
         'notes': value['notes'],
         'sesh_id': value['seshId'],
         'start': ((value['start']).toISOString()),

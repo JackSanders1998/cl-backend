@@ -17,7 +17,6 @@ import * as runtime from '../runtime';
 import type {
   CreateSesh,
   Sesh,
-  SeshWithLocationAndClimbs,
   UpdateSesh,
 } from '../models/index';
 import {
@@ -25,8 +24,6 @@ import {
     CreateSeshToJSON,
     SeshFromJSON,
     SeshToJSON,
-    SeshWithLocationAndClimbsFromJSON,
-    SeshWithLocationAndClimbsToJSON,
     UpdateSeshFromJSON,
     UpdateSeshToJSON,
 } from '../models/index';
@@ -91,11 +88,11 @@ export interface ClBackendroutesseshesseshesControllerApiInterface {
      * @throws {RequiredError}
      * @memberof ClBackendroutesseshesseshesControllerApiInterface
      */
-    getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SeshWithLocationAndClimbs>>>;
+    getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Sesh>>>;
 
     /**
      */
-    getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SeshWithLocationAndClimbs>>;
+    getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Sesh>>;
 
     /**
      * 
@@ -210,7 +207,7 @@ export class ClBackendroutesseshesseshesControllerApi extends runtime.BaseAPI im
 
     /**
      */
-    async getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SeshWithLocationAndClimbs>>> {
+    async getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Sesh>>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -222,12 +219,12 @@ export class ClBackendroutesseshesseshesControllerApi extends runtime.BaseAPI im
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SeshWithLocationAndClimbsFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SeshFromJSON));
     }
 
     /**
      */
-    async getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SeshWithLocationAndClimbs>> {
+    async getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Sesh>> {
         const response = await this.getActiveSeshRaw(initOverrides);
         return await response.value();
     }

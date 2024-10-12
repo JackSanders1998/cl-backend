@@ -1,6 +1,6 @@
 {
   "name": "@climbing-logger/types",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Type declarations for cl-backend",
   "types": "index.d.ts",
   "scripts": {

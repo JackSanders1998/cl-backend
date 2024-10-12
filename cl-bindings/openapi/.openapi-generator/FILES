@@ -12,13 +12,14 @@ models/CreateClimb.ts
 models/CreateLocation.ts
 models/CreatePreference.ts
 models/CreateSesh.ts
+models/Id.ts
 models/Location.ts
+models/LocationData.ts
 models/LocationSearchParams.ts
 models/Preference.ts
 models/Scale.ts
 models/Sesh.ts
 models/SeshSearchParams.ts
-models/SeshWithLocationAndClimbs.ts
 models/SqlxSeshWithLocationAndClimbs.ts
 models/Style.ts
 models/UpdateClimb.ts

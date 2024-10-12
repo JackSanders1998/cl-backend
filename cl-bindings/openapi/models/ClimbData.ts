@@ -52,10 +52,22 @@ export interface ClimbData {
     attempt: Attempt;
     /**
      * 
+     * @type {string}
+     * @memberof ClimbData
+     */
+    climbId: string;
+    /**
+     * 
      * @type {ClimbType}
      * @memberof ClimbData
      */
     climbType: ClimbType;
+    /**
+     * 
+     * @type {Date}
+     * @memberof ClimbData
+     */
+    createdAt: Date;
     /**
      * 
      * @type {string}
@@ -86,6 +98,12 @@ export interface ClimbData {
      * @memberof ClimbData
      */
     style?: Style | null;
+    /**
+     * 
+     * @type {Date}
+     * @memberof ClimbData
+     */
+    updatedAt: Date;
 }
 
 
@@ -95,9 +113,12 @@ export interface ClimbData {
  */
 export function instanceOfClimbData(value: object): value is ClimbData {
     if (!('attempt' in value) || value['attempt'] === undefined) return false;
+    if (!('climbId' in value) || value['climbId'] === undefined) return false;
     if (!('climbType' in value) || value['climbType'] === undefined) return false;
+    if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     if (!('grade' in value) || value['grade'] === undefined) return false;
     if (!('scale' in value) || value['scale'] === undefined) return false;
+    if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
 }
 
@@ -112,12 +133,15 @@ export function ClimbDataFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     return {
         
         'attempt': AttemptFromJSON(json['attempt']),
+        'climbId': json['climb_id'],
         'climbType': ClimbTypeFromJSON(json['climb_type']),
+        'createdAt': (new Date(json['created_at'])),
         'grade': json['grade'],
         'notes': json['notes'] == null ? undefined : json['notes'],
         'pointer': json['pointer'] == null ? undefined : json['pointer'],
         'scale': ScaleFromJSON(json['scale']),
         'style': json['style'] == null ? undefined : StyleFromJSON(json['style']),
+        'updatedAt': (new Date(json['updated_at'])),
     };
 }
 
@@ -128,12 +152,15 @@ export function ClimbDataToJSON(value?: ClimbData | null): any {
     return {
         
         'attempt': AttemptToJSON(value['attempt']),
+        'climb_id': value['climbId'],
         'climb_type': ClimbTypeToJSON(value['climbType']),
+        'created_at': ((value['createdAt']).toISOString()),
         'grade': value['grade'],
         'notes': value['notes'],
         'pointer': value['pointer'],
         'scale': ScaleToJSON(value['scale']),
         'style': StyleToJSON(value['style']),
+        'updated_at': ((value['updatedAt']).toISOString()),
     };
 }
 

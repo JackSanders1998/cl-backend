@@ -52,6 +52,18 @@ export interface SqlxSeshWithLocationAndClimbs {
     attempt?: Attempt | null;
     /**
      * 
+     * @type {Date}
+     * @memberof SqlxSeshWithLocationAndClimbs
+     */
+    climbCreatedAt?: Date | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SqlxSeshWithLocationAndClimbs
+     */
+    climbId?: string | null;
+    /**
+     * 
      * @type {string}
      * @memberof SqlxSeshWithLocationAndClimbs
      */
@@ -62,6 +74,12 @@ export interface SqlxSeshWithLocationAndClimbs {
      * @memberof SqlxSeshWithLocationAndClimbs
      */
     climbType?: ClimbType | null;
+    /**
+     * 
+     * @type {Date}
+     * @memberof SqlxSeshWithLocationAndClimbs
+     */
+    climbUpdatedAt?: Date | null;
     /**
      * 
      * @type {Date}
@@ -88,10 +106,22 @@ export interface SqlxSeshWithLocationAndClimbs {
     grade?: string | null;
     /**
      * 
+     * @type {Date}
+     * @memberof SqlxSeshWithLocationAndClimbs
+     */
+    locationCreatedAt: Date;
+    /**
+     * 
      * @type {string}
      * @memberof SqlxSeshWithLocationAndClimbs
      */
     locationId: string;
+    /**
+     * 
+     * @type {Date}
+     * @memberof SqlxSeshWithLocationAndClimbs
+     */
+    locationUpdatedAt: Date;
     /**
      * 
      * @type {string}
@@ -156,7 +186,9 @@ export interface SqlxSeshWithLocationAndClimbs {
 export function instanceOfSqlxSeshWithLocationAndClimbs(value: object): value is SqlxSeshWithLocationAndClimbs {
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
     if (!('environment' in value) || value['environment'] === undefined) return false;
+    if (!('locationCreatedAt' in value) || value['locationCreatedAt'] === undefined) return false;
     if (!('locationId' in value) || value['locationId'] === undefined) return false;
+    if (!('locationUpdatedAt' in value) || value['locationUpdatedAt'] === undefined) return false;
     if (!('name' in value) || value['name'] === undefined) return false;
     if (!('seshId' in value) || value['seshId'] === undefined) return false;
     if (!('start' in value) || value['start'] === undefined) return false;
@@ -176,13 +208,18 @@ export function SqlxSeshWithLocationAndClimbsFromJSONTyped(json: any, ignoreDisc
     return {
         
         'attempt': json['attempt'] == null ? undefined : AttemptFromJSON(json['attempt']),
+        'climbCreatedAt': json['climb_created_at'] == null ? undefined : (new Date(json['climb_created_at'])),
+        'climbId': json['climb_id'] == null ? undefined : json['climb_id'],
         'climbNotes': json['climb_notes'] == null ? undefined : json['climb_notes'],
         'climbType': json['climb_type'] == null ? undefined : ClimbTypeFromJSON(json['climb_type']),
+        'climbUpdatedAt': json['climb_updated_at'] == null ? undefined : (new Date(json['climb_updated_at'])),
         'createdAt': (new Date(json['created_at'])),
         'end': json['end'] == null ? undefined : (new Date(json['end'])),
         'environment': json['environment'],
         'grade': json['grade'] == null ? undefined : json['grade'],
+        'locationCreatedAt': (new Date(json['location_created_at'])),
         'locationId': json['location_id'],
+        'locationUpdatedAt': (new Date(json['location_updated_at'])),
         'name': json['name'],
         'notes': json['notes'] == null ? undefined : json['notes'],
         'pointer': json['pointer'] == null ? undefined : json['pointer'],
@@ -202,13 +239,18 @@ export function SqlxSeshWithLocationAndClimbsToJSON(value?: SqlxSeshWithLocation
     return {
         
         'attempt': AttemptToJSON(value['attempt']),
+        'climb_created_at': value['climbCreatedAt'] == null ? undefined : ((value['climbCreatedAt'] as any).toISOString()),
+        'climb_id': value['climbId'],
         'climb_notes': value['climbNotes'],
         'climb_type': ClimbTypeToJSON(value['climbType']),
+        'climb_updated_at': value['climbUpdatedAt'] == null ? undefined : ((value['climbUpdatedAt'] as any).toISOString()),
         'created_at': ((value['createdAt']).toISOString()),
         'end': value['end'] == null ? undefined : ((value['end'] as any).toISOString()),
         'environment': value['environment'],
         'grade': value['grade'],
+        'location_created_at': ((value['locationCreatedAt']).toISOString()),
         'location_id': value['locationId'],
+        'location_updated_at': ((value['locationUpdatedAt']).toISOString()),
         'name': value['name'],
         'notes': value['notes'],
         'pointer': value['pointer'],
