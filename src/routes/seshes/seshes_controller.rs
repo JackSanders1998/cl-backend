@@ -115,7 +115,7 @@ pub async fn search_seshes(
     get,
     path = "/seshes/active",
     responses(
-        (status = 200, description = "Get active sesh successfully", body = [Sesh]),
+        (status = 200, description = "Get active sesh successfully", body = Sesh),
         (status = 404, description = "No active sesh found")
     )
 )]
@@ -131,7 +131,7 @@ pub async fn get_active_sesh(
             }
             // Else, continue with mapping
             match seshes_service::map_db_rows_to_sesh_object(seshes) {
-                Ok(sesh) => (StatusCode::OK, Json(sesh)).into_response(),
+                Ok(sesh) => (StatusCode::OK, Json(sesh.into_iter().nth(0))).into_response(),
                 Err(error) => {
                     trace!("Failed to get an active sesh. Error: {:?}", error);
                     StatusCode::NOT_FOUND.into_response()
