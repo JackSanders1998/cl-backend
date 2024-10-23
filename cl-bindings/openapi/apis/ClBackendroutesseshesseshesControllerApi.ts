@@ -88,11 +88,11 @@ export interface ClBackendroutesseshesseshesControllerApiInterface {
      * @throws {RequiredError}
      * @memberof ClBackendroutesseshesseshesControllerApiInterface
      */
-    getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Sesh>>>;
+    getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Sesh>>;
 
     /**
      */
-    getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Sesh>>;
+    getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Sesh>;
 
     /**
      * 
@@ -207,7 +207,7 @@ export class ClBackendroutesseshesseshesControllerApi extends runtime.BaseAPI im
 
     /**
      */
-    async getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Sesh>>> {
+    async getActiveSeshRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Sesh>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -219,12 +219,12 @@ export class ClBackendroutesseshesseshesControllerApi extends runtime.BaseAPI im
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SeshFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => SeshFromJSON(jsonValue));
     }
 
     /**
      */
-    async getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Sesh>> {
+    async getActiveSesh(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Sesh> {
         const response = await this.getActiveSeshRaw(initOverrides);
         return await response.value();
     }
