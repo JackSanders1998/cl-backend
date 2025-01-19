@@ -1,3 +1,4 @@
+pub mod analytics;
 pub mod climbs;
 pub mod health_check;
 pub mod locations;
