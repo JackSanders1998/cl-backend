@@ -7,3 +7,4 @@ Secrets*.toml
 
 .idea
 cl-backend.iml
+.shuttle*
