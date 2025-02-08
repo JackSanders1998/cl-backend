@@ -5,7 +5,7 @@ use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
 use sqlx::FromRow;
 use std::sync::Arc;
-use tracing::log::trace;
+use tracing::info;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
@@ -19,7 +19,7 @@ pub async fn create_sesh(
     payload: CreateSesh,
     user_id: String,
 ) -> Result<Id, PgError> {
-    trace!(
+    info!(
         "create_sesh called by {} with payload: {:?}",
         user_id,
         payload

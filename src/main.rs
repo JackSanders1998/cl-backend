@@ -80,6 +80,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
     let db = PgPoolOptions::new()
         .max_connections(64)
         .acquire_timeout(Duration::from_secs(5))
+        .acquire_slow_threshold(Duration::from_secs(5))
         .connect(&database_url)
         .await
         .expect("PG cannot start. Exiting.");

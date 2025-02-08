@@ -6,7 +6,7 @@ use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use http::HeaderMap;
 use serde_json::json;
 use std::sync::Arc;
-use tracing::log::trace;
+use tracing::{error, info};
 use uuid::Uuid;
 
 #[utoipa::path(
@@ -23,7 +23,7 @@ pub async fn create_sesh(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateSesh>,
 ) -> impl IntoResponse {
-    trace!("create_sesh called with payload: {:?}", payload);
+    info!("create_sesh called with payload: {:?}", payload);
 
     match seshes_repository::create_sesh(state.clone(), payload, get_claims(headers)).await {
         Ok(sesh) => {
@@ -42,7 +42,7 @@ pub async fn create_sesh(
             }
         }
         Err(error) => {
-            trace!("Failed to create sesh. Error: {:?}", error);
+            error!("Failed to create sesh. Error: {:?}", error);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
@@ -72,7 +72,7 @@ pub async fn get_sesh_by_sesh_id(
             }
         }
         Err(error) => {
-            trace!("Failed to get sesh by id. Error: {}", error);
+            error!("Failed to get sesh by id. Error: {}", error);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
@@ -105,7 +105,7 @@ pub async fn search_seshes(
             }
         }
         Err(error) => {
-            trace!("Failed to get search seshes. Error: {:?}", error);
+            error!("Failed to get search seshes. Error: {:?}", error);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
@@ -133,13 +133,13 @@ pub async fn get_active_sesh(
             match seshes_service::map_db_rows_to_sesh_object(seshes) {
                 Ok(sesh) => (StatusCode::OK, Json(sesh.into_iter().nth(0))).into_response(),
                 Err(error) => {
-                    trace!("Failed to get an active sesh. Error: {:?}", error);
+                    error!("Failed to get an active sesh. Error: {:?}", error);
                     StatusCode::NOT_FOUND.into_response()
                 }
             }
         }
         Err(error) => {
-            trace!("Failed to get an active sesh. Error: {:?}", error);
+            error!("Failed to get an active sesh. Error: {:?}", error);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
         }
     }
@@ -172,7 +172,7 @@ pub async fn update_sesh_by_sesh_id(
             }
         }
         Err(error) => {
-            trace!("Failed to get delete sesh. Error: {:?}", error);
+            error!("Failed to get delete sesh. Error: {:?}", error);
             StatusCode::NOT_FOUND.into_response()
         }
     }
