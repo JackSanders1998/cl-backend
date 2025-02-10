@@ -42,6 +42,29 @@ pub async fn create_sesh(
     .await
 }
 
+pub async fn reconcile_active_seshes(
+    state: Arc<AppState>,
+    user_id: String,
+) -> Result<Id, PgError> {
+    info!(
+        "reconcile_active_seshes called by {}",
+        user_id,
+    );
+
+    sqlx::query_as(
+        r#"
+        WITH latest_sesh AS (
+            SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC LIMIT 1
+        )
+        UPDATE seshes
+        SET "end" = CURRENT_TIMESTAMP
+        WHERE user_id = $1 AND sesh_id NOT IN (SELECT sesh_id FROM latest_sesh) RETURNING sesh_id "#,
+    )
+    .bind(user_id)
+    .fetch_one(&state.db)
+    .await
+}
+
 pub async fn search_seshes(
     state: Arc<AppState>,
     params: SeshSearchParams,
@@ -52,7 +75,7 @@ pub async fn search_seshes(
             let formatted_name = "%".to_owned() + &*notes + "%";
             sqlx::query_as!(
                 Id,
-                "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2",
+                "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2 ORDER BY start DESC;",
                 user_id,
                 formatted_name
             )
@@ -60,7 +83,7 @@ pub async fn search_seshes(
             .await
         }
         None => {
-            sqlx::query_as!(Id, "SELECT sesh_id FROM seshes WHERE user_id = $1", user_id)
+            sqlx::query_as!(Id, "SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC;", user_id)
                 .fetch_all(&state.db)
                 .await
         }
@@ -78,7 +101,7 @@ pub async fn get_seshes_with_location_and_climbs(
     let query_string = format!(
         r#"
             WITH sesh_data AS (
-                SELECT * FROM seshes WHERE seshes.sesh_id IN ( {} ) ORDER BY created_at DESC
+                SELECT * FROM seshes WHERE seshes.sesh_id IN ( {} ) ORDER BY start DESC
             )
             SELECT
                 sesh_data.*,
@@ -99,7 +122,8 @@ pub async fn get_seshes_with_location_and_climbs(
                 locations.updated_at AS location_updated_at
             FROM sesh_data
             JOIN locations ON locations.location_id = sesh_data.location_id
-            LEFT JOIN climbs ON climbs.sesh_id = sesh_data.sesh_id;
+            LEFT JOIN climbs ON climbs.sesh_id = sesh_data.sesh_id
+            ORDER BY sesh_data.created_at DESC;
         "#,
         sesh_ids_string.join(",")
     );
@@ -119,7 +143,7 @@ pub async fn get_all_active_sesh_data(
     sqlx::query_as(
         r#"
             WITH latest_active_sesh AS (
-                SELECT * FROM seshes WHERE seshes.end IS NULL AND user_id = $1 ORDER BY created_at DESC LIMIT 1
+                SELECT * FROM seshes WHERE seshes.end IS NULL AND user_id = $1 ORDER BY start DESC LIMIT 1
             )
             SELECT
                 latest_active_sesh.*,
@@ -140,7 +164,8 @@ pub async fn get_all_active_sesh_data(
                 locations.updated_at AS location_updated_at
             FROM latest_active_sesh
             JOIN locations ON locations.location_id = latest_active_sesh.location_id
-            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id;
+            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_ids
+            ORDER BY latest_active_sesh.start DESC;
         "#,
     )
         .bind(

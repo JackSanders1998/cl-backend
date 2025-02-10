@@ -77,6 +77,8 @@ pub fn map_db_rows_to_sesh_object(
         }
     }
 
+    mapped_seshes.sort_by(|a, b| b.start.cmp(&a.start));
+
     Ok(mapped_seshes)
 }
 
