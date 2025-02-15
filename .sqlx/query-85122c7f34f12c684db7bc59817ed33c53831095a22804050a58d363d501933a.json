@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM locations WHERE name LIKE $1",
+  "query": "SELECT * FROM locations WHERE user_id = $1",
   "describe": {
     "columns": [
       {
@@ -48,5 +48,5 @@
       false
     ]
   },
-  "hash": "ffdab86de2b37883025c2ce11820be3313fcff06332491e11695f83716fbd497"
+  "hash": "85122c7f34f12c684db7bc59817ed33c53831095a22804050a58d363d501933a"
 }

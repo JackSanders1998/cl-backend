@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM locations",
+  "query": "SELECT * FROM locations WHERE user_id = $1 AND name LIKE $2",
   "describe": {
     "columns": [
       {
@@ -35,7 +35,10 @@
       }
     ],
     "parameters": {
-      "Left": []
+      "Left": [
+        "Text",
+        "Text"
+      ]
     },
     "nullable": [
       false,
@@ -46,5 +49,5 @@
       false
     ]
   },
-  "hash": "ccacb5e7d348ec2e3ad49a36a46bc379ae24aa494b3397634d9058c3d2e4baab"
+  "hash": "2e77ef17f0836f516b113faf71783186a94c47e6a684f7f745d370aca3fea09d"
 }

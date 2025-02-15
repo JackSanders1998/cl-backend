@@ -43,20 +43,22 @@ pub async fn get_location_by_location_id(
 pub async fn search_locations(
     state: Arc<AppState>,
     params: LocationSearchParams,
+    user_id: String,
 ) -> Result<Vec<Location>, PgError> {
     match params.name {
         Some(name) => {
             let formatted_name = "%".to_owned() + &*name + "%";
             sqlx::query_as!(
                 Location,
-                "SELECT * FROM locations WHERE name LIKE $1",
+                "SELECT * FROM locations WHERE user_id = $1 AND name LIKE $2",
+                user_id,
                 formatted_name
             )
             .fetch_all(&state.db)
             .await
         }
         None => {
-            sqlx::query_as!(Location, "SELECT * FROM locations")
+            sqlx::query_as!(Location, "SELECT * FROM locations WHERE user_id = $1", user_id)
                 .fetch_all(&state.db)
                 .await
         }

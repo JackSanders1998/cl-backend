@@ -72,10 +72,11 @@ pub async fn get_location_by_location_id(
     )
 )]
 pub async fn search_locations(
+    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Query(params): Query<LocationSearchParams>,
 ) -> impl IntoResponse {
-    let result = locations_repository::search_locations(state, params).await;
+    let result = locations_repository::search_locations(state, params, get_claims(headers)).await;
 
     match result {
         Ok(locations) => (StatusCode::OK, Json(locations)).into_response(),

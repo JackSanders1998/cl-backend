@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT sesh_id FROM seshes WHERE user_id = $1",
+  "query": "SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC;",
   "describe": {
     "columns": [
       {
@@ -18,5 +18,5 @@
       false
     ]
   },
-  "hash": "9da8e578a64dc8390aa102bf3aa720591e0726191e07da0f8058c0e750411b51"
+  "hash": "676959c0f5f7d8712d12204634ba5554738abc4e2d7316431b5f46db07db9b0b"
 }

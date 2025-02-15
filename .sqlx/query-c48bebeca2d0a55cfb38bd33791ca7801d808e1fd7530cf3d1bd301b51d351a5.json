@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2",
+  "query": "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2 ORDER BY start DESC;",
   "describe": {
     "columns": [
       {
@@ -19,5 +19,5 @@
       false
     ]
   },
-  "hash": "41f0bb9893f18fc7067b08663643764ba36038ff8f3f4efbcf7acbab295cf4ff"
+  "hash": "c48bebeca2d0a55cfb38bd33791ca7801d808e1fd7530cf3d1bd301b51d351a5"
 }
