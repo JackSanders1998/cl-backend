@@ -4,7 +4,7 @@ use sqlx::FromRow;
 use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Sesh {
     pub sesh_id: Uuid,
     pub user_id: String,

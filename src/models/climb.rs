@@ -42,7 +42,7 @@ pub struct UpdateClimb {
     pub notes: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct ClimbData {
     pub climb_id: Uuid,
     pub climb_type: ClimbType,

@@ -64,7 +64,7 @@ pub fn map_db_rows_to_sesh_object(
                             grade: sesh_row.grade.unwrap(),
                             attempt: sesh_row.attempt.unwrap(),
                             pointer: sesh_row.pointer,
-                            notes: sesh_row.notes,
+                            notes: sesh_row.climb_notes,
                             created_at: sesh_row.climb_created_at.unwrap(),
                             updated_at: sesh_row.climb_updated_at.unwrap(),
                         };

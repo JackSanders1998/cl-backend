@@ -13,7 +13,7 @@ pub struct Location {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct LocationData {
     pub location_id: Uuid,
     pub name: String,
