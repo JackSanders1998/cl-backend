@@ -164,7 +164,7 @@ pub async fn get_all_active_sesh_data(
                 locations.updated_at AS location_updated_at
             FROM latest_active_sesh
             JOIN locations ON locations.location_id = latest_active_sesh.location_id
-            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_ids
+            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id
             ORDER BY latest_active_sesh.start DESC;
         "#,
     )
