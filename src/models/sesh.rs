@@ -1,10 +1,9 @@
 use crate::models::{Attempt, ClimbData, ClimbType, LocationData, Scale, Style};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, FromRow, ToSchema)]
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct Sesh {
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -17,7 +16,7 @@ pub struct Sesh {
     pub climbs: Vec<ClimbData>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Clone, Debug, ToSchema)]
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
 pub struct SqlxSeshWithLocationAndClimbs {
     // sesh
     pub sesh_id: Uuid,
@@ -46,18 +45,18 @@ pub struct SqlxSeshWithLocationAndClimbs {
     pub climb_updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-#[derive(Deserialize, Debug, ToSchema)]
+#[derive(Deserialize, Debug)]
 pub struct CreateSesh {
     pub location_id: Uuid,
     pub notes: Option<String>,
 }
 
-#[derive(Deserialize, ToSchema, IntoParams)]
+#[derive(Deserialize)]
 pub struct SeshSearchParams {
     pub notes: Option<String>, //  Add more
 }
 
-#[derive(Deserialize, ToSchema)]
+#[derive(Deserialize)]
 pub struct UpdateSesh {
     pub location_id: Option<Uuid>,
     pub notes: Option<String>,

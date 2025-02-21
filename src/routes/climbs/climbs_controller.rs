@@ -6,15 +6,6 @@ use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use std::sync::Arc;
 use uuid::Uuid;
 
-#[utoipa::path(
-    post,
-    path = "/climbs",
-    responses(
-        (status = 201, description = "Create a climb", body = Climb),
-        (status = 500, description = "Climb was not created")
-    ),
-    request_body = CreateClimb
-)]
 pub async fn create_climb(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateClimb>,
@@ -43,17 +34,6 @@ pub async fn create_climb(
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/climbs/{climb_id}",
-    params(
-        ("climb_id", description = "climb id"),
-    ),
-    responses(
-        (status = 200, description = "Get a climb successfully", body = Climb),
-        (status = 404, description = "Climb was not found")
-    )
-)]
 pub async fn get_climb_by_climb_id(
     State(state): State<Arc<AppState>>,
     Path(climb_id): Path<Uuid>,
@@ -66,14 +46,6 @@ pub async fn get_climb_by_climb_id(
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/climbs",
-    responses(
-        (status = 200, description = "List all climbs successfully", body = [Climb]),
-        (status = 404, description = "Climb was not found")
-    )
-)]
 pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let result = climbs_repository::get_all_climbs(state).await;
 
@@ -83,17 +55,6 @@ pub async fn search_climbs(State(state): State<Arc<AppState>>) -> impl IntoRespo
     }
 }
 
-#[utoipa::path(
-    delete,
-    path = "/climbs/{climb_id}",
-    params(
-        ("climb_id", description = "climb id"),
-    ),
-    responses(
-        (status = 204, description = "Delete a climb"),
-        (status = 500, description = "Climb was not deleted")
-    )
-)]
 pub async fn delete_climb(
     State(state): State<Arc<AppState>>,
     Path(climb_id): Path<Uuid>,

@@ -6,10 +6,9 @@ use sqlx::Error as PgError;
 use sqlx::FromRow;
 use std::sync::Arc;
 use tracing::info;
-use utoipa::ToSchema;
 use uuid::Uuid;
 
-#[derive(Clone, Copy, FromRow, ToSchema)]
+#[derive(Clone, Copy, FromRow)]
 pub struct Id {
     pub(crate) sesh_id: Uuid,
 }

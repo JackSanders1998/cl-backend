@@ -6,15 +6,6 @@ use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use std::sync::Arc;
 use uuid::Uuid;
 
-#[utoipa::path(
-    post,
-    path = "/locations",
-    request_body = CreateLocation,
-    responses(
-        (status = 201, description = "Create a location", body = Location),
-        (status = 500, description = "Location was not created")
-    )
-)]
 pub async fn create_location(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -39,17 +30,6 @@ pub async fn create_location(
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/locations/{location_id}",
-    params(
-        ("location_id", description = "location id"),
-    ),
-    responses(
-        (status = 200, description = "Get a location successfully", body = Location),
-        (status = 404, description = "Location was not found")
-    )
-)]
 pub async fn get_location_by_location_id(
     State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
@@ -62,15 +42,6 @@ pub async fn get_location_by_location_id(
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/locations",
-    params(LocationSearchParams),
-    responses(
-        (status = 200, description = "Get location(s) successfully", body = [Location]),
-        (status = 404, description = "No location found")
-    )
-)]
 pub async fn search_locations(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -84,18 +55,6 @@ pub async fn search_locations(
     }
 }
 
-#[utoipa::path(
-    patch,
-    path = "/locations/{location_id}",
-    params(
-        ("location_id", description = "location id"),
-    ),
-    request_body = UpdateLocation,
-    responses(
-        (status = 200, description = "Update location successfully", body = Location),
-        (status = 500, description = "Location was not updated")
-    )
-)]
 pub async fn update_location_by_location_id(
     State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,
@@ -121,17 +80,6 @@ pub async fn update_location_by_location_id(
     }
 }
 
-#[utoipa::path(
-    delete,
-    path = "/locations/{location_id}",
-    params(
-        ("location_id", description = "location id"),
-    ),
-    responses(
-        (status = 204, description = "Delete a location"),
-        (status = 500, description = "Location was not deleted")
-    )
-)]
 pub async fn delete_location_by_location_id(
     State(state): State<Arc<AppState>>,
     Path(location_id): Path<Uuid>,

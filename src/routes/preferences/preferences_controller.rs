@@ -6,15 +6,6 @@ use http::HeaderMap;
 use std::sync::Arc;
 use uuid::Uuid;
 
-#[utoipa::path(
-    post,
-    path = "/preferences",
-    responses(
-        (status = 201, description = "Create a preference", body = Preference),
-        (status = 500, description = "Preference was not created")
-    ),
-    request_body = CreatePreference
-)]
 pub async fn create_preference(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -42,17 +33,6 @@ pub async fn create_preference(
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/preferences/{preference_id}",
-    params(
-        ("preference_id", description = "preference id"),
-    ),
-    responses(
-        (status = 200, description = "Get a preference successfully", body = Preference),
-        (status = 404, description = "Preference was not found")
-    )
-)]
 pub async fn get_preference_by_preference_id(
     State(state): State<Arc<AppState>>,
     Path(preference_id): Path<Uuid>,
@@ -66,14 +46,6 @@ pub async fn get_preference_by_preference_id(
     }
 }
 
-#[utoipa::path(
-    get,
-    path = "/preferences",
-    responses(
-        (status = 200, description = "Get preference(s) successfully", body = [Preference]),
-        (status = 404, description = "No preference found")
-    )
-)]
 pub async fn get_preference_by_user_id(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -87,17 +59,6 @@ pub async fn get_preference_by_user_id(
     }
 }
 
-#[utoipa::path(
-    delete,
-    path = "/preferences/{preference_id}",
-    params(
-        ("preference_id", description = "preference id"),
-    ),
-    responses(
-        (status = 204, description = "Delete a preference"),
-        (status = 500, description = "Preference was not deleted")
-    )
-)]
 pub async fn delete_preference(
     State(state): State<Arc<AppState>>,
     Path(preference_id): Path<Uuid>,
