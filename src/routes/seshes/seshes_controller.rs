@@ -15,15 +15,21 @@ pub async fn create_sesh(
 ) -> impl IntoResponse {
     info!("create_sesh called with payload: {:?}", payload);
 
-    match seshes_repository::create_sesh(state.clone(), payload, get_claims(headers.clone())).await {
+    match seshes_repository::create_sesh(state.clone(), payload, get_claims(headers.clone())).await
+    {
         Ok(sesh) => {
-            match seshes_service::get_seshes_with_location_and_climbs(state.clone(), vec![sesh.sesh_id])
-                .await
+            match seshes_service::get_seshes_with_location_and_climbs(
+                state.clone(),
+                vec![sesh.sesh_id],
+            )
+            .await
             {
                 Ok(seshes) => {
                     if seshes.len() == 1 {
                         // Reconcile active seshes
-                        let _ = seshes_repository::reconcile_active_seshes(state, get_claims(headers)).await;
+                        let _ =
+                            seshes_repository::reconcile_active_seshes(state, get_claims(headers))
+                                .await;
                         (StatusCode::CREATED, Json(json!(seshes.into_iter().nth(0))))
                             .into_response()
                     } else {

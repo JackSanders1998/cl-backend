@@ -1,4 +1,4 @@
-use crate::models::{CreateRoute, Route, Scale, Discipline};
+use crate::models::{CreateRoute, Discipline, Route, Scale};
 use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;

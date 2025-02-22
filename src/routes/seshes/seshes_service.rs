@@ -11,9 +11,7 @@ pub fn get_ids_from_struct(sesh_ids: Vec<Id>) -> Vec<Uuid> {
     sesh_ids.iter().map(|&i| i.sesh_id).collect()
 }
 
-pub fn map_db_rows_to_sesh_object(
-    db_rows: Vec<SeshFromRow>,
-) -> Result<Vec<Sesh>, ErrorKind> {
+pub fn map_db_rows_to_sesh_object(db_rows: Vec<SeshFromRow>) -> Result<Vec<Sesh>, ErrorKind> {
     info!("map_db_rows_to_sesh_object called with: {:?}", db_rows);
 
     let mut mapped_seshes: Vec<Sesh> = Vec::new();
@@ -51,17 +49,17 @@ pub fn map_db_rows_to_sesh_object(
                 };
 
                 for sesh_row in sesh {
-                        let tick_row = TickQuery {
-                            tick_id: sesh_row.tick_id,
-                            route_id: sesh_row.route_id,
-                            discipline: sesh_row.discipline,
-                            attempt: sesh_row.attempt,
-                            tick_notes: sesh_row.tick_notes,
-                            lap_group: sesh_row.lap_group,
-                            tick_created_at: sesh_row.tick_created_at,
-                            tick_updated_at: sesh_row.tick_updated_at,
-                        };
-                        hydrated_sesh.ticks.push(tick_row);
+                    let tick_row = TickQuery {
+                        tick_id: sesh_row.tick_id,
+                        route_id: sesh_row.route_id,
+                        discipline: sesh_row.discipline,
+                        attempt: sesh_row.attempt,
+                        tick_notes: sesh_row.tick_notes,
+                        lap_group: sesh_row.lap_group,
+                        tick_created_at: sesh_row.tick_created_at,
+                        tick_updated_at: sesh_row.tick_updated_at,
+                    };
+                    hydrated_sesh.ticks.push(tick_row);
                 }
                 mapped_seshes.push(hydrated_sesh);
             }

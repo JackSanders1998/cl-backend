@@ -36,4 +36,3 @@ pub enum Attempt {
     Redpoint,
     Fall,
 }
-

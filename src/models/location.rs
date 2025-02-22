@@ -38,7 +38,7 @@ pub struct LocationSearchParams {
 #[serde(rename_all = "snake_case")]
 pub enum Environment {
     Outdoor,
-    Gym
+    Gym,
 }
 
 impl From<String> for Environment {

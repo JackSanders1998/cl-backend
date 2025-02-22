@@ -19,8 +19,7 @@ pub async fn create_sesh(
 ) -> Result<Id, PgError> {
     info!(
         "create_sesh called by {} with payload: {:?}",
-        user_id,
-        payload
+        user_id, payload
     );
 
     sqlx::query_as(
@@ -40,14 +39,8 @@ pub async fn create_sesh(
     .await
 }
 
-pub async fn reconcile_active_seshes(
-    state: Arc<AppState>,
-    user_id: String,
-) -> Result<Id, PgError> {
-    info!(
-        "reconcile_active_seshes called by {}",
-        user_id,
-    );
+pub async fn reconcile_active_seshes(state: Arc<AppState>, user_id: String) -> Result<Id, PgError> {
+    info!("reconcile_active_seshes called by {}", user_id,);
 
     sqlx::query_as(
         r#"
@@ -80,9 +73,13 @@ pub async fn search_seshes(
             .await
         }
         None => {
-            sqlx::query_as!(Id, "SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC;", user_id)
-                .fetch_all(&state.db)
-                .await
+            sqlx::query_as!(
+                Id,
+                "SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC;",
+                user_id
+            )
+            .fetch_all(&state.db)
+            .await
         }
     }
 }

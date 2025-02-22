@@ -66,7 +66,6 @@ pub struct TickQuery {
     pub tick_updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-
 #[derive(Deserialize, Debug)]
 pub struct CreateSesh {
     pub location_id: Uuid,

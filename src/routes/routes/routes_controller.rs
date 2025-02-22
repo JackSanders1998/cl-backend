@@ -1,4 +1,4 @@
-use crate::models::{Route, CreateRoute};
+use crate::models::{CreateRoute, Route};
 use crate::routes::{routes_repository, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
