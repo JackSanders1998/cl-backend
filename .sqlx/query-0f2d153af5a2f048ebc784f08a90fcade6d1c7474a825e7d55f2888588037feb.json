@@ -10,28 +10,33 @@
       },
       {
         "ordinal": 1,
-        "name": "user_id",
-        "type_info": "Text"
-      },
-      {
-        "ordinal": 2,
         "name": "name",
         "type_info": "Text"
       },
       {
-        "ordinal": 3,
+        "ordinal": 2,
         "name": "environment",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 3,
         "name": "created_at",
         "type_info": "Timestamptz"
       },
       {
-        "ordinal": 5,
+        "ordinal": 4,
         "name": "updated_at",
         "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "author",
+        "type_info": "Text"
       }
     ],
     "parameters": {
@@ -47,6 +52,7 @@
       false,
       false,
       false,
+      true,
       false
     ]
   },
