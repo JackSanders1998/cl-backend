@@ -15,7 +15,9 @@ pub async fn create_location(
             INSERT INTO locations (
                 user_id,
                 name,
-                environment
+                environment,
+                author,
+                description
             ) VALUES ($1, $2, $3)
             RETURNING *
         "#,
@@ -23,6 +25,8 @@ pub async fn create_location(
     .bind(user_id)
     .bind(payload.name)
     .bind(payload.environment)
+    .bind(payload.author)
+    .bind(payload.description)
     .fetch_one(&state.db)
     .await
 }
@@ -43,22 +47,20 @@ pub async fn get_location_by_location_id(
 pub async fn search_locations(
     state: Arc<AppState>,
     params: LocationSearchParams,
-    user_id: String,
 ) -> Result<Vec<Location>, PgError> {
     match params.name {
         Some(name) => {
             let formatted_name = "%".to_owned() + &*name + "%";
             sqlx::query_as!(
                 Location,
-                "SELECT * FROM locations WHERE user_id = $1 AND name LIKE $2",
-                user_id,
+                "SELECT * FROM locations WHERE name LIKE $1",
                 formatted_name
             )
             .fetch_all(&state.db)
             .await
         }
         None => {
-            sqlx::query_as!(Location, "SELECT * FROM locations WHERE user_id = $1", user_id)
+            sqlx::query_as!(Location, "SELECT * FROM locations")
                 .fetch_all(&state.db)
                 .await
         }
@@ -80,7 +82,7 @@ pub async fn update_location_by_location_id(
            RETURNING *
         "#,
         payload.name,
-        payload.environment,
+        payload.environment.as_ref().map(|env| env.as_str()),
         location_id
     )
     .fetch_one(&state.db)

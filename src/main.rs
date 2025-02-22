@@ -6,7 +6,7 @@ use anyhow::Context;
 use axum::routing::get;
 use axum::Router;
 use cl_backend::routes::{
-    climbs_router, health_check, locations_router, preferences_router, seshes_router, AppState,
+    routes_router, health_check, locations_router, preferences_router, seshes_router, AppState,
 };
 use cl_backend::utils::CustomTraceLayer;
 use clerk_rs::validators::axum::ClerkLayer;
@@ -44,7 +44,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .nest("/locations", locations_router())
         .nest("/preferences", preferences_router())
         .nest("/seshes", seshes_router())
-        .nest("/climbs", climbs_router())
+        .nest("/routes", routes_router())
         .layer(ClerkLayer::new(config, None, true))
         .layer(CustomTraceLayer::new())
         .with_state(state);

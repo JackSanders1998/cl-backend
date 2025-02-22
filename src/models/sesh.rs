@@ -1,23 +1,24 @@
-use crate::models::{Attempt, ClimbData, ClimbType, LocationData, Scale, Style};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
+
+use super::{tick::Attempt, Discipline, Environment, Location, Scale};
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct Sesh {
     pub sesh_id: Uuid,
     pub user_id: String,
-    pub notes: Option<String>,
     pub start: chrono::DateTime<chrono::Utc>,
     pub end: Option<chrono::DateTime<chrono::Utc>>,
+    pub location: Location,
+    pub ticks: Vec<TickQuery>,
+    pub notes: Option<String>,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
-    pub location: LocationData,
-    pub climbs: Vec<ClimbData>,
 }
 
 #[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
-pub struct SqlxSeshWithLocationAndClimbs {
+pub struct SeshFromRow {
     // sesh
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -27,23 +28,44 @@ pub struct SqlxSeshWithLocationAndClimbs {
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
     // location (inner join)
-    pub location_id: Uuid,
+    pub author: String,
     pub name: String,
-    pub environment: String,
+    pub environment: Environment,
+    pub description: Option<String>,
     pub location_created_at: chrono::DateTime<chrono::Utc>,
     pub location_updated_at: chrono::DateTime<chrono::Utc>,
-    // climb (left join)
-    pub climb_id: Option<Uuid>,
-    pub climb_type: Option<ClimbType>,
-    pub style: Option<Style>,
-    pub scale: Option<Scale>,
-    pub grade: Option<String>,
-    pub attempt: Option<Attempt>,
-    pub pointer: Option<Uuid>,
-    pub climb_notes: Option<String>,
-    pub climb_created_at: Option<chrono::DateTime<chrono::Utc>>,
-    pub climb_updated_at: Option<chrono::DateTime<chrono::Utc>>,
+    // tick (left join)
+    pub tick_id: Uuid,
+    pub discipline: Discipline,
+    pub attempt: Attempt,
+    pub tick_notes: Option<String>,
+    pub lap_group: Option<Uuid>,
+    pub tick_created_at: chrono::DateTime<chrono::Utc>,
+    pub tick_updated_at: chrono::DateTime<chrono::Utc>,
+    // route (left join)
+    pub route_id: Uuid,
+    pub location_id: Uuid,
+    pub grade: String,
+    pub scale: Scale,
+    pub disciplines: Vec<Discipline>,
+    pub route_author: String,
+    pub route_description: Option<String>,
+    pub route_created_at: chrono::DateTime<chrono::Utc>,
+    pub route_updated_at: chrono::DateTime<chrono::Utc>,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TickQuery {
+    pub tick_id: Uuid,
+    pub route_id: Uuid,
+    pub discipline: Discipline,
+    pub attempt: Attempt,
+    pub tick_notes: Option<String>,
+    pub lap_group: Option<Uuid>,
+    pub tick_created_at: chrono::DateTime<chrono::Utc>,
+    pub tick_updated_at: chrono::DateTime<chrono::Utc>,
+}
+
 
 #[derive(Deserialize, Debug)]
 pub struct CreateSesh {

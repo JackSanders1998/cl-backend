@@ -1,5 +1,4 @@
-pub use crate::models::{Attempt, ClimbType, Scale, Style};
-use crate::models::{CreateSesh, SeshSearchParams, SqlxSeshWithLocationAndClimbs, UpdateSesh};
+use crate::models::{CreateSesh, SeshFromRow, SeshSearchParams, UpdateSesh};
 use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
@@ -72,12 +71,11 @@ pub async fn search_seshes(
     match params.notes {
         Some(notes) => {
             let formatted_name = "%".to_owned() + &*notes + "%";
-            sqlx::query_as!(
-                Id,
-                "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2 ORDER BY start DESC;",
-                user_id,
-                formatted_name
+            sqlx::query_as::<_, Id>(
+                "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2 ORDER BY start DESC;"
             )
+            .bind(user_id)
+            .bind(formatted_name)
             .fetch_all(&state.db)
             .await
         }
@@ -92,7 +90,7 @@ pub async fn search_seshes(
 pub async fn get_seshes_with_location_and_climbs(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
-) -> Result<Vec<SqlxSeshWithLocationAndClimbs>, PgError> {
+) -> Result<Vec<SeshFromRow>, PgError> {
     let sesh_ids_string: Vec<String> = sesh_ids
         .iter()
         .map(|id| format!("'{}'", id.to_string()))
@@ -104,16 +102,16 @@ pub async fn get_seshes_with_location_and_climbs(
             )
             SELECT
                 sesh_data.*,
-                climbs.climb_id,
-                climbs.climb_type,
-                climbs.style,
-                climbs.scale,
-                climbs.grade,
-                climbs.attempt,
-                climbs.pointer,
-                climbs.notes AS climb_notes,
-                climbs.created_at AS climb_created_at,
-                climbs.updated_at AS climb_updated_at,
+                routes.climb_id,
+                routes.climb_type,
+                routes.style,
+                routes.scale,
+                routes.grade,
+                routes.attempt,
+                routes.pointer,
+                routes.notes AS climb_notes,
+                routes.created_at AS climb_created_at,
+                routes.updated_at AS climb_updated_at,
                 locations.location_id,
                 locations.name,
                 locations.environment,
@@ -121,7 +119,7 @@ pub async fn get_seshes_with_location_and_climbs(
                 locations.updated_at AS location_updated_at
             FROM sesh_data
             JOIN locations ON locations.location_id = sesh_data.location_id
-            LEFT JOIN climbs ON climbs.sesh_id = sesh_data.sesh_id
+            LEFT JOIN climbs ON routes.sesh_id = sesh_data.sesh_id
             ORDER BY sesh_data.created_at DESC;
         "#,
         sesh_ids_string.join(",")
@@ -138,7 +136,7 @@ pub async fn get_seshes_with_location_and_climbs(
 pub async fn get_all_active_sesh_data(
     state: Arc<AppState>,
     user_id: String,
-) -> Result<Vec<SqlxSeshWithLocationAndClimbs>, PgError> {
+) -> Result<Vec<SeshFromRow>, PgError> {
     sqlx::query_as(
         r#"
             WITH latest_active_sesh AS (
@@ -146,16 +144,16 @@ pub async fn get_all_active_sesh_data(
             )
             SELECT
                 latest_active_sesh.*,
-                climbs.climb_id,
-                climbs.climb_type,
-                climbs.style,
-                climbs.scale,
-                climbs.grade,
-                climbs.attempt,
-                climbs.pointer,
-                climbs.notes AS climb_notes,
-                climbs.created_at AS climb_created_at,
-                climbs.updated_at AS climb_updated_at,
+                routes.climb_id,
+                routes.climb_type,
+                routes.style,
+                routes.scale,
+                routes.grade,
+                routes.attempt,
+                routes.pointer,
+                routes.notes AS climb_notes,
+                routes.created_at AS climb_created_at,
+                routes.updated_at AS climb_updated_at,
                 locations.location_id,
                 locations.name,
                 locations.environment,
@@ -163,7 +161,7 @@ pub async fn get_all_active_sesh_data(
                 locations.updated_at AS location_updated_at
             FROM latest_active_sesh
             JOIN locations ON locations.location_id = latest_active_sesh.location_id
-            LEFT JOIN climbs ON climbs.sesh_id = latest_active_sesh.sesh_id
+            LEFT JOIN climbs ON routes.sesh_id = latest_active_sesh.sesh_id
             ORDER BY latest_active_sesh.start DESC;
         "#,
     )

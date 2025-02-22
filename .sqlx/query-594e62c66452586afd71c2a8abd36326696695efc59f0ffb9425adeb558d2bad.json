@@ -1,0 +1,80 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT\n                route_id,\n                location_id,\n                grade,\n                scale as \"scale: Scale\",\n                disciplines as \"disciplines: Vec<Discipline>\",\n                author,\n                description,\n                created_at,\n                updated_at\n            FROM routes\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "route_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "location_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "grade",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "scale: Scale",
+        "type_info": {
+          "Custom": {
+            "name": "scale",
+            "kind": {
+              "Enum": [
+                "verm",
+                "font",
+                "yosemite",
+                "french"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "disciplines: Vec<Discipline>",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 5,
+        "name": "author",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "594e62c66452586afd71c2a8abd36326696695efc59f0ffb9425adeb558d2bad"
+}

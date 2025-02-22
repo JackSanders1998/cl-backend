@@ -1,4 +1,4 @@
-pub mod climbs;
+pub mod routes;
 pub mod health_check;
 pub mod locations;
 pub mod preferences;
@@ -6,7 +6,7 @@ pub mod seshes;
 
 use base64::engine::general_purpose;
 use base64::{alphabet, engine, Engine};
-pub use climbs::*;
+pub use routes::*;
 pub use health_check::health_check;
 use http::HeaderMap;
 pub use locations::*;

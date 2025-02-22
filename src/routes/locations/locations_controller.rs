@@ -18,9 +18,10 @@ pub async fn create_location(
             StatusCode::CREATED,
             Json(Location {
                 location_id: location.location_id,
-                user_id: location.user_id,
+                author: location.author,
                 name: location.name,
                 environment: location.environment,
+                description: location.description,
                 created_at: location.created_at,
                 updated_at: location.updated_at,
             }),
@@ -43,11 +44,10 @@ pub async fn get_location_by_location_id(
 }
 
 pub async fn search_locations(
-    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Query(params): Query<LocationSearchParams>,
 ) -> impl IntoResponse {
-    let result = locations_repository::search_locations(state, params, get_claims(headers)).await;
+    let result = locations_repository::search_locations(state, params).await;
 
     match result {
         Ok(locations) => (StatusCode::OK, Json(locations)).into_response(),
@@ -68,9 +68,10 @@ pub async fn update_location_by_location_id(
             StatusCode::OK,
             Json(Location {
                 location_id: location.location_id,
-                user_id: location.user_id,
+                author: location.author,
                 name: location.name,
                 environment: location.environment,
+                description: location.description,
                 created_at: location.created_at,
                 updated_at: location.updated_at,
             }),

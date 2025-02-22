@@ -1,4 +1,3 @@
-pub use crate::models::{Attempt, ClimbType, Scale, Style};
 use crate::models::{CreateSesh, SeshSearchParams, UpdateSesh};
 use crate::routes::{get_claims, seshes_repository, seshes_service, AppState};
 use axum::extract::{Path, Query, State};
