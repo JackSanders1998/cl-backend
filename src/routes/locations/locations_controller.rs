@@ -1,17 +1,17 @@
 use crate::models::{CreateLocation, Location, LocationSearchParams, UpdateLocation};
-use crate::routes::{get_claims, locations_repository, AppState};
+use crate::routes::{locations_repository, AppState};
 use axum::extract::{Path, Query, State};
-use axum::http::HeaderMap;
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use std::sync::Arc;
+use tracing::{error, info};
 use uuid::Uuid;
 
 pub async fn create_location(
-    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateLocation>,
 ) -> impl IntoResponse {
-    let result = locations_repository::create_location(state, payload, get_claims(headers)).await;
+    info!("Creating location with payload: {:?}", payload);
+    let result = locations_repository::create_location(state, payload).await;
 
     match result {
         Ok(location) => (
@@ -27,7 +27,10 @@ pub async fn create_location(
             }),
         )
             .into_response(),
-        Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        Err(error) => {
+            error!("Failed to get an active sesh. Error: {:?}", error);
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 

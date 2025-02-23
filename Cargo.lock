@@ -547,6 +547,7 @@ dependencies = [
  "chrono",
  "clerk-rs",
  "http 1.2.0",
+ "lazy_static",
  "reqwest 0.12.12",
  "serde",
  "serde_json",

@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
+use sqlx::{FromRow, Type};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq)]
 pub struct Location {
     pub location_id: Uuid,
     pub author: String,
@@ -13,7 +13,7 @@ pub struct Location {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CreateLocation {
     pub author: String,
     pub name: String,
@@ -33,29 +33,27 @@ pub struct LocationSearchParams {
     pub name: Option<String>, //  Add more
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
-#[sqlx(type_name = "environment", rename_all = "snake_case")]
-#[serde(rename_all = "snake_case")]
+#[derive(Debug, Clone, PartialEq, Eq, Type, Serialize, Deserialize)]
+#[sqlx(type_name = "environment_type", rename_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
 pub enum Environment {
-    Outdoor,
     Gym,
-}
-
-impl From<String> for Environment {
-    fn from(s: String) -> Self {
-        match s.as_str() {
-            "Outdoor" => Environment::Outdoor,
-            "Gym" => Environment::Gym,
-            _ => panic!("Invalid environment"),
-        }
-    }
+    Outdoor,
 }
 
 impl Environment {
     pub fn as_str(&self) -> &str {
         match self {
-            Environment::Gym => "Gym",
-            Environment::Outdoor => "Outdoor",
+            Environment::Gym => "gym",
+            Environment::Outdoor => "outdoor",
+        }
+    }
+
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "gym" => Some(Environment::Gym),
+            "outdoor" => Some(Environment::Outdoor),
+            _ => None,
         }
     }
 }
