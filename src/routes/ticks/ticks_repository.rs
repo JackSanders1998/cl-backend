@@ -10,12 +10,12 @@ pub async fn create_tick(
     sqlx::query_as(
         r#"
             INSERT INTO ticks (
-                sesh_id
+                sesh_id,
                 route_id,
                 discipline,
                 attempt,
                 notes,
-                lap_group,
+                lap_group
             ) VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *
         "#

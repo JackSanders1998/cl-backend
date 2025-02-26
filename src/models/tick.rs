@@ -33,7 +33,7 @@ pub struct TickSearchParams {
 }
 
 #[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
-#[sqlx(type_name = "attempt", rename_all = "snake_case")]
+#[sqlx(type_name = "attempt_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Attempt {
     Onsight,

@@ -24,6 +24,7 @@ pub async fn create_route(state: Arc<AppState>, payload: CreateRoute) -> Result<
     .bind(payload.scale)
     .bind(payload.disciplines)
     .bind(payload.author)
+    .bind(payload.description)
     .fetch_one(&state.db)
     .await
 }
