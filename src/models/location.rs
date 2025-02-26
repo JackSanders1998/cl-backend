@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
-use sqlx::{FromRow, Type};
+use sqlx::{FromRow};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq, Clone)]
 pub struct Location {
     pub location_id: Uuid,
     pub author: String,
@@ -33,7 +33,7 @@ pub struct LocationSearchParams {
     pub name: Option<String>, //  Add more
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Type, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, PartialEq, Eq)]
 #[sqlx(type_name = "environment_type", rename_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
 pub enum Environment {

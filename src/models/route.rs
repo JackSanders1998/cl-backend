@@ -35,13 +35,33 @@ pub struct UpdateRoute {
 }
 
 #[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
-#[sqlx(type_name = "style", rename_all = "snake_case")]
+#[sqlx(type_name = "discipline", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Discipline {
     Boulder,
     Sport,
     TopRope,
 }
+
+impl Discipline {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Discipline::Boulder => "boulder",
+            Discipline::Sport => "sport",
+            Discipline::TopRope => "top_rope",
+        }
+    }
+
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "boulder" => Some(Discipline::Boulder),
+            "sport" => Some(Discipline::Sport),
+            "top_rope" => Some(Discipline::TopRope),
+            _ => None,
+        }
+    }
+}
+
 
 #[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
 #[sqlx(type_name = "scale", rename_all = "snake_case")]

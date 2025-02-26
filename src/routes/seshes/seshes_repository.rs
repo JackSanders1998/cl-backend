@@ -1,4 +1,4 @@
-use crate::models::{CreateSesh, SeshFromRow, SeshSearchParams, UpdateSesh};
+use crate::models::{CreateSesh, SeshFromRow, SeshRow, SeshSearchParams, UpdateSesh};
 use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
@@ -16,7 +16,7 @@ pub async fn create_sesh(
     state: Arc<AppState>,
     payload: CreateSesh,
     user_id: String,
-) -> Result<Id, PgError> {
+) -> Result<SeshRow, PgError> {
     info!(
         "create_sesh called by {} with payload: {:?}",
         user_id, payload
@@ -29,7 +29,7 @@ pub async fn create_sesh(
                 location_id,
                 notes
             ) VALUES ($1, $2, $3)
-            RETURNING sesh_id
+            RETURNING *
         "#,
     )
     .bind(user_id)
@@ -84,7 +84,31 @@ pub async fn search_seshes(
     }
 }
 
-pub async fn get_seshes_with_location_and_climbs(
+pub async fn get_sesh_and_location_by_id(
+    state: Arc<AppState>,
+    sesh_id: Uuid,
+) -> Result<SeshFromRow, PgError> {
+    sqlx::query_as(
+        r#"
+              SELECT
+                seshes.*,
+                locations.location_id,
+                locations.author,
+                locations.name,
+                locations.environment,
+                locations.description,
+                locations.created_at AS location_created_at,
+                locations.updated_at AS location_updated_at
+            FROM seshes
+              JOIN locations ON locations.location_id = seshes.location_id
+            WHERE sesh_id = $1
+            ORDER BY seshes.created_at DESC;
+        "#
+    ).bind(sesh_id).fetch_one(&state.db).await
+}
+
+
+pub async fn get_hydrated_seshes(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
 ) -> Result<Vec<SeshFromRow>, PgError> {
@@ -96,28 +120,47 @@ pub async fn get_seshes_with_location_and_climbs(
         r#"
             WITH sesh_data AS (
                 SELECT * FROM seshes WHERE seshes.sesh_id IN ( {} ) ORDER BY start DESC
-            )
-            SELECT
+            ), tick_and_location_data AS (
+              SELECT
                 sesh_data.*,
-                routes.climb_id,
-                routes.climb_type,
-                routes.style,
-                routes.scale,
-                routes.grade,
-                routes.attempt,
-                routes.pointer,
-                routes.notes AS climb_notes,
-                routes.created_at AS climb_created_at,
-                routes.updated_at AS climb_updated_at,
+
                 locations.location_id,
+                locations.author,
                 locations.name,
                 locations.environment,
+                locations.description,
                 locations.created_at AS location_created_at,
-                locations.updated_at AS location_updated_at
+                locations.updated_at AS location_updated_at,
+
+                ticks.tick_id,
+                ticks.route_id,
+                ticks.discipline,
+                ticks.attempt,
+                ticks.notes AS tick_notes,
+                ticks.lap_group,
+                ticks.created_at AS tick_created_at,
+                ticks.updated_at AS tick_updated_at
             FROM sesh_data
-            JOIN locations ON locations.location_id = sesh_data.location_id
-            LEFT JOIN climbs ON routes.sesh_id = sesh_data.sesh_id
-            ORDER BY sesh_data.created_at DESC;
+              JOIN locations ON locations.location_id = sesh_data.location_id
+              LEFT JOIN ticks ON ticks.sesh_id = sesh_data.sesh_id
+            ), route_data AS (
+              SELECT 
+              tick_and_location_data.*,
+
+              routes.route_id,
+              routes.location_id,
+              routes.grade,
+              routes.scale,
+              routes.disciplines,
+              routes.author AS route_author,
+              routes.description AS route_description,
+              routes.created_at AS route_created_at,
+              routes.updated_at AS route_updated_at
+            FROM tick_and_location_data
+                JOIN routes ON routes.route_id = tick_and_location_data.route_id
+            )
+            SELECT * FROM route_data
+            ORDER BY route_data.created_at DESC;
         "#,
         sesh_ids_string.join(",")
     );

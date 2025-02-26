@@ -1,4 +1,5 @@
-use crate::models::{Location, Sesh, SeshFromRow, TickQuery};
+use crate::models::{CreateSesh, Location, Sesh, SeshFromRow, TickQuery};
+use crate::routes::locations_repository::get_location_by_location_id;
 use crate::routes::seshes_repository::Id;
 use crate::routes::{seshes_repository, AppState};
 use std::collections::HashMap;
@@ -72,22 +73,65 @@ pub fn map_db_rows_to_sesh_object(db_rows: Vec<SeshFromRow>) -> Result<Vec<Sesh>
     Ok(mapped_seshes)
 }
 
-pub async fn get_seshes_with_location_and_climbs(
+pub async fn get_hydrated_seshes(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
 ) -> Result<Vec<Sesh>, ErrorKind> {
     info!(
-        "get_seshes_with_location_and_climbs called with {:?}",
+        "get_hydrated_seshes called with {:?}",
         sesh_ids
     );
 
-    match seshes_repository::get_seshes_with_location_and_climbs(state, sesh_ids).await {
+    match seshes_repository::get_hydrated_seshes(state, sesh_ids).await {
         Ok(db_rows) => map_db_rows_to_sesh_object(db_rows),
         Err(error) => {
             info!(
-                "get_seshes_with_location_and_climbs failed with error: {:?}",
+                "get_hydrated_seshes failed with error: {:?}",
                 error
             );
+            Err(ErrorKind::NotFound)
+        }
+    }
+}
+
+pub async fn create_sesh(
+    state: Arc<AppState>,
+    user_id: String,
+    payload: CreateSesh,
+) -> Result<Sesh, ErrorKind> {
+    let location = match get_location_by_location_id(state.clone(), payload.location_id).await {
+        Ok(location) => location,
+        Err(_) => return Err(ErrorKind::NotFound),
+    };
+
+    match seshes_repository::create_sesh(state.clone(), payload, user_id.clone()).await {
+        Ok(sesh) => Ok({
+            // reconcile active seshes
+            let _ = seshes_repository::reconcile_active_seshes(state, user_id).await;
+
+            // return Sesh
+            Sesh {
+                sesh_id: sesh.sesh_id,
+                user_id: sesh.user_id,
+                notes: sesh.notes,
+                start: sesh.start,
+                end: sesh.end,
+                created_at: sesh.created_at,
+                updated_at: sesh.updated_at,
+                location: Location {
+                    location_id: sesh.location_id,
+                    author: location.author,
+                    name: location.name,
+                    environment: location.environment,
+                    description: location.description,
+                    created_at: location.created_at,
+                    updated_at: location.updated_at,
+                },
+                ticks: Vec::new(),
+            }
+        }),
+        Err(error) => {
+            info!("create_sesh failed with error: {:?}", error);
             Err(ErrorKind::NotFound)
         }
     }

@@ -4,7 +4,20 @@ use uuid::Uuid;
 
 use super::{tick::Attempt, Discipline, Environment, Location, Scale};
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+// Literal representation of the seshes table in the database
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+pub struct SeshRow {
+    pub sesh_id: Uuid,
+    pub user_id: String,
+    pub location_id: Uuid,
+    pub notes: Option<String>,
+    pub start: chrono::DateTime<chrono::Utc>,
+    pub end: Option<chrono::DateTime<chrono::Utc>>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
 pub struct Sesh {
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -54,7 +67,7 @@ pub struct SeshFromRow {
     pub route_updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct TickQuery {
     pub tick_id: Uuid,
     pub route_id: Uuid,

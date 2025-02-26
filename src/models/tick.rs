@@ -17,7 +17,7 @@ pub struct Tick {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CreateTick {
     pub route_id: Uuid,
     pub sesh_id: Uuid,
@@ -25,6 +25,11 @@ pub struct CreateTick {
     pub attempt: Attempt,
     pub notes: Option<String>,
     pub lap_group: Option<Uuid>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TickSearchParams {
+    pub sesh_id: Uuid,
 }
 
 #[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
@@ -35,4 +40,25 @@ pub enum Attempt {
     Flash,
     Redpoint,
     Fall,
+}
+
+impl Attempt {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Attempt::Onsight => "onsight",
+            Attempt::Flash => "flash",
+            Attempt::Redpoint => "redpoint",
+            Attempt::Fall => "fall",
+        }
+    }
+
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "onsight" => Some(Attempt::Onsight),
+            "flash" => Some(Attempt::Flash),
+            "redpoint" => Some(Attempt::Redpoint),
+            "fall" => Some(Attempt::Fall),
+            _ => None,
+        }
+    }
 }

@@ -15,30 +15,8 @@ pub async fn create_sesh(
 ) -> impl IntoResponse {
     info!("create_sesh called with payload: {:?}", payload);
 
-    match seshes_repository::create_sesh(state.clone(), payload, get_claims(headers.clone())).await
-    {
-        Ok(sesh) => {
-            match seshes_service::get_seshes_with_location_and_climbs(
-                state.clone(),
-                vec![sesh.sesh_id],
-            )
-            .await
-            {
-                Ok(seshes) => {
-                    if seshes.len() == 1 {
-                        // Reconcile active seshes
-                        let _ =
-                            seshes_repository::reconcile_active_seshes(state, get_claims(headers))
-                                .await;
-                        (StatusCode::CREATED, Json(json!(seshes.into_iter().nth(0))))
-                            .into_response()
-                    } else {
-                        StatusCode::NOT_FOUND.into_response()
-                    }
-                }
-                Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
-            }
-        }
+    match seshes_service::create_sesh(state, get_claims(headers), payload).await {
+        Ok(sesh) => (StatusCode::CREATED, Json(json!(sesh))).into_response(),
         Err(error) => {
             error!("Failed to create sesh. Error: {:?}", error);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
@@ -50,7 +28,9 @@ pub async fn get_sesh_by_sesh_id(
     State(state): State<Arc<AppState>>,
     Path(sesh_id): Path<Uuid>,
 ) -> impl IntoResponse {
-    match seshes_service::get_seshes_with_location_and_climbs(state, vec![sesh_id]).await {
+    info!("get_sesh_by_sesh_id called with sesh_id: {:?}", sesh_id);
+
+    match seshes_service::get_hydrated_seshes(state, vec![sesh_id]).await {
         Ok(seshes) => {
             if seshes.len() == 1 {
                 (StatusCode::CREATED, Json(json!(seshes.into_iter().nth(0)))).into_response()
@@ -72,7 +52,7 @@ pub async fn search_seshes(
 ) -> impl IntoResponse {
     match seshes_repository::search_seshes(state.clone(), params, get_claims(headers)).await {
         Ok(sesh_ids) => {
-            match seshes_service::get_seshes_with_location_and_climbs(
+            match seshes_service::get_hydrated_seshes(
                 state,
                 seshes_service::get_ids_from_struct(sesh_ids),
             )
@@ -122,7 +102,7 @@ pub async fn update_sesh_by_sesh_id(
 ) -> impl IntoResponse {
     match seshes_repository::update_sesh_by_sesh_id(state.clone(), sesh_id, payload).await {
         Ok(sesh) => {
-            match seshes_service::get_seshes_with_location_and_climbs(state, vec![sesh.sesh_id])
+            match seshes_service::get_hydrated_seshes(state, vec![sesh.sesh_id])
                 .await
             {
                 Ok(seshes) => (StatusCode::OK, Json(seshes)).into_response(),
