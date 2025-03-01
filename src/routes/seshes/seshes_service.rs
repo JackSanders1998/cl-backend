@@ -1,4 +1,4 @@
-use crate::models::{CreateSesh, Location, SeshWithLocation, SeshWithLocationAndTicks};
+use crate::models::{CreateSesh, Location, SeshWithLocation, SeshWithLocationAndTicks };
 use crate::routes::locations_repository::get_location_by_location_id;
 use crate::routes::{seshes_repository, ticks_service, AppState};
 use std::io::ErrorKind;
@@ -116,46 +116,6 @@ pub async fn search_seshes(
         }
         Err(error) => {
             info!("search_seshes failed with error: {:?}", error);
-            Err(ErrorKind::NotFound)
-        }
-    }
-}
-
-pub async fn get_active_sesh(
-    state: Arc<AppState>,
-    user_id: String,
-) -> Result<SeshWithLocation, ErrorKind> {
-    info!("get_active_sesh called with {:?}", user_id);
-
-    match seshes_repository::get_active_seshes(state.clone(), user_id.clone()).await {
-        Ok(seshes) => {
-            if seshes.len() > 1 {
-                info!("More than one active sesh found. Reconciling...");
-                let _ = seshes_repository::reconcile_active_seshes(state, user_id).await;
-            };
-
-            let sesh = seshes.into_iter().nth(0).unwrap();
-            Ok(SeshWithLocation {
-                sesh_id: sesh.sesh_id,
-                user_id: sesh.user_id,
-                notes: sesh.notes,
-                start: sesh.start,
-                end: sesh.end,
-                created_at: sesh.created_at,
-                updated_at: sesh.updated_at,
-                location: Location {
-                    location_id: sesh.location_id,
-                    author: sesh.author,
-                    name: sesh.name,
-                    environment: sesh.environment,
-                    description: sesh.description,
-                    created_at: sesh.location_created_at,
-                    updated_at: sesh.location_updated_at,
-                },
-            })
-        }
-        Err(error) => {
-            info!("get_active_sesh failed with error: {:?}", error);
             Err(ErrorKind::NotFound)
         }
     }

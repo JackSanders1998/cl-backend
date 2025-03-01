@@ -75,7 +75,7 @@ mod test_routes {
         let client = reqwest::Client::new();
         let location = post_location(None).await;
         let route_a = post_route(location.location_id).await;
-        let route_vb = post_route(location.location_id).await;
+        let route_b = post_route(location.location_id).await;
 
         let get_response = client
             .get("http://127.0.0.1:8000/locations?name=locations_200 e2e test")
@@ -91,8 +91,8 @@ mod test_routes {
             .await
             .expect("Response should be Vec<location>");
 
-        delete_location(location_a.location_id).await;
-        delete_location(location_b.location_id).await;
+        delete_location(route_a.location_id).await;
+        delete_location(route_b.location_id).await;
 
         println!("{:?}", get_location);
 

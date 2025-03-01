@@ -38,7 +38,25 @@
       {
         "ordinal": 4,
         "name": "disciplines: Vec<Discipline>",
-        "type_info": "TextArray"
+        "type_info": {
+          "Custom": {
+            "name": "discipline_type[]",
+            "kind": {
+              "Array": {
+                "Custom": {
+                  "name": "discipline_type",
+                  "kind": {
+                    "Enum": [
+                      "boulder",
+                      "sport",
+                      "top_rope"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
         "ordinal": 5,

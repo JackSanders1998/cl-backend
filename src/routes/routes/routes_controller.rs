@@ -3,7 +3,7 @@ use crate::routes::{routes_repository, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use std::sync::Arc;
-use tracing::error;
+use tracing::{error, info};
 use uuid::Uuid;
 
 use super::routes_service;
@@ -41,7 +41,9 @@ pub async fn get_route_by_route_id(
     State(state): State<Arc<AppState>>,
     Path(route_id): Path<Uuid>,
 ) -> impl IntoResponse {
+    info!("get_route_by_route_id called with: {:?}", route_id);
     let result = routes_service::get_route_by_route_id(state, route_id).await;
+    info!("Result: {:?}", result);
 
     match result {
         Ok(route) => (StatusCode::OK, Json(route)).into_response(),

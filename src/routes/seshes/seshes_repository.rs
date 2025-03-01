@@ -137,10 +137,10 @@ pub async fn update_sesh_by_sesh_id(
     state: Arc<AppState>,
     sesh_id: Uuid,
     payload: UpdateSesh,
-) -> Result<Id, PgError> {
+) -> Result<SeshRow, PgError> {
     if payload.end_session == Option::from(true) {
         sqlx::query_as!(
-            Id,
+            SeshRow,
             r#"
                 UPDATE seshes
                 SET location_id = COALESCE($1, location_id),
@@ -148,7 +148,7 @@ pub async fn update_sesh_by_sesh_id(
                     "end" = CURRENT_TIMESTAMP
                 WHERE sesh_id = $3
                 AND seshes.end IS NULL
-                RETURNING sesh_id
+                RETURNING *
             "#,
             payload.location_id,
             payload.notes,
@@ -158,13 +158,13 @@ pub async fn update_sesh_by_sesh_id(
         .await
     } else {
         sqlx::query_as!(
-            Id,
+            SeshRow,
             r#"
                 UPDATE seshes
                 SET location_id = COALESCE($1, location_id),
                     notes = COALESCE($2, notes)
                 WHERE sesh_id = $3
-           RETURNING sesh_id
+           RETURNING *
         "#,
             payload.location_id,
             payload.notes,

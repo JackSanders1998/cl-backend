@@ -31,7 +31,10 @@ pub async fn get_route_by_route_id(
             created_at: route.created_at,
             updated_at: route.updated_at,
         }),
-        Err(_) => Err(ErrorKind::NotFound),
+        Err(error) => {
+            error!("Failed to get route by route_id. Error: {:?}", error);
+            Err(ErrorKind::NotFound)
+        }
     }
 }
 

@@ -66,7 +66,7 @@ pub struct CreateSesh {
     pub notes: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct UpdateSesh {
     pub location_id: Option<Uuid>,
     pub notes: Option<String>,
