@@ -77,18 +77,12 @@ pub async fn get_hydrated_seshes(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
 ) -> Result<Vec<Sesh>, ErrorKind> {
-    info!(
-        "get_hydrated_seshes called with {:?}",
-        sesh_ids
-    );
+    info!("get_hydrated_seshes called with {:?}", sesh_ids);
 
     match seshes_repository::get_hydrated_seshes(state, sesh_ids).await {
         Ok(db_rows) => map_db_rows_to_sesh_object(db_rows),
         Err(error) => {
-            info!(
-                "get_hydrated_seshes failed with error: {:?}",
-                error
-            );
+            info!("get_hydrated_seshes failed with error: {:?}", error);
             Err(ErrorKind::NotFound)
         }
     }

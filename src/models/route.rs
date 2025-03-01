@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq)]
 pub struct Route {
     pub route_id: Uuid,
     pub location_id: Uuid,
@@ -33,7 +33,7 @@ pub struct UpdateRoute {
     pub description: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, PartialEq, Eq)]
 #[sqlx(type_name = "discipline_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Discipline {
@@ -61,8 +61,7 @@ impl Discipline {
     }
 }
 
-
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, PartialEq, Eq)]
 #[sqlx(type_name = "scale", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Scale {
@@ -70,4 +69,25 @@ pub enum Scale {
     Font,
     Yosemite,
     French,
+}
+
+impl Scale {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Scale::Verm => "verm",
+            Scale::Font => "font",
+            Scale::Yosemite => "yosemite",
+            Scale::French => "french",
+        }
+    }
+
+    pub fn from_str(s: &str) -> Option<Self> {
+        match s {
+            "verm" => Some(Scale::Verm),
+            "font" => Some(Scale::Font),
+            "yosemite" => Some(Scale::Yosemite),
+            "french" => Some(Scale::French),
+            _ => None,
+        }
+    }
 }

@@ -38,7 +38,6 @@ pub async fn search_ticks(
     State(state): State<Arc<AppState>>,
     Query(params): Query<TickSearchParams>,
 ) -> impl IntoResponse {
-
     match ticks_repository::get_tick_and_location_by_sesh_id(state, params).await {
         Ok(ticks) => (StatusCode::OK, Json(ticks)).into_response(),
         Err(error) => {

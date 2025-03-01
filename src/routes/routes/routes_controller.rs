@@ -3,8 +3,8 @@ use crate::routes::{routes_repository, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use std::sync::Arc;
-use uuid::Uuid;
 use tracing::error;
+use uuid::Uuid;
 
 pub async fn create_route(
     State(state): State<Arc<AppState>>,
@@ -30,7 +30,8 @@ pub async fn create_route(
             .into_response(),
         Err(error) => {
             error!("Failed to create route. Error: {:?}", error);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()}
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 

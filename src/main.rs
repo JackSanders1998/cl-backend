@@ -6,7 +6,8 @@ use anyhow::Context;
 use axum::routing::get;
 use axum::Router;
 use cl_backend::routes::{
-    health_check, locations_router, preferences_router, routes_router, seshes_router, ticks_router, AppState
+    health_check, locations_router, preferences_router, routes_router, seshes_router, ticks_router,
+    AppState,
 };
 use cl_backend::utils::CustomTraceLayer;
 use clerk_rs::validators::axum::ClerkLayer;

@@ -101,14 +101,10 @@ pub async fn update_sesh_by_sesh_id(
     Json(payload): Json<UpdateSesh>,
 ) -> impl IntoResponse {
     match seshes_repository::update_sesh_by_sesh_id(state.clone(), sesh_id, payload).await {
-        Ok(sesh) => {
-            match seshes_service::get_hydrated_seshes(state, vec![sesh.sesh_id])
-                .await
-            {
-                Ok(seshes) => (StatusCode::OK, Json(seshes)).into_response(),
-                Err(_) => StatusCode::NOT_FOUND.into_response(),
-            }
-        }
+        Ok(sesh) => match seshes_service::get_hydrated_seshes(state, vec![sesh.sesh_id]).await {
+            Ok(seshes) => (StatusCode::OK, Json(seshes)).into_response(),
+            Err(_) => StatusCode::NOT_FOUND.into_response(),
+        },
         Err(error) => {
             error!("Failed to get delete sesh. Error: {:?}", error);
             StatusCode::NOT_FOUND.into_response()

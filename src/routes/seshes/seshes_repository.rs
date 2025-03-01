@@ -103,10 +103,12 @@ pub async fn get_sesh_and_location_by_id(
               JOIN locations ON locations.location_id = seshes.location_id
             WHERE sesh_id = $1
             ORDER BY seshes.created_at DESC;
-        "#
-    ).bind(sesh_id).fetch_one(&state.db).await
+        "#,
+    )
+    .bind(sesh_id)
+    .fetch_one(&state.db)
+    .await
 }
-
 
 pub async fn get_hydrated_seshes(
     state: Arc<AppState>,

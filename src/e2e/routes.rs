@@ -1,53 +1,43 @@
-/// This module contains end-to-end tests for the `locations` API.
-///
-/// # Tests
-///
-/// - `location_201`: Tests the creation of a location and verifies the response.
-/// - `location_200`: Tests retrieving a location by ID and verifies the response.
-/// - `locations_200`: Tests retrieving multiple locations by name and verifies the response.
-/// - `location_404`: Tests retrieving a non-existent location and expects a 404 status code.
-///
-/// # Helper Functions
-///
-/// - `post_location`: Creates a new location using the API and returns the created `Location`.
-/// - `delete_location`: Deletes a location by ID using the API.
 #[cfg(test)]
-mod test_locations {
+mod test_routes {
     use crate::{
-        e2e::{delete_location, post_location},
-        models::{Environment, Location},
+        e2e::{delete_location, delete_route, post_location, post_route},
+        models::{CreateLocation, Discipline, Environment, Location, Route, Scale},
     };
+    use uuid::Uuid;
 
     #[tokio::test]
-    async fn location_201() {
+    async fn route_201() {
         let location = post_location(None).await;
+        let route = post_route(location.location_id).await;
         delete_location(location.location_id).await;
+        delete_route(route.route_id).await;
 
         assert_eq!(
-            location,
-            Location {
+            route,
+            Route {
+                route_id: route.route_id,
                 location_id: location.location_id,
-                author: "e2e location author".to_string(),
-                name: "e2e location name".to_string(),
-                environment: Environment::Gym,
-                description: Some("test location description".to_string()),
-                created_at: location.created_at,
-                updated_at: location.updated_at
+                grade: "5.10a".to_string(),
+                scale: Scale::Yosemite,
+                disciplines: vec![Discipline::Sport, Discipline::TopRope],
+                author: "e2e route author".to_string(),
+                description: Some("test route description".to_string()),
+                created_at: route.created_at,
+                updated_at: route.updated_at
             }
         );
     }
 
     #[tokio::test]
-    async fn location_200() {
+    async fn route_200() {
         let bearer_auth = std::env::var("BEARER_AUTH").expect("BEARER_AUTH must be set");
         let client = reqwest::Client::new();
-        let post_location = post_location(None).await;
+        let location = post_location(None).await;
+        let route = post_route(location.location_id).await;
 
         let get_response = client
-            .get(&format!(
-                "http://127.0.0.1:8000/locations/{}",
-                post_location.location_id
-            ))
+            .get(&format!("http://127.0.0.1:8000/routes/{}", route.route_id))
             .bearer_auth(bearer_auth.clone())
             .send()
             .await
@@ -55,31 +45,35 @@ mod test_locations {
 
         assert_eq!(get_response.status(), 200);
 
-        let get_location: Location = get_response
+        let get_route: Route = get_response
             .json()
             .await
-            .expect("Response should be {status: 'healthy'}");
+            .expect("Response should be a Route");
 
-        delete_location(get_location.location_id).await;
+        delete_route(route.route_id).await;
+        delete_location(location.location_id).await;
 
         assert_eq!(
-            get_location,
-            Location {
-                location_id: get_location.location_id,
-                author: "e2e location author".to_string(),
-                name: "e2e location name".to_string(),
-                environment: Environment::Gym,
-                description: Some("test location description".to_string()),
-                created_at: get_location.created_at,
-                updated_at: get_location.updated_at
+            get_route,
+            Route {
+                location_id: location.location_id,
+                route_id: route.route_id,
+                grade: "5.10a".to_string(),
+                scale: Scale::Yosemite,
+                disciplines: vec![Discipline::Sport, Discipline::TopRope],
+                author: "e2e route author".to_string(),
+                description: Some("test route description".to_string()),
+                created_at: route.created_at,
+                updated_at: route.updated_at
             }
         );
     }
 
     #[tokio::test]
-    async fn locations_200() {
+    async fn routes_200() {
         let bearer_auth = std::env::var("BEARER_AUTH").expect("BEARER_AUTH must be set");
         let client = reqwest::Client::new();
+        let location = post_location(None).await;
         let location_a = post_location(Some("locations_200 e2e test".to_string())).await;
         let location_b = post_location(Some("locations_200 e2e test".to_string())).await;
 
