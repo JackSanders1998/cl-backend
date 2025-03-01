@@ -1,4 +1,6 @@
-use crate::models::{CreateSesh, Location, Sesh, SeshFromRow, TickQuery};
+use crate::models::{
+    CreateSesh, Location, SeshFromRow, SeshWithLocation, SeshWithLocationAndTicks, TickQuery,
+};
 use crate::routes::locations_repository::get_location_by_location_id;
 use crate::routes::seshes_repository::Id;
 use crate::routes::{seshes_repository, AppState};
@@ -12,10 +14,12 @@ pub fn get_ids_from_struct(sesh_ids: Vec<Id>) -> Vec<Uuid> {
     sesh_ids.iter().map(|&i| i.sesh_id).collect()
 }
 
-pub fn map_db_rows_to_sesh_object(db_rows: Vec<SeshFromRow>) -> Result<Vec<Sesh>, ErrorKind> {
+pub fn map_db_rows_to_sesh_object(
+    db_rows: Vec<SeshFromRow>,
+) -> Result<Vec<SeshWithLocationAndTicks>, ErrorKind> {
     info!("map_db_rows_to_sesh_object called with: {:?}", db_rows);
 
-    let mut mapped_seshes: Vec<Sesh> = Vec::new();
+    let mut mapped_seshes: Vec<SeshWithLocationAndTicks> = Vec::new();
 
     let mut seshes: HashMap<Uuid, Vec<SeshFromRow>> = HashMap::new();
 
@@ -37,7 +41,7 @@ pub fn map_db_rows_to_sesh_object(db_rows: Vec<SeshFromRow>) -> Result<Vec<Sesh>
                     updated_at: first_sesh.location_updated_at,
                 };
 
-                let mut hydrated_sesh: Sesh = Sesh {
+                let mut hydrated_sesh: SeshWithLocationAndTicks = SeshWithLocationAndTicks {
                     sesh_id: first_sesh.sesh_id,
                     user_id: first_sesh.user_id.clone(),
                     notes: first_sesh.notes.clone(),
@@ -76,7 +80,7 @@ pub fn map_db_rows_to_sesh_object(db_rows: Vec<SeshFromRow>) -> Result<Vec<Sesh>
 pub async fn get_hydrated_seshes(
     state: Arc<AppState>,
     sesh_ids: Vec<Uuid>,
-) -> Result<Vec<Sesh>, ErrorKind> {
+) -> Result<Vec<SeshWithLocationAndTicks>, ErrorKind> {
     info!("get_hydrated_seshes called with {:?}", sesh_ids);
 
     match seshes_repository::get_hydrated_seshes(state, sesh_ids).await {
@@ -92,7 +96,7 @@ pub async fn create_sesh(
     state: Arc<AppState>,
     user_id: String,
     payload: CreateSesh,
-) -> Result<Sesh, ErrorKind> {
+) -> Result<SeshWithLocationAndTicks, ErrorKind> {
     let location = match get_location_by_location_id(state.clone(), payload.location_id).await {
         Ok(location) => location,
         Err(_) => return Err(ErrorKind::NotFound),
@@ -103,8 +107,8 @@ pub async fn create_sesh(
             // reconcile active seshes
             let _ = seshes_repository::reconcile_active_seshes(state, user_id).await;
 
-            // return Sesh
-            Sesh {
+            // return SeshWithLocationAndTicks
+            SeshWithLocationAndTicks {
                 sesh_id: sesh.sesh_id,
                 user_id: sesh.user_id,
                 notes: sesh.notes,
@@ -126,6 +130,44 @@ pub async fn create_sesh(
         }),
         Err(error) => {
             info!("create_sesh failed with error: {:?}", error);
+            Err(ErrorKind::NotFound)
+        }
+    }
+}
+
+pub async fn search_seshes(
+    state: Arc<AppState>,
+    user_id: String,
+) -> Result<Vec<SeshWithLocation>, ErrorKind> {
+    match seshes_repository::search_seshes(state, user_id).await {
+        Ok(seshes) => {
+            let mut mapped_seshes: Vec<SeshWithLocation> = Vec::new();
+
+            for sesh in seshes {
+                mapped_seshes.push(SeshWithLocation {
+                    sesh_id: sesh.sesh_id,
+                    user_id: sesh.user_id,
+                    notes: sesh.notes,
+                    start: sesh.start,
+                    end: sesh.end,
+                    created_at: sesh.created_at,
+                    updated_at: sesh.updated_at,
+                    location: Location {
+                        location_id: sesh.location_id,
+                        author: sesh.author,
+                        name: sesh.name,
+                        environment: sesh.environment,
+                        description: sesh.description,
+                        created_at: sesh.location_created_at,
+                        updated_at: sesh.location_updated_at,
+                    },
+                });
+            }
+
+            Ok(mapped_seshes)
+        }
+        Err(error) => {
+            info!("search_seshes failed with error: {:?}", error);
             Err(ErrorKind::NotFound)
         }
     }

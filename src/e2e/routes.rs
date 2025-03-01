@@ -74,8 +74,8 @@ mod test_routes {
         let bearer_auth = std::env::var("BEARER_AUTH").expect("BEARER_AUTH must be set");
         let client = reqwest::Client::new();
         let location = post_location(None).await;
-        let location_a = post_location(Some("locations_200 e2e test".to_string())).await;
-        let location_b = post_location(Some("locations_200 e2e test".to_string())).await;
+        let route_a = post_route(location.location_id).await;
+        let route_vb = post_route(location.location_id).await;
 
         let get_response = client
             .get("http://127.0.0.1:8000/locations?name=locations_200 e2e test")

@@ -18,14 +18,45 @@ pub struct SeshRow {
 }
 
 #[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
-pub struct Sesh {
+pub struct SeshWithLocation {
     pub sesh_id: Uuid,
     pub user_id: String,
+    pub notes: Option<String>,
+    pub location: Location,
     pub start: chrono::DateTime<chrono::Utc>,
     pub end: Option<chrono::DateTime<chrono::Utc>>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+pub struct SeshWithLocationSqlx {
+    pub sesh_id: Uuid,
+    pub user_id: String,
+    pub notes: Option<String>,
+    pub start: chrono::DateTime<chrono::Utc>,
+    pub end: Option<chrono::DateTime<chrono::Utc>>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+
+    pub location_id: Uuid,
+    pub author: String,
+    pub name: String,
+    pub environment: Environment,
+    pub description: Option<String>,
+    pub location_created_at: chrono::DateTime<chrono::Utc>,
+    pub location_updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+pub struct SeshWithLocationAndTicks {
+    pub sesh_id: Uuid,
+    pub user_id: String,
+    pub notes: Option<String>,
     pub location: Location,
     pub ticks: Vec<TickQuery>,
-    pub notes: Option<String>,
+    pub start: chrono::DateTime<chrono::Utc>,
+    pub end: Option<chrono::DateTime<chrono::Utc>>,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
@@ -83,11 +114,6 @@ pub struct TickQuery {
 pub struct CreateSesh {
     pub location_id: Uuid,
     pub notes: Option<String>,
-}
-
-#[derive(Deserialize)]
-pub struct SeshSearchParams {
-    pub notes: Option<String>, //  Add more
 }
 
 #[derive(Deserialize)]

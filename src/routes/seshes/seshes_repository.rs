@@ -1,4 +1,4 @@
-use crate::models::{CreateSesh, SeshFromRow, SeshRow, SeshSearchParams, UpdateSesh};
+use crate::models::{CreateSesh, SeshFromRow, SeshRow, SeshWithLocationSqlx, UpdateSesh};
 use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
@@ -7,7 +7,7 @@ use std::sync::Arc;
 use tracing::info;
 use uuid::Uuid;
 
-#[derive(Clone, Copy, FromRow)]
+#[derive(Clone, Copy, FromRow, Debug)]
 pub struct Id {
     pub(crate) sesh_id: Uuid,
 }
@@ -39,49 +39,29 @@ pub async fn create_sesh(
     .await
 }
 
-pub async fn reconcile_active_seshes(state: Arc<AppState>, user_id: String) -> Result<Id, PgError> {
-    info!("reconcile_active_seshes called by {}", user_id,);
-
-    sqlx::query_as(
-        r#"
-        WITH latest_sesh AS (
-            SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC LIMIT 1
-        )
-        UPDATE seshes
-        SET "end" = CURRENT_TIMESTAMP
-        WHERE user_id = $1 AND sesh_id NOT IN (SELECT sesh_id FROM latest_sesh) RETURNING sesh_id "#,
-    )
-    .bind(user_id)
-    .fetch_one(&state.db)
-    .await
-}
-
 pub async fn search_seshes(
     state: Arc<AppState>,
-    params: SeshSearchParams,
     user_id: String,
-) -> Result<Vec<Id>, PgError> {
-    match params.notes {
-        Some(notes) => {
-            let formatted_name = "%".to_owned() + &*notes + "%";
-            sqlx::query_as::<_, Id>(
-                "SELECT sesh_id FROM seshes WHERE user_id = $1 AND notes LIKE $2 ORDER BY start DESC;"
-            )
-            .bind(user_id)
-            .bind(formatted_name)
-            .fetch_all(&state.db)
-            .await
-        }
-        None => {
-            sqlx::query_as!(
-                Id,
-                "SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC;",
-                user_id
-            )
-            .fetch_all(&state.db)
-            .await
-        }
-    }
+) -> Result<Vec<SeshWithLocationSqlx>, PgError> {
+    sqlx::query_as(
+        r#"
+              SELECT
+                seshes.*,
+                locations.author,
+                locations.name,
+                locations.environment,
+                locations.description,
+                locations.created_at AS location_created_at,
+                locations.updated_at AS location_updated_at
+            FROM seshes
+              JOIN locations ON locations.location_id = seshes.location_id
+            WHERE user_id = $1
+            ORDER BY seshes.created_at DESC;
+        "#,
+    )
+    .bind(user_id)
+    .fetch_all(&state.db)
+    .await
 }
 
 pub async fn get_sesh_and_location_by_id(
@@ -106,6 +86,23 @@ pub async fn get_sesh_and_location_by_id(
         "#,
     )
     .bind(sesh_id)
+    .fetch_one(&state.db)
+    .await
+}
+
+pub async fn reconcile_active_seshes(state: Arc<AppState>, user_id: String) -> Result<Id, PgError> {
+    info!("reconcile_active_seshes called by {}", user_id,);
+
+    sqlx::query_as(
+        r#"
+        WITH latest_sesh AS (
+            SELECT sesh_id FROM seshes WHERE user_id = $1 ORDER BY start DESC LIMIT 1
+        )
+        UPDATE seshes
+        SET "end" = CURRENT_TIMESTAMP
+        WHERE user_id = $1 AND sesh_id NOT IN (SELECT sesh_id FROM latest_sesh) RETURNING sesh_id "#,
+    )
+    .bind(user_id)
     .fetch_one(&state.db)
     .await
 }

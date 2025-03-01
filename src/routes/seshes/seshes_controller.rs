@@ -1,4 +1,4 @@
-use crate::models::{CreateSesh, SeshSearchParams, UpdateSesh};
+use crate::models::{CreateSesh, UpdateSesh};
 use crate::routes::{get_claims, seshes_repository, seshes_service, AppState};
 use axum::extract::{Path, Query, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
@@ -48,20 +48,9 @@ pub async fn get_sesh_by_sesh_id(
 pub async fn search_seshes(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
-    Query(params): Query<SeshSearchParams>,
 ) -> impl IntoResponse {
-    match seshes_repository::search_seshes(state.clone(), params, get_claims(headers)).await {
-        Ok(sesh_ids) => {
-            match seshes_service::get_hydrated_seshes(
-                state,
-                seshes_service::get_ids_from_struct(sesh_ids),
-            )
-            .await
-            {
-                Ok(seshes) => (StatusCode::OK, Json(seshes)).into_response(),
-                Err(_) => StatusCode::NOT_FOUND.into_response(),
-            }
-        }
+    match seshes_service::search_seshes(state, get_claims(headers)).await {
+        Ok(seshes) => (StatusCode::OK, Json(seshes)).into_response(),
         Err(error) => {
             error!("Failed to get search seshes. Error: {:?}", error);
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
