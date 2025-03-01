@@ -1,11 +1,10 @@
+use crate::models::{Discipline, Environment, RouteWithLocation, Scale};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-use super::Discipline;
-
 #[derive(Serialize, Deserialize, FromRow, Debug)]
-pub struct Tick {
+pub struct TickRow {
     pub tick_id: Uuid,
     pub route_id: Uuid,
     pub sesh_id: Uuid,
@@ -15,6 +14,50 @@ pub struct Tick {
     pub lap_group: Option<Uuid>,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Debug, Clone)]
+pub struct TickWithRoute {
+    pub tick_id: Uuid,
+    pub route_id: Uuid,
+    pub sesh_id: Uuid,
+    pub discipline: Discipline,
+    pub attempt: Attempt,
+    pub notes: Option<String>,
+    pub lap_group: Option<Uuid>,
+    pub route: RouteWithLocation,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Debug)]
+pub struct TickWithRouteSqlx {
+    // tick
+    pub tick_id: Uuid,
+    pub sesh_id: Uuid,
+    pub discipline: Discipline,
+    pub attempt: Attempt,
+    pub notes: Option<String>,
+    pub lap_group: Option<Uuid>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+    // route
+    pub route_id: Uuid,
+    pub grade: String,
+    pub scale: Scale,
+    pub disciplines: Vec<Discipline>,
+    pub author: String,
+    pub description: Option<String>,
+    pub route_created_at: chrono::DateTime<chrono::Utc>,
+    pub route_updated_at: chrono::DateTime<chrono::Utc>,
+    // location
+    pub location_id: Uuid,
+    pub location_author: String,
+    pub name: String,
+    pub environment: Environment,
+    pub location_description: Option<String>,
+    pub location_created_at: chrono::DateTime<chrono::Utc>,
+    pub location_updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
 use crate::{
-    models::{CreateTick, Tick, TickSearchParams},
+    models::{CreateTick, TickRow},
     routes::AppState,
 };
 use sqlx::Error as PgError;
+use uuid::Uuid;
 
-pub async fn create_tick(state: Arc<AppState>, payload: CreateTick) -> Result<Tick, PgError> {
+pub async fn create_tick(state: Arc<AppState>, payload: CreateTick) -> Result<TickRow, PgError> {
     sqlx::query_as(
         r#"
             INSERT INTO ticks (
@@ -30,12 +31,9 @@ pub async fn create_tick(state: Arc<AppState>, payload: CreateTick) -> Result<Ti
     .await
 }
 
-pub async fn get_tick_and_location_by_sesh_id(
-    state: Arc<AppState>,
-    params: TickSearchParams,
-) -> Result<Vec<Tick>, PgError> {
+pub async fn search_ticks(state: Arc<AppState>, sesh_id: Uuid) -> Result<Vec<TickRow>, PgError> {
     sqlx::query_as("SELECT * FROM ticks WHERE sesh_id = $1")
-        .bind(params.sesh_id)
+        .bind(sesh_id)
         .fetch_all(&state.db)
         .await
 }

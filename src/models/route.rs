@@ -1,3 +1,4 @@
+use crate::models::{Environment, Location};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
@@ -13,6 +14,39 @@ pub struct Route {
     pub description: Option<String>,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq, Clone)]
+pub struct RouteWithLocation {
+    pub route_id: Uuid,
+    pub grade: String,
+    pub scale: Scale,
+    pub disciplines: Vec<Discipline>,
+    pub author: String,
+    pub description: Option<String>,
+    pub location: Location,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq, Clone)]
+pub struct RouteWithLocationSqlx {
+    pub route_id: Uuid,
+    pub grade: String,
+    pub scale: Scale,
+    pub disciplines: Vec<Discipline>,
+    pub author: String,
+    pub description: Option<String>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+
+    pub location_id: Uuid,
+    pub location_author: String,
+    pub name: String,
+    pub environment: Environment,
+    pub location_description: Option<String>,
+    pub location_created_at: chrono::DateTime<chrono::Utc>,
+    pub location_updated_at: chrono::DateTime<chrono::Utc>,
 }
 
 #[derive(Serialize, Deserialize)]

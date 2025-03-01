@@ -2,7 +2,7 @@ use uuid::Uuid;
 
 use crate::models::{
     Attempt, CreateLocation, CreateRoute, CreateSesh, CreateTick, Discipline, Environment,
-    Location, Route, Scale, Tick,
+    Location, Route, Scale, TickWithRoute,
 };
 
 // >>>>>>> Location Helpers <<<<<<<
@@ -85,7 +85,7 @@ pub async fn delete_route(route_id: Uuid) {
 }
 
 // >>>>>>> Tick Helpers <<<<<<<
-pub async fn post_tick(sesh_id: Uuid, route_id: Uuid) -> Tick {
+pub async fn post_tick(sesh_id: Uuid, route_id: Uuid) -> TickWithRoute {
     let bearer_auth: String = std::env::var("BEARER_AUTH").expect("BEARER_AUTH must be set");
     let client = reqwest::Client::new();
 
@@ -124,7 +124,7 @@ pub async fn delete_tick(tick_id: Uuid) {
 }
 
 // >>>>>>> Sesh Helpers <<<<<<<
-pub async fn post_sesh(location_id: Uuid) -> Tick {
+pub async fn post_sesh(location_id: Uuid) -> TickWithRoute {
     let bearer_auth: String = std::env::var("BEARER_AUTH").expect("BEARER_AUTH must be set");
     let client = reqwest::Client::new();
 

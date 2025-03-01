@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 pub mod routes_controller;
 pub mod routes_repository;
+pub mod routes_service;
 
 use crate::routes::routes_controller::*;
 
