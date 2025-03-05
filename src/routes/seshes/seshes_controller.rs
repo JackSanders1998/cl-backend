@@ -67,7 +67,7 @@ pub async fn get_active_sesh(
                 return (StatusCode::OK, Json(())).into_response();
             }
             let sesh = active_seshes.into_iter().nth(0).unwrap();
-            let active_sesh =  SeshWithLocation {
+            let active_sesh = SeshWithLocation {
                 sesh_id: sesh.sesh_id,
                 user_id: sesh.user_id,
                 notes: sesh.notes,
@@ -87,10 +87,11 @@ pub async fn get_active_sesh(
             };
 
             (StatusCode::OK, Json(active_sesh)).into_response()
-        },
+        }
         Err(error) => {
             error!("Failed to get an active sesh. Error: {:?}", error);
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()        }
+            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        }
     }
 }
 

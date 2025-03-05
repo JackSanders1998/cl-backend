@@ -1,4 +1,4 @@
-use crate::models::{CreateSesh, Location, SeshWithLocation, SeshWithLocationAndTicks };
+use crate::models::{CreateSesh, Location, SeshWithLocation, SeshWithLocationAndTicks};
 use crate::routes::locations_repository::get_location_by_location_id;
 use crate::routes::{seshes_repository, ticks_service, AppState};
 use std::io::ErrorKind;
