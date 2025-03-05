@@ -1,5 +1,5 @@
+use crate::api::{routes_service, ticks_repository, AppState};
 use crate::models::{CreateTick, TickWithRoute};
-use crate::routes::{routes_service, ticks_repository, AppState};
 use std::io::ErrorKind;
 use std::sync::Arc;
 use tracing::info;

@@ -1,5 +1,5 @@
+use crate::api::AppState;
 use crate::models::{CreateSesh, SeshRow, SeshWithLocationSqlx, UpdateSesh};
-use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
 use sqlx::FromRow;

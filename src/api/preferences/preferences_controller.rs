@@ -1,5 +1,5 @@
+use crate::api::{get_claims, preferences_repository, AppState};
 use crate::models::{CreatePreference, Preference};
-use crate::routes::{get_claims, preferences_repository, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use http::HeaderMap;

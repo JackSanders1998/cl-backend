@@ -1,6 +1,6 @@
+use crate::api::locations_repository::get_location_by_location_id;
+use crate::api::{seshes_repository, ticks_service, AppState};
 use crate::models::{CreateSesh, Location, SeshWithLocation, SeshWithLocationAndTicks};
-use crate::routes::locations_repository::get_location_by_location_id;
-use crate::routes::{seshes_repository, ticks_service, AppState};
 use std::io::ErrorKind;
 use std::sync::Arc;
 use tracing::info;
@@ -68,7 +68,7 @@ pub async fn get_sesh_by_sesh_id(
         notes: sesh.notes,
         start: sesh.start,
         end: sesh.end,
-        ticks: ticks,
+        ticks,
         location: Location {
             location_id: sesh.location_id,
             author: sesh.author,

@@ -42,5 +42,5 @@ fn get_claims(header: HeaderMap) -> String {
 
     let claims: Claims = serde_json::from_str(String::from_utf8(bytes).unwrap().as_str()).unwrap();
 
-    return claims.sub;
+    claims.sub
 }

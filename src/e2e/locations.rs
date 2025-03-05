@@ -44,7 +44,7 @@ mod test_locations {
         let post_location = post_location(None).await;
 
         let get_response = client
-            .get(&format!(
+            .get(format!(
                 "http://127.0.0.1:8000/locations/{}",
                 post_location.location_id
             ))

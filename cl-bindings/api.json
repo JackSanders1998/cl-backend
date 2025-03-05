@@ -12,7 +12,7 @@
     "/healthcheck": {
       "get": {
         "tags": [
-          "cl_backend::routes::health_check"
+          "cl_backend::api::health_check"
         ],
         "operationId": "health_check",
         "responses": {
@@ -25,7 +25,7 @@
     "/locations": {
       "get": {
         "tags": [
-          "cl_backend::routes::locations::locations_controller"
+          "cl_backend::api::locations::locations_controller"
         ],
         "operationId": "search_locations",
         "parameters": [
@@ -60,7 +60,7 @@
       },
       "post": {
         "tags": [
-          "cl_backend::routes::locations::locations_controller"
+          "cl_backend::api::locations::locations_controller"
         ],
         "operationId": "create_location",
         "requestBody": {
@@ -93,7 +93,7 @@
     "/locations/{location_id}": {
       "get": {
         "tags": [
-          "cl_backend::routes::locations::locations_controller"
+          "cl_backend::api::locations::locations_controller"
         ],
         "operationId": "get_location_by_location_id",
         "parameters": [
@@ -126,7 +126,7 @@
       },
       "delete": {
         "tags": [
-          "cl_backend::routes::locations::locations_controller"
+          "cl_backend::api::locations::locations_controller"
         ],
         "operationId": "delete_location_by_location_id",
         "parameters": [
@@ -152,7 +152,7 @@
       },
       "patch": {
         "tags": [
-          "cl_backend::routes::locations::locations_controller"
+          "cl_backend::api::locations::locations_controller"
         ],
         "operationId": "update_location_by_location_id",
         "parameters": [
@@ -195,9 +195,120 @@
       }
     }
   },
+  "components": {
+    "schemas": {
+      "CreateLocation": {
+        "type": "object",
+        "required": [
+          "author",
+          "name",
+          "environment"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Environment": {
+        "type": "string",
+        "enum": [
+          "gym",
+          "outdoor"
+        ]
+      },
+      "Location": {
+        "type": "object",
+        "required": [
+          "location_id",
+          "author",
+          "name",
+          "environment",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "LocationSearchParams": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateLocation": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "environment": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Environment"
+              }
+            ],
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "token_jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "security": [
     {
-      "token_jwt": []
+      "token_jwt": [
+        "general"
+      ]
     }
   ],
   "tags": [

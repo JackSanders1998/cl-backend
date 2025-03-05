@@ -1,4 +1,4 @@
-use crate::routes::AppState;
+use crate::api::AppState;
 use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use std::sync::Arc;
@@ -7,7 +7,7 @@ pub mod seshes_controller;
 pub mod seshes_repository;
 pub mod seshes_service;
 
-use crate::routes::seshes_controller::*;
+use crate::api::seshes_controller::*;
 
 pub fn seshes_router() -> Router<Arc<AppState>> {
     Router::new()

@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
+    api::AppState,
     models::{CreateTick, TickRow},
-    routes::AppState,
 };
 use sqlx::Error as PgError;
 use uuid::Uuid;

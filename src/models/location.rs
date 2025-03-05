@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use utoipa::IntoParams;
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq, Clone)]
+#[derive(Serialize, Deserialize, FromRow, Debug, PartialEq, Eq, Clone, ToSchema)]
 pub struct Location {
     pub location_id: Uuid,
     pub author: String,
@@ -14,7 +14,7 @@ pub struct Location {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateLocation {
     pub author: String,
     pub name: String,
@@ -22,19 +22,19 @@ pub struct CreateLocation {
     pub description: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct UpdateLocation {
     pub name: Option<String>,
     pub environment: Option<Environment>,
     pub description: Option<String>,
 }
 
-#[derive(Deserialize, IntoParams)]
+#[derive(Deserialize, IntoParams, ToSchema)]
 pub struct LocationSearchParams {
     pub name: Option<String>, //  Add more
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, PartialEq, Eq, ToSchema)]
 #[sqlx(type_name = "environment_type", rename_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
 pub enum Environment {

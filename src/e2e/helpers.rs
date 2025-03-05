@@ -36,7 +36,7 @@ pub async fn delete_location(location_id: Uuid) {
     let client = reqwest::Client::new();
 
     let response = client
-        .delete(&format!("http://127.0.0.1:8000/locations/{}", location_id))
+        .delete(format!("http://127.0.0.1:8000/locations/{}", location_id))
         .bearer_auth(bearer_auth)
         .send()
         .await
@@ -75,7 +75,7 @@ pub async fn delete_route(route_id: Uuid) {
     let client = reqwest::Client::new();
 
     let response = client
-        .delete(&format!("http://127.0.0.1:8000/routes/{}", route_id))
+        .delete(format!("http://127.0.0.1:8000/routes/{}", route_id))
         .bearer_auth(bearer_auth)
         .send()
         .await
@@ -114,7 +114,7 @@ pub async fn delete_tick(tick_id: Uuid) {
     let client = reqwest::Client::new();
 
     let response = client
-        .delete(&format!("http://127.0.0.1:8000/ticks/{}", tick_id))
+        .delete(format!("http://127.0.0.1:8000/ticks/{}", tick_id))
         .bearer_auth(bearer_auth)
         .send()
         .await
@@ -149,7 +149,7 @@ pub async fn delete_sesh(sesh_id: Uuid) {
     let client = reqwest::Client::new();
 
     let response = client
-        .delete(&format!("http://127.0.0.1:8000/seshes/{}", sesh_id))
+        .delete(format!("http://127.0.0.1:8000/seshes/{}", sesh_id))
         .bearer_auth(bearer_auth)
         .send()
         .await

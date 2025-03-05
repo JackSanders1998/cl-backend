@@ -1,5 +1,5 @@
+use crate::api::{ticks_service, AppState};
 use crate::models::{CreateTick, TickSearchParams};
-use crate::routes::{ticks_service, AppState};
 use axum::extract::{Query, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use serde_json::json;

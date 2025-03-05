@@ -2,9 +2,8 @@
 mod test_routes {
     use crate::{
         e2e::{delete_location, delete_route, post_location, post_route},
-        models::{CreateLocation, Discipline, Environment, Location, Route, Scale},
+        models::{Discipline, Location, Route, Scale},
     };
-    use uuid::Uuid;
 
     #[tokio::test]
     async fn route_201() {
@@ -37,7 +36,7 @@ mod test_routes {
         let route = post_route(location.location_id).await;
 
         let get_response = client
-            .get(&format!("http://127.0.0.1:8000/routes/{}", route.route_id))
+            .get(format!("http://127.0.0.1:8000/routes/{}", route.route_id))
             .bearer_auth(bearer_auth.clone())
             .send()
             .await

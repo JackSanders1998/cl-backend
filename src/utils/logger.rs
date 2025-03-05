@@ -7,7 +7,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 pub struct CustomTraceLayer {}
 
 impl CustomTraceLayer {
-    pub fn init() -> () {
+    pub fn init() {
         // https://github.com/tokio-rs/axum/blob/main/examples/tracing-aka-logging/src/main.rs
         tracing_subscriber::registry()
             .with(
@@ -25,7 +25,7 @@ impl CustomTraceLayer {
             .init();
     }
 
-    pub fn new() -> TraceLayer<HttpMakeClassifier, fn(&Request<Body>) -> Span> {
+    pub fn setup() -> TraceLayer<HttpMakeClassifier, fn(&Request<Body>) -> Span> {
         // https://github.com/tokio-rs/axum/blob/main/examples/tracing-aka-logging/src/main.rs
         TraceLayer::new_for_http().make_span_with(|request: &Request<Body>| {
             // Log the matched route's path (with placeholders not filled in).

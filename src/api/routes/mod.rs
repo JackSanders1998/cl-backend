@@ -1,4 +1,4 @@
-use crate::routes::AppState;
+use crate::api::AppState;
 use axum::routing::{delete, get, post};
 use axum::Router;
 use std::sync::Arc;
@@ -7,7 +7,7 @@ pub mod routes_controller;
 pub mod routes_repository;
 pub mod routes_service;
 
-use crate::routes::routes_controller::*;
+use crate::api::routes_controller::*;
 
 pub fn routes_router() -> Router<Arc<AppState>> {
     Router::new()

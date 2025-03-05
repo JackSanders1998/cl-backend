@@ -1,5 +1,5 @@
+use crate::api::{get_claims, seshes_repository, seshes_service, AppState};
 use crate::models::{CreateSesh, Location, SeshWithLocation, UpdateSesh};
-use crate::routes::{get_claims, seshes_repository, seshes_service, AppState};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use http::HeaderMap;
@@ -63,10 +63,10 @@ pub async fn get_active_sesh(
                 info!("More than one active sesh found. Reconciling...");
                 let _ = seshes_repository::reconcile_active_seshes(state, user_id).await;
             };
-            if active_seshes.len() == 0 {
+            if active_seshes.is_empty() {
                 return (StatusCode::OK, Json(())).into_response();
             }
-            let sesh = active_seshes.into_iter().nth(0).unwrap();
+            let sesh = active_seshes.into_iter().next().unwrap();
             let active_sesh = SeshWithLocation {
                 sesh_id: sesh.sesh_id,
                 user_id: sesh.user_id,

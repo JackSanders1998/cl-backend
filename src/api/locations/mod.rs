@@ -1,7 +1,7 @@
 pub mod locations_controller;
 pub mod locations_repository;
 
-use crate::routes::AppState;
+use crate::api::AppState;
 use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use std::sync::Arc;

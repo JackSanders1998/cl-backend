@@ -1,5 +1,5 @@
+use crate::api::{locations_repository, AppState};
 use crate::models::{CreateLocation, Location, LocationSearchParams, UpdateLocation};
-use crate::routes::{locations_repository, AppState};
 use axum::extract::{Path, Query, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
 use std::sync::Arc;

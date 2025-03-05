@@ -7,7 +7,7 @@ use std::time::Duration;
 use anyhow::Context;
 use axum::routing::get;
 use axum::Router;
-use cl_backend::routes::{
+use cl_backend::api::{
     health_check, locations_router, preferences_router, routes_router, seshes_router, ticks_router,
     AppState,
 };
@@ -16,8 +16,10 @@ use clerk_rs::validators::axum::ClerkLayer;
 use clerk_rs::ClerkConfiguration;
 use shuttle_runtime::SecretStore;
 use sqlx::postgres::PgPoolOptions;
-use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
-use utoipa::{Modify, OpenApi};
+use utoipa::{
+    openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
+    Modify, OpenApi,
+};
 use utoipa_swagger_ui::SwaggerUi;
 use utoipauto::utoipauto;
 
@@ -38,7 +40,7 @@ impl Modify for SecurityAddon {
     }
 }
 
-#[utoipauto(paths = "./src/routes from cl_backend::routes, 
+#[utoipauto(paths = "./src/api from cl_backend::api, 
     ./src/models from cl_backend::models")]
 #[derive(OpenApi)]
 #[openapi(
@@ -47,7 +49,7 @@ impl Modify for SecurityAddon {
     ),
     modifiers(&SecurityAddon),
     security(
-        ("token_jwt" = []),
+        ("token_jwt" = ["general"]),
     )
 )]
 pub struct ApiDoc;
@@ -57,7 +59,6 @@ fn generate_open_api_bindings() -> std::io::Result<()> {
     let json = ApiDoc::openapi().to_pretty_json()?;
     file.write_all(json.as_bytes())
 }
-
 
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
@@ -95,9 +96,10 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .nest("/routes", routes_router())
         .nest("/ticks", ticks_router())
         .layer(ClerkLayer::new(config, None, true))
-        .layer(CustomTraceLayer::new())
+        .layer(CustomTraceLayer::setup())
         .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .with_state(state);
+
     Ok(app.into())
 }
 

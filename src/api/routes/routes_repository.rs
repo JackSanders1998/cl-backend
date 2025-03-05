@@ -1,5 +1,5 @@
+use crate::api::AppState;
 use crate::models::{CreateRoute, Discipline, Route, RouteWithLocationSqlx, Scale};
-use crate::routes::AppState;
 use sqlx::postgres::PgQueryResult;
 use sqlx::Error as PgError;
 use std::sync::Arc;
