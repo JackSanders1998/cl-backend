@@ -193,10 +193,389 @@
           }
         }
       }
+    },
+    "/routes": {
+      "get": {
+        "tags": [
+          "cl_backend::api::routes::routes_controller"
+        ],
+        "operationId": "search_routes",
+        "responses": {
+          "200": {
+            "description": "Get route(s) successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Route"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No route found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cl_backend::api::routes::routes_controller"
+        ],
+        "operationId": "create_route",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoute"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a route",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Route was not created"
+          }
+        }
+      }
+    },
+    "/routes/{route_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::api::routes::routes_controller"
+        ],
+        "operationId": "get_route_by_route_id",
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "path",
+            "description": "route id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a route successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouteWithLocation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Route was not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cl_backend::api::routes::routes_controller"
+        ],
+        "operationId": "delete_route",
+        "parameters": [
+          {
+            "name": "route_id",
+            "in": "path",
+            "description": "route id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a route"
+          },
+          "500": {
+            "description": "Route was not deleted"
+          }
+        }
+      }
+    },
+    "/seshes": {
+      "get": {
+        "tags": [
+          "cl_backend::api::seshes::seshes_controller"
+        ],
+        "operationId": "search_seshes",
+        "responses": {
+          "200": {
+            "description": "Get sesh(es) successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SeshWithLocation"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No sesh found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cl_backend::api::seshes::seshes_controller"
+        ],
+        "operationId": "create_sesh",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSesh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a sesh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeshWithLocation"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Sesh was not created"
+          }
+        }
+      }
+    },
+    "/seshes/active": {
+      "get": {
+        "tags": [
+          "cl_backend::api::seshes::seshes_controller"
+        ],
+        "operationId": "get_active_sesh",
+        "responses": {
+          "200": {
+            "description": "Get the active successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeshWithLocation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No active sesh found"
+          }
+        }
+      }
+    },
+    "/seshes/{sesh_id}": {
+      "get": {
+        "tags": [
+          "cl_backend::api::seshes::seshes_controller"
+        ],
+        "operationId": "get_sesh_by_sesh_id",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "path",
+            "description": "sesh id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get a sesh successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeshWithLocationAndTicks"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sesh was not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cl_backend::api::seshes::seshes_controller"
+        ],
+        "operationId": "delete_sesh",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "path",
+            "description": "sesh id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete a sesh"
+          },
+          "500": {
+            "description": "Sesh was not deleted"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "cl_backend::api::seshes::seshes_controller"
+        ],
+        "operationId": "update_sesh_by_sesh_id",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "path",
+            "description": "sesh id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLocation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Update sesh successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeshRow"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Sesh was not updated"
+          }
+        }
+      }
+    },
+    "/ticks": {
+      "get": {
+        "tags": [
+          "cl_backend::api::ticks::ticks_controller"
+        ],
+        "operationId": "search_ticks",
+        "parameters": [
+          {
+            "name": "sesh_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get tick(s) successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TickWithRoute"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No tick found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "cl_backend::api::ticks::ticks_controller"
+        ],
+        "operationId": "create_tick",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTick"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Create a tick",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateTick"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Tick was not created"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "Attempt": {
+        "type": "string",
+        "enum": [
+          "onsight",
+          "flash",
+          "redpoint",
+          "fall"
+        ]
+      },
       "CreateLocation": {
         "type": "object",
         "required": [
@@ -219,6 +598,122 @@
             "type": "string"
           }
         }
+      },
+      "CreatePreference": {
+        "type": "object",
+        "required": [
+          "boulder_scale",
+          "sport_scale",
+          "color_scheme",
+          "theme"
+        ],
+        "properties": {
+          "boulder_scale": {
+            "type": "string"
+          },
+          "color_scheme": {
+            "type": "string"
+          },
+          "sport_scale": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateRoute": {
+        "type": "object",
+        "required": [
+          "location_id",
+          "grade",
+          "scale",
+          "disciplines",
+          "author"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            }
+          },
+          "grade": {
+            "type": "string"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          }
+        }
+      },
+      "CreateSesh": {
+        "type": "object",
+        "required": [
+          "location_id"
+        ],
+        "properties": {
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateTick": {
+        "type": "object",
+        "required": [
+          "route_id",
+          "sesh_id",
+          "discipline",
+          "attempt"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "discipline": {
+            "$ref": "#/components/schemas/Discipline"
+          },
+          "lap_group": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Discipline": {
+        "type": "string",
+        "enum": [
+          "boulder",
+          "sport",
+          "top_rope"
+        ]
       },
       "Environment": {
         "type": "string",
@@ -274,6 +769,670 @@
           }
         }
       },
+      "Preference": {
+        "type": "object",
+        "required": [
+          "preference_id",
+          "user_id",
+          "boulder_scale",
+          "sport_scale",
+          "color_scheme",
+          "theme",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "boulder_scale": {
+            "type": "string"
+          },
+          "color_scheme": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "preference_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sport_scale": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "Route": {
+        "type": "object",
+        "required": [
+          "route_id",
+          "location_id",
+          "grade",
+          "scale",
+          "disciplines",
+          "author",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            }
+          },
+          "grade": {
+            "type": "string"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RouteWithLocation": {
+        "type": "object",
+        "required": [
+          "route_id",
+          "grade",
+          "scale",
+          "disciplines",
+          "author",
+          "location",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            }
+          },
+          "grade": {
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RouteWithLocationSqlx": {
+        "type": "object",
+        "required": [
+          "route_id",
+          "grade",
+          "scale",
+          "disciplines",
+          "author",
+          "created_at",
+          "updated_at",
+          "location_id",
+          "location_author",
+          "name",
+          "environment",
+          "location_created_at",
+          "location_updated_at"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            }
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "location_author": {
+            "type": "string"
+          },
+          "location_created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "location_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Scale": {
+        "type": "string",
+        "enum": [
+          "verm",
+          "font",
+          "yosemite",
+          "french"
+        ]
+      },
+      "SeshRow": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "location_id",
+          "start",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SeshWithLocation": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "location",
+          "start",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SeshWithLocationAndTicks": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "location",
+          "ticks",
+          "start",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ticks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TickWithRoute"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "SeshWithLocationSqlx": {
+        "type": "object",
+        "required": [
+          "sesh_id",
+          "user_id",
+          "start",
+          "created_at",
+          "updated_at",
+          "location_id",
+          "author",
+          "name",
+          "environment",
+          "location_created_at",
+          "location_updated_at"
+        ],
+        "properties": {
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "location_created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "location_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        }
+      },
+      "TickRow": {
+        "type": "object",
+        "required": [
+          "tick_id",
+          "route_id",
+          "sesh_id",
+          "discipline",
+          "attempt",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "discipline": {
+            "$ref": "#/components/schemas/Discipline"
+          },
+          "lap_group": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tick_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TickSearchParams": {
+        "type": "object",
+        "required": [
+          "sesh_id"
+        ],
+        "properties": {
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "TickWithRoute": {
+        "type": "object",
+        "required": [
+          "tick_id",
+          "route_id",
+          "sesh_id",
+          "discipline",
+          "attempt",
+          "route",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "discipline": {
+            "$ref": "#/components/schemas/Discipline"
+          },
+          "lap_group": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "route": {
+            "$ref": "#/components/schemas/RouteWithLocation"
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tick_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TickWithRouteSqlx": {
+        "type": "object",
+        "required": [
+          "tick_id",
+          "sesh_id",
+          "discipline",
+          "attempt",
+          "created_at",
+          "updated_at",
+          "route_id",
+          "grade",
+          "scale",
+          "disciplines",
+          "author",
+          "route_created_at",
+          "route_updated_at",
+          "location_id",
+          "location_author",
+          "name",
+          "environment",
+          "location_created_at",
+          "location_updated_at"
+        ],
+        "properties": {
+          "attempt": {
+            "$ref": "#/components/schemas/Attempt"
+          },
+          "author": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "discipline": {
+            "$ref": "#/components/schemas/Discipline"
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            }
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment"
+          },
+          "grade": {
+            "type": "string"
+          },
+          "lap_group": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "location_author": {
+            "type": "string"
+          },
+          "location_created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "location_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "route_created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "route_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "route_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scale": {
+            "$ref": "#/components/schemas/Scale"
+          },
+          "sesh_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tick_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "UpdateLocation": {
         "type": "object",
         "properties": {
@@ -290,6 +1449,73 @@
             "nullable": true
           },
           "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdatePreference": {
+        "type": "object",
+        "properties": {
+          "boulder_scale": {
+            "type": "string",
+            "nullable": true
+          },
+          "color_scheme": {
+            "type": "string",
+            "nullable": true
+          },
+          "sport_scale": {
+            "type": "string",
+            "nullable": true
+          },
+          "theme": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateRoute": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "disciplines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discipline"
+            },
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "nullable": true
+          },
+          "scale": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Scale"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "UpdateSesh": {
+        "type": "object",
+        "properties": {
+          "end_session": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "location_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "notes": {
             "type": "string",
             "nullable": true
           }

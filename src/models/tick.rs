@@ -1,9 +1,10 @@
 use crate::models::{Discipline, Environment, RouteWithLocation, Scale};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Debug, ToSchema)]
 pub struct TickRow {
     pub tick_id: Uuid,
     pub route_id: Uuid,
@@ -16,7 +17,7 @@ pub struct TickRow {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Debug, Clone)]
+#[derive(Serialize, Deserialize, FromRow, Debug, Clone, ToSchema)]
 pub struct TickWithRoute {
     pub tick_id: Uuid,
     pub route_id: Uuid,
@@ -30,7 +31,7 @@ pub struct TickWithRoute {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Debug, ToSchema)]
 pub struct TickWithRouteSqlx {
     // tick
     pub tick_id: Uuid,
@@ -60,7 +61,7 @@ pub struct TickWithRouteSqlx {
     pub location_updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateTick {
     pub route_id: Uuid,
     pub sesh_id: Uuid,
@@ -70,12 +71,12 @@ pub struct CreateTick {
     pub lap_group: Option<Uuid>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema, IntoParams)]
 pub struct TickSearchParams {
     pub sesh_id: Uuid,
 }
 
-#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug)]
+#[derive(Serialize, Deserialize, Clone, sqlx::Type, Debug, ToSchema)]
 #[sqlx(type_name = "attempt_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum Attempt {

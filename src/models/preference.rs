@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Preference {
     pub preference_id: Uuid,
     pub user_id: String,
@@ -14,7 +15,7 @@ pub struct Preference {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct CreatePreference {
     pub boulder_scale: String,
     pub sport_scale: String,
@@ -22,7 +23,7 @@ pub struct CreatePreference {
     pub theme: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct UpdatePreference {
     pub boulder_scale: Option<String>,
     pub sport_scale: Option<String>,

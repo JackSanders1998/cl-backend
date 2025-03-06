@@ -8,6 +8,15 @@ use uuid::Uuid;
 
 use super::routes_service;
 
+#[utoipa::path(
+    post,
+    path = "/routes",
+    request_body = CreateRoute,
+    responses(
+        (status = 201, description = "Create a route", body = Route),
+        (status = 500, description = "Route was not created")
+    )
+)]
 pub async fn create_route(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateRoute>,
@@ -37,6 +46,17 @@ pub async fn create_route(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/routes/{route_id}",
+    params(
+        ("route_id", description = "route id"),
+    ),
+    responses(
+        (status = 200, description = "Get a route successfully", body = RouteWithLocation),
+        (status = 404, description = "Route was not found")
+    )
+)]
 pub async fn get_route_by_route_id(
     State(state): State<Arc<AppState>>,
     Path(route_id): Path<Uuid>,
@@ -51,6 +71,14 @@ pub async fn get_route_by_route_id(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/routes",
+    responses(
+        (status = 200, description = "Get route(s) successfully", body = [Route]),
+        (status = 404, description = "No route found")
+    )
+)]
 pub async fn search_routes(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let result = routes_repository::get_all_routes(state).await;
 
@@ -60,6 +88,17 @@ pub async fn search_routes(State(state): State<Arc<AppState>>) -> impl IntoRespo
     }
 }
 
+#[utoipa::path(
+    delete,
+    path = "/routes/{route_id}",
+    params(
+        ("route_id", description = "route id"),
+    ),
+    responses(
+        (status = 204, description = "Delete a route"),
+        (status = 500, description = "Route was not deleted")
+    )
+)]
 pub async fn delete_route(
     State(state): State<Arc<AppState>>,
     Path(route_id): Path<Uuid>,

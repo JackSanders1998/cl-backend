@@ -6,6 +6,15 @@ use serde_json::json;
 use std::sync::Arc;
 use tracing::{error, info};
 
+#[utoipa::path(
+    post,
+    path = "/ticks",
+    request_body = CreateTick,
+    responses(
+        (status = 201, description = "Create a tick", body = CreateTick),
+        (status = 500, description = "Tick was not created")
+    )
+)]
 pub async fn create_tick(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateTick>,
@@ -21,6 +30,15 @@ pub async fn create_tick(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/ticks",
+    params(TickSearchParams),
+    responses(
+        (status = 200, description = "Get tick(s) successfully", body = [TickWithRoute]),
+        (status = 404, description = "No tick found")
+    )
+)]
 pub async fn search_ticks(
     State(state): State<Arc<AppState>>,
     Query(params): Query<TickSearchParams>,

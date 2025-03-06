@@ -8,6 +8,15 @@ use std::sync::Arc;
 use tracing::{error, info};
 use uuid::Uuid;
 
+#[utoipa::path(
+    post,
+    path = "/seshes",
+    request_body = CreateSesh,
+    responses(
+        (status = 201, description = "Create a sesh", body = SeshWithLocation),
+        (status = 500, description = "Sesh was not created")
+    )
+)]
 pub async fn create_sesh(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -24,6 +33,17 @@ pub async fn create_sesh(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/seshes/{sesh_id}",
+    params(
+        ("sesh_id", description = "sesh id"),
+    ),
+    responses(
+        (status = 200, description = "Get a sesh successfully", body = SeshWithLocationAndTicks),
+        (status = 404, description = "Sesh was not found")
+    )
+)]
 pub async fn get_sesh_by_sesh_id(
     State(state): State<Arc<AppState>>,
     Path(sesh_id): Path<Uuid>,
@@ -39,6 +59,14 @@ pub async fn get_sesh_by_sesh_id(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/seshes",
+    responses(
+        (status = 200, description = "Get sesh(es) successfully", body = [SeshWithLocation]),
+        (status = 404, description = "No sesh found")
+    )
+)]
 pub async fn search_seshes(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -52,6 +80,14 @@ pub async fn search_seshes(
     }
 }
 
+#[utoipa::path(
+    get,
+    path = "/seshes/active",
+    responses(
+        (status = 200, description = "Get the active successfully", body = SeshWithLocation),
+        (status = 404, description = "No active sesh found")
+    )
+)]
 pub async fn get_active_sesh(
     headers: HeaderMap,
     State(state): State<Arc<AppState>>,
@@ -95,6 +131,18 @@ pub async fn get_active_sesh(
     }
 }
 
+#[utoipa::path(
+    patch,
+    path = "/seshes/{sesh_id}",
+    params(
+        ("sesh_id", description = "sesh id"),
+    ),
+    request_body = UpdateLocation,
+    responses(
+        (status = 200, description = "Update sesh successfully", body = SeshRow),
+        (status = 500, description = "Sesh was not updated")
+    )
+)]
 pub async fn update_sesh_by_sesh_id(
     State(state): State<Arc<AppState>>,
     Path(sesh_id): Path<Uuid>,
@@ -106,6 +154,17 @@ pub async fn update_sesh_by_sesh_id(
     }
 }
 
+#[utoipa::path(
+    delete,
+    path = "/seshes/{sesh_id}",
+    params(
+        ("sesh_id", description = "sesh id"),
+    ),
+    responses(
+        (status = 204, description = "Delete a sesh"),
+        (status = 500, description = "Sesh was not deleted")
+    )
+)]
 pub async fn delete_sesh(
     State(state): State<Arc<AppState>>,
     Path(sesh_id): Path<Uuid>,

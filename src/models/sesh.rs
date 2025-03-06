@@ -1,10 +1,11 @@
 use crate::models::{Environment, Location, TickWithRoute};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use utoipa::ToSchema;
 use uuid::Uuid;
 
 // Literal representation of the seshes table in the database
-#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug, ToSchema)]
 pub struct SeshRow {
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -16,7 +17,7 @@ pub struct SeshRow {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug, ToSchema)]
 pub struct SeshWithLocation {
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -28,7 +29,7 @@ pub struct SeshWithLocation {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug, ToSchema)]
 pub struct SeshWithLocationSqlx {
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -47,7 +48,7 @@ pub struct SeshWithLocationSqlx {
     pub location_updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, FromRow, Clone, Debug)]
+#[derive(Serialize, Deserialize, FromRow, Clone, Debug, ToSchema)]
 pub struct SeshWithLocationAndTicks {
     pub sesh_id: Uuid,
     pub user_id: String,
@@ -60,13 +61,13 @@ pub struct SeshWithLocationAndTicks {
     pub updated_at: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSesh {
     pub location_id: Uuid,
     pub notes: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, ToSchema)]
 pub struct UpdateSesh {
     pub location_id: Option<Uuid>,
     pub notes: Option<String>,
