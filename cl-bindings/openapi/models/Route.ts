@@ -13,59 +13,77 @@
  */
 
 import { mapValues } from '../runtime';
-import type { Environment } from './Environment';
+import type { Scale } from './Scale';
 import {
-    EnvironmentFromJSON,
-    EnvironmentFromJSONTyped,
-    EnvironmentToJSON,
-} from './Environment';
+    ScaleFromJSON,
+    ScaleFromJSONTyped,
+    ScaleToJSON,
+} from './Scale';
+import type { Discipline } from './Discipline';
+import {
+    DisciplineFromJSON,
+    DisciplineFromJSONTyped,
+    DisciplineToJSON,
+} from './Discipline';
 
 /**
  * 
  * @export
- * @interface Location
+ * @interface Route
  */
-export interface Location {
+export interface Route {
     /**
      * 
      * @type {string}
-     * @memberof Location
+     * @memberof Route
      */
     author: string;
     /**
      * 
      * @type {Date}
-     * @memberof Location
+     * @memberof Route
      */
     createdAt: Date;
     /**
      * 
      * @type {string}
-     * @memberof Location
+     * @memberof Route
      */
     description?: string | null;
     /**
      * 
-     * @type {Environment}
-     * @memberof Location
+     * @type {Array<Discipline>}
+     * @memberof Route
      */
-    environment: Environment;
+    disciplines: Array<Discipline>;
     /**
      * 
      * @type {string}
-     * @memberof Location
+     * @memberof Route
+     */
+    grade: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Route
      */
     locationId: string;
     /**
      * 
      * @type {string}
-     * @memberof Location
+     * @memberof Route
      */
-    name: string;
+    routeId: string;
+    /**
+     * 
+     * @type {Scale}
+     * @memberof Route
+     */
+    scale: Scale;
     /**
      * 
      * @type {Date}
-     * @memberof Location
+     * @memberof Route
      */
     updatedAt: Date;
 }
@@ -73,23 +91,25 @@ export interface Location {
 
 
 /**
- * Check if a given object implements the Location interface.
+ * Check if a given object implements the Route interface.
  */
-export function instanceOfLocation(value: object): value is Location {
+export function instanceOfRoute(value: object): value is Route {
     if (!('author' in value) || value['author'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
-    if (!('environment' in value) || value['environment'] === undefined) return false;
+    if (!('disciplines' in value) || value['disciplines'] === undefined) return false;
+    if (!('grade' in value) || value['grade'] === undefined) return false;
     if (!('locationId' in value) || value['locationId'] === undefined) return false;
-    if (!('name' in value) || value['name'] === undefined) return false;
+    if (!('routeId' in value) || value['routeId'] === undefined) return false;
+    if (!('scale' in value) || value['scale'] === undefined) return false;
     if (!('updatedAt' in value) || value['updatedAt'] === undefined) return false;
     return true;
 }
 
-export function LocationFromJSON(json: any): Location {
-    return LocationFromJSONTyped(json, false);
+export function RouteFromJSON(json: any): Route {
+    return RouteFromJSONTyped(json, false);
 }
 
-export function LocationFromJSONTyped(json: any, ignoreDiscriminator: boolean): Location {
+export function RouteFromJSONTyped(json: any, ignoreDiscriminator: boolean): Route {
     if (json == null) {
         return json;
     }
@@ -98,14 +118,16 @@ export function LocationFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'author': json['author'],
         'createdAt': (new Date(json['created_at'])),
         'description': json['description'] == null ? undefined : json['description'],
-        'environment': EnvironmentFromJSON(json['environment']),
+        'disciplines': ((json['disciplines'] as Array<any>).map(DisciplineFromJSON)),
+        'grade': json['grade'],
         'locationId': json['location_id'],
-        'name': json['name'],
+        'routeId': json['route_id'],
+        'scale': ScaleFromJSON(json['scale']),
         'updatedAt': (new Date(json['updated_at'])),
     };
 }
 
-export function LocationToJSON(value?: Location | null): any {
+export function RouteToJSON(value?: Route | null): any {
     if (value == null) {
         return value;
     }
@@ -114,9 +136,11 @@ export function LocationToJSON(value?: Location | null): any {
         'author': value['author'],
         'created_at': ((value['createdAt']).toISOString()),
         'description': value['description'],
-        'environment': EnvironmentToJSON(value['environment']),
+        'disciplines': ((value['disciplines'] as Array<any>).map(DisciplineToJSON)),
+        'grade': value['grade'],
         'location_id': value['locationId'],
-        'name': value['name'],
+        'route_id': value['routeId'],
+        'scale': ScaleToJSON(value['scale']),
         'updated_at': ((value['updatedAt']).toISOString()),
     };
 }

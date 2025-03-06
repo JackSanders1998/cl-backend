@@ -1,6 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './ClBackendroutesclimbsclimbsControllerApi';
-export * from './ClBackendrouteslocationslocationsControllerApi';
-export * from './ClBackendroutespreferencespreferencesControllerApi';
-export * from './ClBackendroutesseshesseshesControllerApi';
+export * from './ClBackendapihealthCheckApi';
+export * from './ClBackendapilocationslocationsControllerApi';
+export * from './ClBackendapiroutesroutesControllerApi';
+export * from './ClBackendapiseshesseshesControllerApi';
+export * from './ClBackendapiticksticksControllerApi';

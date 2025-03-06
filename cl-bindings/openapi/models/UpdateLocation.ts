@@ -13,6 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
+import type { Environment } from './Environment';
+import {
+    EnvironmentFromJSON,
+    EnvironmentFromJSONTyped,
+    EnvironmentToJSON,
+} from './Environment';
+
 /**
  * 
  * @export
@@ -24,7 +31,13 @@ export interface UpdateLocation {
      * @type {string}
      * @memberof UpdateLocation
      */
-    environment?: string | null;
+    description?: string | null;
+    /**
+     * 
+     * @type {Environment}
+     * @memberof UpdateLocation
+     */
+    environment?: Environment | null;
     /**
      * 
      * @type {string}
@@ -32,6 +45,8 @@ export interface UpdateLocation {
      */
     name?: string | null;
 }
+
+
 
 /**
  * Check if a given object implements the UpdateLocation interface.
@@ -50,7 +65,8 @@ export function UpdateLocationFromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
-        'environment': json['environment'] == null ? undefined : json['environment'],
+        'description': json['description'] == null ? undefined : json['description'],
+        'environment': json['environment'] == null ? undefined : EnvironmentFromJSON(json['environment']),
         'name': json['name'] == null ? undefined : json['name'],
     };
 }
@@ -61,7 +77,8 @@ export function UpdateLocationToJSON(value?: UpdateLocation | null): any {
     }
     return {
         
-        'environment': value['environment'],
+        'description': value['description'],
+        'environment': EnvironmentToJSON(value['environment']),
         'name': value['name'],
     };
 }
