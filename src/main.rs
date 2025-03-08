@@ -1,7 +1,5 @@
 extern crate core;
 
-use std::fs::File;
-use std::io::Write;
 use std::time::Duration;
 
 use anyhow::Context;
@@ -40,8 +38,7 @@ impl Modify for SecurityAddon {
     }
 }
 
-#[utoipauto(paths = "./src/api from cl_backend::api, 
-    ./src/models from cl_backend::models")]
+#[utoipauto(paths = "./src/api from cl_backend::api, ./src/models from cl_backend::models")]
 #[derive(OpenApi)]
 #[openapi(
     tags(
@@ -54,19 +51,10 @@ impl Modify for SecurityAddon {
 )]
 pub struct ApiDoc;
 
-fn generate_open_api_bindings() -> std::io::Result<()> {
-    let mut file = File::create("./cl-bindings/api.json")?;
-    let json = ApiDoc::openapi().to_pretty_json()?;
-    file.write_all(json.as_bytes())
-}
-
 #[shuttle_runtime::main]
 async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum::ShuttleAxum {
     // Initialize trace layer
     CustomTraceLayer::init();
-
-    // Generate openapi bindings
-    let _ = generate_open_api_bindings();
 
     // Get env vars. Exit if any are not found.
     let clerk_secret = secrets
@@ -97,7 +85,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .nest("/ticks", ticks_router())
         .layer(ClerkLayer::new(config, None, true))
         .layer(CustomTraceLayer::setup())
-        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
+        .merge(SwaggerUi::new("/swagger").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .with_state(state);
 
     Ok(app.into())
