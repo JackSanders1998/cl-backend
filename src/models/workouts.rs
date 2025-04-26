@@ -7,7 +7,7 @@ use uuid::Uuid;
 pub struct Workout {
     pub workout_id: Uuid,
     pub sesh_id: Uuid,
-    pub user_id: Uuid,
+    pub user_id: String,
     pub log: serde_json::Value,
     pub created_at: chrono::DateTime<chrono::Utc>,
     pub updated_at: chrono::DateTime<chrono::Utc>,
@@ -16,6 +16,5 @@ pub struct Workout {
 #[derive(Serialize, Deserialize, ToSchema, Debug)]
 pub struct CreateWorkout {
     pub sesh_id: Uuid,
-    pub user_id: Uuid,
     pub log: serde_json::Value,
 }

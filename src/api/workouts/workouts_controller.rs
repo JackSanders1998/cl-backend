@@ -1,7 +1,8 @@
-use crate::api::{workouts_repository, AppState};
+use crate::api::{get_claims, workouts_repository, AppState};
 use crate::models::{CreateWorkout, Workout};
 use axum::extract::{Path, State};
 use axum::{extract::Json, http::StatusCode, response::IntoResponse};
+use http::HeaderMap;
 use std::sync::Arc;
 use tracing::{error, info};
 use uuid::Uuid;
@@ -16,11 +17,12 @@ use uuid::Uuid;
     )
 )]
 pub async fn create_workout(
+    headers: HeaderMap,
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateWorkout>,
 ) -> impl IntoResponse {
     info!("Creating workout with payload: {:?}", payload);
-    let result = workouts_repository::create_workout(state, payload).await;
+    let result = workouts_repository::create_workout(state, payload, get_claims(headers)).await;
 
     match result {
         Ok(workout) => (
