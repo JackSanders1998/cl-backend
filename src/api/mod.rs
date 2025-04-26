@@ -4,12 +4,14 @@ pub mod preferences;
 pub mod routes;
 pub mod seshes;
 pub mod ticks;
+pub mod workouts;
 
 pub use locations::*;
 pub use preferences::*;
 pub use routes::*;
 pub use seshes::*;
 pub use ticks::*;
+pub use workouts::*;
 
 use base64::engine::general_purpose;
 use base64::{alphabet, engine, Engine};

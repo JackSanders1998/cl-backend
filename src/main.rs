@@ -7,7 +7,7 @@ use axum::routing::get;
 use axum::Router;
 use cl_backend::api::{
     health_check, locations_router, preferences_router, routes_router, seshes_router, ticks_router,
-    AppState,
+    workouts_router, AppState,
 };
 use cl_backend::utils::CustomTraceLayer;
 use clerk_rs::validators::axum::ClerkLayer;
@@ -83,6 +83,7 @@ async fn main(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .nest("/seshes", seshes_router())
         .nest("/routes", routes_router())
         .nest("/ticks", ticks_router())
+        .nest("/workouts", workouts_router())
         .layer(ClerkLayer::new(config, None, true))
         .layer(CustomTraceLayer::setup())
         .merge(SwaggerUi::new("/swagger").url("/api-docs/openapi.json", ApiDoc::openapi()))
